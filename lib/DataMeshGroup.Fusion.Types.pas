@@ -3,7 +3,7 @@ unit DataMeshGroup.Fusion.Types;
 interface
 
 uses
-  SysUtils, Json, Json.Converters, Json.Serializers;
+  SysUtils, Json, Json.Converters, Json.Serializers, Nullable;
 
 //public GenericProfile GenericProfile { get; set; } = GenericProfile.Basic;
 //public List<ServiceProfile> ServiceProfiles { get; private set; } = new List<ServiceProfile>();
@@ -11,6 +11,11 @@ uses
 {$SCOPEDENUMS ON}
 
 type
+/// <summary>
+/// Delphi Nullable Types
+/// </summary>
+  TNullableBool = TNullable<Boolean>;
+
   Decimal = Currency;
 
   //[JsonConverter(TJsonEnumNameConverter<TMessageClass>)]

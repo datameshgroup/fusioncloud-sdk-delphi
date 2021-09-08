@@ -1,0 +1,43 @@
+unit DataMeshGroup.Fusion.LoginResponse;
+
+interface
+
+uses DataMeshGroup.Fusion.MessagePayload, DataMeshGroup.Fusion.Response,
+  DataMeshGroup.Fusion.POISystemData, DataMeshGroup.Fusion.Types,
+  System.SysUtils;
+
+type
+  TLoginResponse = class(TMessagePayload)
+  private
+    FResponse: TResponse;
+    FPOISystemData: TPOISystemData;
+
+    function CreateDefaultResponseMessagePayload(AResponse: TResponse):
+      TMessagePayload; override;
+  public
+    property Response: TResponse read FResponse write FResponse;
+    property POISystemData: TPOISystemData read FPOISystemData
+      write FPOISystemData;
+
+    constructor Create(AMessageClass: TMessageClass; AMessageCategory: TMessageCategory;
+      AMessageType: TMessageType); override;
+  end;
+
+implementation
+
+{ TLoginResponse }
+
+constructor TLoginResponse.Create(AMessageClass: TMessageClass;
+  AMessageCategory: TMessageCategory; AMessageType: TMessageType);
+begin
+  inherited;
+
+end;
+
+function TLoginResponse.CreateDefaultResponseMessagePayload(
+  AResponse: TResponse): TMessagePayload;
+begin
+  raise Exception.Create('Not Implemented');
+end;
+
+end.

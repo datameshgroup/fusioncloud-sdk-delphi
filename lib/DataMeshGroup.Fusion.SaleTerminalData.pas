@@ -13,6 +13,8 @@ type
     FSaleProfile: TSaleProfile;
     FGenericProfile: TGenericProfile;
     FTotalsGroupID: string;
+
+    procedure InitProperties;
   public
     property TerminalEnvironment: TTerminalenvironment read FTerminalenvironment
       write FTerminalenvironment;
@@ -20,7 +22,7 @@ type
       write FSaleCapabilities;
     property SaleProfile: TSaleProfile read FSaleProfile write FSaleProfile;
     property TotalsGroupID: string read FTotalsGroupID write FTotalsGroupID;
-  published
+
     constructor Create;
     destructor Destroy; override;
   end;
@@ -31,13 +33,9 @@ implementation
 
 constructor TSaleTerminalData.Create;
 begin
-  inherited Create;
+  inherited;
 
-  FTerminalenvironment := TTerminalenvironment.Attended;
-  FSaleCapabilities := TList<TSaleCapability>.Create;
-
-  FSaleProfile := TSaleProfile.Create;
-  FSaleProfile.ServiceProfiles := TGenericProfile.Basic;
+  InitProperties;
 end;
 
 destructor TSaleTerminalData.Destroy;
@@ -46,6 +44,15 @@ begin
   FSaleProfile.Free;
 
   inherited;
+end;
+
+procedure TSaleTerminalData.InitProperties;
+begin
+  FTerminalenvironment := TTerminalenvironment.Attended;
+  FSaleCapabilities := TList<TSaleCapability>.Create;
+
+  FSaleProfile := TSaleProfile.Create;
+  FSaleProfile.GenericProfile := TGenericProfile.Basic;
 end;
 
 end.

@@ -9,12 +9,14 @@ type
   private
     FGenericProfile: TGenericProfile;
     FServiceProfile: TList<TServiceProfile>;
+
+    procedure InitProperties;
   public
     property GenericProfile: TGenericProfile read FGenericProfile
       write FGenericProfile;
     property ServiceProfiles: TList<TServiceProfile> read FServiceProfile
       write FServiceProfile;
-  published
+
     constructor Create;
     destructor Destroy; override;
   end;
@@ -27,8 +29,7 @@ constructor TSaleProfile.Create;
 begin
   inherited Create;
 
-  FGenericProfile := TGenericProfile.Basic;
-  FServiceProfile := TList<TServiceProfile>.Create;
+  InitProperties;
 end;
 
 destructor TSaleProfile.Destroy;
@@ -36,6 +37,12 @@ begin
   FServiceProfile.Free;
 
   inherited;
+end;
+
+procedure TSaleProfile.InitProperties;
+begin
+  FGenericProfile := TGenericProfile.Basic;
+  FServiceProfile := TList<TServiceProfile>.Create;
 end;
 
 end.

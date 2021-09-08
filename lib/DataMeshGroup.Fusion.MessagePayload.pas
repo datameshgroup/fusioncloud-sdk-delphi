@@ -2,7 +2,7 @@ unit DataMeshGroup.Fusion.MessagePayload;
 
 interface
 
-uses DataMeshGroup.Fusion.Types, RTTI;
+uses DataMeshGroup.Fusion.Types, DataMeshGroup.Fusion.Response, RTTI;
 
 type
   TMessagePayload = class abstract
@@ -12,11 +12,17 @@ type
     FMessageType: TMessageType;
 
   protected
+    function CreateDefaultResponseMessagePayload(AResponse: TResponse):
+      TMessagePayload; virtual; abstract;
+
     constructor Create(AMessageClass: TMessageClass; AMessageCategory: TMessageCategory;
       AMessageType: TMessageType); virtual;
   public
+    [JsonIgnore]
     property MessageClass: TMessageClass read FMessageClass write FMessageClass;
+    [JsonIgnore]
     property MessageCategory: TMessageCategory read FMessageCategory write FMessageCategory;
+    [JsonIgnore]
     property MessageType: TMessageType read FMessageType write FMessageType;
 
     function GetMessageDescription: string;
