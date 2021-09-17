@@ -2,7 +2,7 @@ unit DataMeshGroup.Fusion.Response;
 
 interface
 
-uses DataMeshGroup.Fusion.Types;
+uses DataMeshGroup.Fusion.Types, Neon.Core.Attributes;
 
 type
   TResponse = class
@@ -32,7 +32,7 @@ type
     /// <summary>
     /// Helper function. True when Result is <see cref="Result.Success"/> or <see cref="Result.Partial"/>
     /// </summary>
-    [JsonIgnore]
+    [NeonIgnoreAttribute] //[JsonIgnore]
     property Success: Boolean read FSuccess write FSuccess;
 
     constructor Create;

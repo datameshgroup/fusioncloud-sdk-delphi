@@ -2,7 +2,8 @@ unit DataMeshGroup.Fusion.MessagePayload;
 
 interface
 
-uses DataMeshGroup.Fusion.Types, DataMeshGroup.Fusion.Response, RTTI;
+uses DataMeshGroup.Fusion.Types, DataMeshGroup.Fusion.Response, RTTI,
+  Neon.Core.Attributes;
 
 type
   TMessagePayload = class abstract
@@ -18,11 +19,11 @@ type
     constructor Create(AMessageClass: TMessageClass; AMessageCategory: TMessageCategory;
       AMessageType: TMessageType); virtual;
   public
-    [JsonIgnore]
+    [NeonIgnoreAttribute] //[JsonIgnore]
     property MessageClass: TMessageClass read FMessageClass write FMessageClass;
-    [JsonIgnore]
+    [NeonIgnoreAttribute]
     property MessageCategory: TMessageCategory read FMessageCategory write FMessageCategory;
-    [JsonIgnore]
+    [NeonIgnoreAttribute]
     property MessageType: TMessageType read FMessageType write FMessageType;
 
     function GetMessageDescription: string;

@@ -2,7 +2,7 @@ unit DataMeshGroup.Fusion.POIStatus;
 
 interface
 
-uses DataMeshGroup.Fusion.Types, DataMeshGroup.Fusion.CashHandlingDevice;
+uses NullableTypes, DataMeshGroup.Fusion.CashHandlingDevice;
 
 type
   TPOIStatus = class

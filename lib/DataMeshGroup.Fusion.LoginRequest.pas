@@ -32,8 +32,7 @@ type
     property SaleSoftware: TSaleSoftware read FSaleSoftware write FSaleSoftware;
     property SaleTerminalData: TSaleTerminalData read FSaleTerminalData
       write FSaleTerminalData;
-    property TrainingModeFlag: Boolean read FTrainingModeFlag
-      write FTrainingModeFlag;
+    property TrainingModeFlag: Boolean read FTrainingModeFlag;
     property OperatorLanguage: string read FOperatorLanguage
       write FOperatorLanguage;
     property OperatorID: string read FOperatorID write FOperatorID;

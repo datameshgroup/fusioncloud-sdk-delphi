@@ -3,7 +3,7 @@ unit DataMeshGroup.Fusion.POISystemData;
 interface
 
 uses DataMeshGroup.Fusion.POISoftware, DataMeshGroup.Fusion.POITerminalData,
-  DataMeshGroup.Fusion.Types, DataMeshGroup.Fusion.POIStatus;
+  NullableTypes, DataMeshGroup.Fusion.POIStatus;
 
 type
   TPOISystemData = class

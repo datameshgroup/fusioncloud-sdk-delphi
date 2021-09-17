@@ -2,7 +2,7 @@ unit DataMeshGroup.Fusion.CashHandlingDevice;
 
 interface
 
-uses DataMeshGroup.Fusion.Types, DataMeshGroup.Fusion.CoinsOrBills;
+uses NullableTypes, DataMeshGroup.Fusion.CoinsOrBills;
 
 type
   TCashHandlingDevice = class
