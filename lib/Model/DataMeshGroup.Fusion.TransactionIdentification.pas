@@ -13,19 +13,11 @@ type
     [JsonConverter(typeof(IsoDateTimeConverter))]
     property TimeStamp: TDateTime read FTimeStamp write FTimeStamp;
 
-    procedure TransactionIdentification(ATransactionID: string);
+    function Equals(AObj: TObject): Boolean; override;
+    function GetHashCode:Integer; override;
 
-//  public TransactionIdentification(string transactionID)
-//        {
-//            TransactionID = transactionID;
-//            TimeStamp = DateTime.UtcNow;
-//        }
-//
-//        public string TransactionID { get; set; }
-//
-//        [JsonConverter(typeof(IsoDateTimeConverter))]
-//        public DateTime TimeStamp { get; set; }
-//
+    constructor Create(ATransactionID: string);
+
 //        public override bool Equals(object obj)
 //        {
 //            if (obj is null || !(obj is TransactionIdentification))
@@ -49,11 +41,28 @@ uses System.DateUtils, System.SysUtils;
 
 { TTransactionIdentification }
 
-procedure TTransactionIdentification.TransactionIdentification(
-  ATransactionID: string);
+constructor TTransactionIdentification.Create(ATransactionID: string);
 begin
   FTransactionID := ATransactionID;
   FTimeStamp :=  TTimeZone.Local.ToUniversalTime(Now);
+end;
+
+function TTransactionIdentification.Equals(AObj: TObject): Boolean;
+var
+  Obj: TTransactionIdentification;
+begin
+  if (AObj = nil) or not(AObj is TTransactionIdentification) then
+    Result := False;
+
+  Obj := AObj as TTransactionIdentification;
+
+  Result := (FTimeStamp = Obj.TimeStamp) and
+    (FTransactionID = Obj.TransactionID);
+end;
+
+function TTransactionIdentification.GetHashCode: Integer;
+begin
+//  Result := Self.FTimeStamp.GetHashCode + FTransactionID.GetHashCode;
 end;
 
 end.

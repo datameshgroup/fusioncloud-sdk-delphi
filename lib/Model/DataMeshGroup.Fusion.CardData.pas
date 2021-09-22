@@ -28,7 +28,6 @@ type
 
     //public string AllowedProductCode { get; set; }
     //public AllowedProduct AllowedProduct { get; set; }
-
     /// <summary>
     /// Only present if EntryMode is "File". Object with identifies the payment token.
     /// </summary>

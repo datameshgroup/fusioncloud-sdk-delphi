@@ -12,6 +12,9 @@ type
   TNullableCurrency = TNullable<Currency>;  // decimal
   TNullableCurrencySymbol = TNullable<TCurrencySymbol>;
   TNullableInt = TNullable<Integer>;
+  TNullabeTokenRequestedType = TNullable<TTokenRequestedType>;
+  TNullablePaymentInstrumentType = TNullable<TPaymentInstrumentType>;
+  TNullableDateTime = TNullable<TDateTime>;
 
 implementation
 
