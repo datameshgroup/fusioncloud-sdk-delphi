@@ -1,0 +1,37 @@
+unit DataMeshGroup.Fusion.CardData;
+
+interface
+
+uses DataMeshGroup.Fusion.Types, DataMeshGroup.Fusion.ProtectedCardData;
+
+type
+  TCardData = class
+  private
+    FPaymentBrand: string;
+    FMaskedPAN: string;
+    FPaymentAccountRef: string;
+    FEntryMode: TEntryMode;
+    FCardCountryCode: string;
+  public
+   property PaymentBrand: string read FPaymentBrand write FPaymentBrand;
+   property MaskedPAN: string read FMaskedPAN write FMaskedPAN;
+   property PaymentAccountRef: string read FPaymentAccountRef
+     write FPaymentAccountRef;
+   property EntryMode: TEntryMode read FEntryMode write FEntryMode;
+   property CardCountryCode: string read FCardCountryCode
+     write FCardCountryCode;
+
+        public ProtectedCardData ProtectedCardData { get; set; }
+        //public string AllowedProductCode { get; set; }
+        //public AllowedProduct AllowedProduct { get; set; }
+
+        /// <summary>
+        /// Only present if EntryMode is "File". Object with identifies the payment token.
+        /// </summary>
+        public PaymentToken PaymentToken { get; set; }
+        //public CustomerOrder CustomerOrder { get; set; }
+  end;
+
+implementation
+
+end.

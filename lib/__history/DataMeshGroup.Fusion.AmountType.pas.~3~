@@ -1,0 +1,19 @@
+unit DataMeshGroup.Fusion.AmountType;
+
+interface
+
+uses NullableTypes;
+
+type
+  TAmountType = class
+  private
+    FAmountValue:
+
+    [JsonConverter(typeof(DecimalJsonConverter))]
+        public decimal? AmountValue { get; set; }
+        public string Currency { get; set; }
+  end;
+
+implementation
+
+end.

@@ -1,0 +1,22 @@
+unit DataMeshGroup.Fusion.LoyaltyAccountID;
+
+interface
+
+uses DataMeshGroup.Fusion.Types;
+
+type
+  TLoyaltyAccountID = class
+  private
+    FEntryMode: TEntryMode;
+    FIdentificationType: TIdentificationType;
+  public
+      property EntryMode: TEntryMode read FEntryMode write FEntryMode;
+      property IdentificationType: TIdentificationType read FIdentificationType
+        write FIdentificationType;
+      property IdentificationSupport IdentificationSupport { get; set; }
+      property string LoyaltyID { get; set; }
+  end;
+
+implementation
+
+end.

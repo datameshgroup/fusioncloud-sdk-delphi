@@ -1,0 +1,75 @@
+unit DataMeshGroup.Fusion.SecurityTrailer;
+
+interface
+
+type
+  TKeyEncryptionAlgorithm = class
+  private
+    FAlgorithm: string;
+  public
+    property Algorithm: string read FAlgorithm write FAlgorithm;
+  end;
+
+  TEncapsulatedContent = class
+  private
+    FContentType: string;
+  public
+    property ContentType: string read FContentType write FContentType;
+  end;
+
+  TMACAlgorithm = class
+  private
+    FAlgorithm: string;
+  public
+    property Algorithm: string read FAlgorithm write FAlgorithm;
+  end;
+
+  TKEKIdentifier = class
+  private
+    FKeyIdentifier: string;
+    FKeyVersion: string;
+  public
+    property KeyIdentifier: string read FKeyIdentifier write FKeyIdentifier;
+    property KeyVersion: string read FKeyVersion write FKeyVersion;
+  end;
+    {
+        public string  { get; set; }
+        public string  { get; set; }
+    }
+
+
+public class SecurityTrailer
+    {
+        public string ContentType { get; set; }
+        public AuthenticatedData AuthenticatedData { get; set; }
+    }
+
+    public class AuthenticatedData
+    {
+        public string Version { get; set; }
+        public Recipient Recipient { get; set; }
+    }
+
+    public class Recipient
+    {
+        public KEK KEK { get; set; }
+        public MACAlgorithm MACAlgorithm { get; set; }
+        public EncapsulatedContent EncapsulatedContent { get; set; }
+        public string MAC { get; set; }
+    }
+
+    public class KEK
+    {
+        public string Version { get; set; }
+        public KEKIdentifier KEKIdentifier { get; set; }
+        public KeyEncryptionAlgorithm KeyEncryptionAlgorithm { get; set; }
+        public string EncryptedKey { get; set; }
+    }
+
+
+
+
+
+implementation
+
+end.

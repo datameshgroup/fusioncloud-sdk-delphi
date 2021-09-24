@@ -1,0 +1,25 @@
+unit DataMeshGroup.Fusion.LoginResponse;
+
+interface
+
+uses DataMeshGroup.Fusion.MessagePayload, DataMeshGroup.Fusion.Response;
+
+type
+  TLoginResponse = class(TMessagePayload)
+  private
+    FResponse: TResponse;
+  public
+    property Response: TResponse read FResponse write FResponse;
+    constructor Create;
+  end;
+
+implementation
+
+{ TLoginResponse }
+
+constructor TLoginResponse.Create;
+begin
+  TMessagePayload.Create();
+end;
+
+end.

@@ -1,0 +1,25 @@
+unit DataMeshGroup.Fusion.POISystemData;
+
+interface
+
+uses DataMeshGroup.Fusion.POISoftware;
+
+type
+  TPOISystemData = class
+  private
+    FDateTime: string;
+    FPOISoftware: TPOISoftware;
+  public
+    property DateTime: string read FDateTime write FDatetime;
+    property POISoftware: TPOISoftware read FPOISoftware write FPOISoftware;
+  end;
+
+
+//  public string DateTime { get; set; }
+//        public POISoftware POISoftware { get; set; }
+//        public POITerminalData POITerminalData { get; set; }
+//        public POIStatus POIStatus { get; set; }
+//        public bool? TokenRequestStatus { get; set; }
+implementation
+
+end.

@@ -1,0 +1,50 @@
+unit DataMeshGroup.Fusion.LogoutRequest;
+
+interface
+
+uses DataMeshGroup.Fusion.MessagePayload, DataMeshGroup.Fusion.Types,
+  DataMeshGroup.Fusion.Response, DataMeshGroup.Fusion.LogoutResponse;
+
+type
+  TLogoutRequest = class(TMessagePayload)
+  private
+    function CreateDefaultResponseMessagePayload(AResponse: TResponse):
+      TMessagePayload; override;
+  public
+    constructor Create(AMessageClass: TMessageClass; AMessageCategory: TMessageCategory;
+      AMessageType: TMessageType); override;
+
+
+  end;
+
+implementation
+
+{ TLogoutRequest }
+
+constructor TLogoutRequest.Create(AMessageClass: TMessageClass;
+  AMessageCategory: TMessageCategory; AMessageType: TMessageType);
+begin
+  inherited;
+
+end;
+
+function TLogoutRequest.CreateDefaultResponseMessagePayload(
+  AResponse: TResponse): TMessagePayload;
+begin
+  Result := TLogoutResponse.Create;
+        internal override MessagePayload CreateDefaultResponseMessagePayload(Response response)
+        {
+            return new LogoutResponse
+            {
+                Response = response ?? new Response()
+                {
+                    Result = Result.Failure,
+                    ErrorCondition = ErrorCondition.Aborted,
+                    AdditionalResponse = ""
+                }
+            };
+        }
+
+end;
+
+end.

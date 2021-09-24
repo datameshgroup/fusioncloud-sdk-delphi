@@ -1,0 +1,12 @@
+unit DataMeshGroup.Fusion.PaymentResult;
+
+interface
+
+type
+  TPaymentResult = class
+
+  end;
+
+implementation
+
+end.

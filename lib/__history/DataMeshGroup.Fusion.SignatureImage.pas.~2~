@@ -1,0 +1,12 @@
+unit DataMeshGroup.Fusion.SignatureImage;
+
+interface
+
+type
+  TFSignatureImage = class
+
+  end;
+
+implementation
+
+end.

@@ -1,0 +1,12 @@
+unit DataMeshGroup.Fusion.MessageHeader;
+
+interface
+
+type
+  TMessageHeader = class
+
+  end;
+
+implementation
+
+end.

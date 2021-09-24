@@ -1,0 +1,24 @@
+unit DataMeshGroup.Fusion.CashHandlingDevice;
+
+interface
+
+uses DataMeshGroup.Fusion.Types;
+
+type
+  TCashHandlingDevice = class
+  private
+    FCashHandlingOKFlag: TNullableBool;
+    FCurrency: Currency;
+  public
+    property CashHandlingOKFlag: TNullableBool read FCashHandlingOKFlag
+      write FCashHandlingOKFlag;
+    property Currency: Currency read FCurrency write FCurrency;
+
+        public bool? CashHandlingOKFlag { get; set; }
+        public string Currency { get; set; }
+        public CoinsOrBills CoinsOrBills { get; set; }
+  end;
+
+implementation
+
+end.

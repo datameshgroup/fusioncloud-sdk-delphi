@@ -1,0 +1,71 @@
+unit DataMeshGroup.Fusion.AmountsReq;
+
+interface
+
+uses DataMeshGroup.Fusion.Types;
+
+type
+  TAmountsReq = class
+  private
+    FCurrencySymbol: TCurrencySymbol;
+    FRequestedAmount: TNullableDecimal;
+    FCashBackAmount: TNullableDecimal;
+    FTipAmount: TNullableDecimal;
+    FSurchargeAmount: TNullableDecimal;
+    FPaidAmount: TNullableDecimal;
+    FMinimumAmountDeliver: TNullableDecimal;
+    FMaximumCashBackAmount: TNullableDecimal;
+    FMinimumSplitAmount: TNullableDecimal;
+  public
+    property CurrencySymbol: TCurrencySymbol read FCurrencySymbol
+      write FCurrencySymbol default TCurrencySymbol.AUD;
+   property RequestedAmount: TNullableDecimal read FRequestedAmount
+     write FRequestedAmount;
+   property CashBackAmount: TNullableDecimal read FCashBackAmount
+     write FCashBackAmount;
+   property TipAmount: TNullableDecimal read FTipAmount
+     write FTipAmount;
+   property SurchargeAmount: TNullableDecimal read FSurchargeAmount
+     write FSurchargeAmount;
+   property PaidAmount: TNullableDecimal read FPaidAmount
+     write FPaidAmount;
+   property MinimumAmountDeliver: TNullableDecimal read FMinimumAmountDeliver
+     write FMinimumAmountDeliver;
+   property MaximumCashBackAmount: TNullableDecimal read FMaximumCashBackAmount
+     write FMaximumCashBackAmount;
+   property MinimumSplitAmount: TNullableDecimal read FMinimumSplitAmount
+     write FMinimumSplitAmount;
+
+  end;
+
+//public CurrencySymbol Currency { get; set; } = CurrencySymbol
+//
+//.AUD;
+//
+//        [Newtonsoft.Json.JsonConverter(typeof(DecimalJsonConverter))]
+//        public decimal? RequestedAmount { get; set; }
+//
+//        [Newtonsoft.Json.JsonConverter(typeof(DecimalJsonConverter))]
+//        public decimal? CashBackAmount { get; set; }
+//
+//        [Newtonsoft.Json.JsonConverter(typeof(DecimalJsonConverter))]
+//        public decimal? TipAmount { get; set; }
+//
+//        [Newtonsoft.Json.JsonConverter(typeof(DecimalJsonConverter))]
+//        public decimal? SurchargeAmount { get; set; }
+//
+//        [Newtonsoft.Json.JsonConverter(typeof(DecimalJsonConverter))]
+//        public decimal? PaidAmount { get; set; }
+//
+//        [Newtonsoft.Json.JsonConverter(typeof(DecimalJsonConverter))]
+//        public decimal? MinimumAmountDeliver { get; set; }
+//
+//        [Newtonsoft.Json.JsonConverter(typeof(DecimalJsonConverter))]
+//        public decimal? MaximumCashBackAmount { get; set; }
+//
+//        [Newtonsoft.Json.JsonConverter(typeof(DecimalJsonConverter))]
+//        public decimal? MinimumSplitAmount { get; set; }
+
+implementation
+
+end.

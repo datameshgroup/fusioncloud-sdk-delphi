@@ -1,0 +1,17 @@
+unit DataMeshGroup.Fusion.LoyaltyAccount;
+
+interface
+
+type
+  TLoyaltyAccount = class
+  private
+    FLoyaltyAccountID: TLoyaltyAccountID;
+  public
+    property LoyaltyAccountID: TLoyaltyAccountID read FLoyaltyAccountID
+      write FLoyaltyAccountID;
+        public string LoyaltyBrand { get; set; }
+  end;
+
+implementation
+
+end.

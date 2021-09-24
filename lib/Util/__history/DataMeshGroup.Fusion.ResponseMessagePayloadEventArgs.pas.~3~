@@ -1,0 +1,14 @@
+unit DataMeshGroup.Fusion.ResponseMessagePayloadEventArgs;
+
+interface
+
+uses DataMeshGroup.Fusion.MessagePayload;
+
+type
+  TMessagePayloadEventArgs<T> = class(TMessagePayload)
+
+  end;
+
+implementation
+
+end.

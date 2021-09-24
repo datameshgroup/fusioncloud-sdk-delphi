@@ -1,0 +1,28 @@
+unit DataMeshGroup.Fusion.CustomerOrder;
+
+interface
+
+type
+  TCustomerOrder = class
+  private
+    FCustomerOrderID: string;
+  public
+    property CustomerOrderID: string read FCustomerOrderID write
+      FCustomerOrderID;
+
+        public string SaleReferenceId { get; set; }
+        public bool? OpenOrderState { get; set; }
+        public string StartDate { get; set; }
+        public string EndDate { get; set; }
+        [JsonConverter(typeof(DecimalJsonConverter))]
+        public decimal? ForecastedAmount { get; set; }
+        [JsonConverter(typeof(DecimalJsonConverter))]
+        public decimal? CurrentAmount { get; set; }
+        public string Currency { get; set; }
+        public string AccessedBy { get; set; }
+        public string AdditionalInformation { get; set; }
+  end;
+
+implementation
+
+end.

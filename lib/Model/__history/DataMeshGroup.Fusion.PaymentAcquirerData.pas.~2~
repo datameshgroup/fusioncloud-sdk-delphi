@@ -1,0 +1,12 @@
+unit DataMeshGroup.Fusion.PaymentAcquirerData;
+
+interface
+
+type
+  TPaymentAcquirerData = class
+
+  end;
+
+implementation
+
+end.

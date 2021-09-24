@@ -1,0 +1,12 @@
+unit DataMeshGroup.Fusion.EnvelopedData;
+
+interface
+
+type
+  TEnvelopedData = class
+
+  end;
+
+implementation
+
+end.

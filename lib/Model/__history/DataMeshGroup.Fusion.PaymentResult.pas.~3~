@@ -1,0 +1,31 @@
+unit DataMeshGroup.Fusion.PaymentResult;
+
+interface
+
+uses DataMeshGroup.Fusion.Types;
+
+type
+  TPaymentResult = class
+  public
+    property PaymentType PaymentType { get; set; }
+        property PaymentInstrumentData PaymentInstrumentData { get; set; }
+        property AmountsResp AmountsResp { get; set; }
+        //public Instalment Instalment { get; set; }
+        property CurrencyConversion CurrencyConversion { get; set; }
+        //public bool? MerchantOverrideFlag { get; set; }
+        //public CapturedSignature CapturedSignature { get; set; }
+        //public string ProtectedSignature { get; set; }
+        property string CustomerLanguage { get; set; }
+        property bool? OnlineFlag { get; set; }
+        property List<AuthenticationMethod> AuthenticationMethod { get; set; }
+        property string ValidityDate { get; set; }
+
+        /// <summary>
+        /// Data related to the response from the payment acquirer
+        /// </summary>
+        property PaymentAcquirerData PaymentAcquirerData { get; set; }
+  end;
+
+implementation
+
+end.

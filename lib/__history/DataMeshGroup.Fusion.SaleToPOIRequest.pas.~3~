@@ -1,0 +1,21 @@
+unit DataMeshGroup.Fusion.SaleToPOIRequest;
+
+interface
+
+uses DataMeshGroup.Fusion.MessageHeader, DataMeshGroup.Fusion.MessagePayload,
+  DataMeshGroup.Fusion.SecurityTrailer;
+
+type
+  TSaleToPOIMessage = class
+  private
+    FMessageHeader: TMessageHeader;
+  public
+    property MessageHeader: TMessageHeader read FMessageHeader
+      write FMessageHeader;
+        public MessagePayload MessagePayload { get; set; }
+        public SecurityTrailer SecurityTrailer { get; set; }
+  end;
+
+implementation
+
+end.

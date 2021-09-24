@@ -1,0 +1,17 @@
+unit DataMeshGroup.Fusion.CapturedSignature;
+
+interface
+
+type
+  TCapturedSignature = class
+  private
+    FRawSignature: string;
+    FSignatureImage: TSignatureImage;
+  public
+    property RawSignature: string read FRawSignature write FRawSignature;
+        public SignatureImage SignatureImage { get; set; }
+  end;
+
+implementation
+
+end.

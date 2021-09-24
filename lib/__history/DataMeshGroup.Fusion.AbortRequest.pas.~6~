@@ -1,0 +1,35 @@
+unit DataMeshGroup.Fusion.AbortRequest;
+
+interface
+
+uses DataMeshGroup.Fusion.MessagePayload, DataMeshGroup.Fusion.Types;
+
+type
+  TAbortRequest = class(TMessagePayload)
+  public
+    constructor Create(AMessageClass: TMessageClass; AMessageCategory: TMessageCategory;
+      AMessageType: TMessageType); override;
+
+  public MessageReference MessageReference { get; set; }
+        public string AbortReason { get; set; }
+
+        internal override MessagePayload CreateDefaultResponseMessagePayload(Response response)
+        {
+            return null;
+        }
+
+        //public DisplayOutput DisplayOutput { get; set; }
+  end;
+
+implementation
+
+{ TAbortRequest }
+
+constructor TAbortRequest.Create(AMessageClass: TMessageClass;
+  AMessageCategory: TMessageCategory; AMessageType: TMessageType);
+begin
+  inherited;
+
+end;
+
+end.

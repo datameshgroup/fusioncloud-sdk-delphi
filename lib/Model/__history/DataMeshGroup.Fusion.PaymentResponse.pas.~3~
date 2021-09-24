@@ -1,0 +1,35 @@
+unit DataMeshGroup.Fusion.PaymentResponse;
+
+interface
+
+uses DataMeshGroup.Fusion.MessagePayload, DataMeshGroup.Fusion.Types,
+  DataMeshGroup.Fusion.Response;
+
+type
+  TPaymentResponse = class(TMessagePayload)
+  private
+    function CreateDefaultResponseMessagePayload(AResponse: TResponse):
+      TMessagePayload; override;
+  public
+    constructor Create(AMessageClass: TMessageClass; AMessageCategory: TMessageCategory;
+      AMessageType: TMessageType); override;
+  end;
+
+implementation
+
+{ TPaymentResponse }
+
+constructor TPaymentResponse.Create(AMessageClass: TMessageClass;
+  AMessageCategory: TMessageCategory; AMessageType: TMessageType);
+begin
+  inherited;
+
+end;
+
+function TPaymentResponse.CreateDefaultResponseMessagePayload(
+  AResponse: TResponse): TMessagePayload;
+begin
+  raise Exception.Create('Not Implemented');
+end;
+
+end.

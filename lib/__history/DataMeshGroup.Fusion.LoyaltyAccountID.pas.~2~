@@ -1,0 +1,12 @@
+unit DataMeshGroup.Fusion.LoyaltyAccountID;
+
+interface
+
+type
+  TLoyaltyAccountID = class
+
+  end;
+
+implementation
+
+end.

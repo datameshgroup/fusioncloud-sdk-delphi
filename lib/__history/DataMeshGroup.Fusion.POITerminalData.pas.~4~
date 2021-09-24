@@ -1,0 +1,45 @@
+unit DataMeshGroup.Fusion.POITerminalData;
+
+interface
+
+uses DataMeshGroup.Fusion.Types, System.Generics.Collections;
+
+type
+  TPOITerminalData = class
+  private
+    FTerminalEnvironment: string;
+    FPOICapabilities: TList<TPOICapability>;
+  public
+    property TerminalEnvironment: string read FTerminalEnvironment
+      write FTerminalEnvironment;
+    property POICapabilities: TList<TPOICapability> read FPOICapabilities
+      write FPOICapabilities;
+
+    constructor Create;
+    destructor Destroy; override;
+
+
+//        public List<POICapability> POICapabilities { get; set; } = new List<POICapability>();
+//        public POIProfile POIProfile { get; set; }
+//        public string POISerialNumber { get; set; }
+  end;
+
+implementation
+
+{ TPOITerminalData }
+
+constructor TPOITerminalData.Create;
+begin
+  inherited;
+
+  FPOICapabilities := TList<TPOICapability>.Create;
+end;
+
+destructor TPOITerminalData.Destroy;
+begin
+  FPOICapabilities.Free;
+
+  inherited;
+end;
+
+end.

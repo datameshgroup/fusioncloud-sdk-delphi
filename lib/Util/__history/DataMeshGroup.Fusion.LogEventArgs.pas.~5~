@@ -1,0 +1,70 @@
+unit DataMeshGroup.Fusion.LogEventArgs;
+
+interface
+
+uses DataMeshGroup.Fusion.LogLevel, System.SysUtils;
+
+type
+  TException = class(Exception)
+
+  end;
+  TLogEventArgs = class
+  private
+    FData: string;
+    FLogLevel: TLogLevel;
+    FException: TException;
+    FCreatedDateTime: TDateTime;
+  public
+    constructor Create;
+//    public LogEventArgs()
+//        {
+//            Data = "";
+//            LogLevel = LogLevel.None;
+//            Exception = null;
+//            CreatedDateTime = DateTime.UtcNow;
+//        }
+//
+//        /// <summary>
+//        /// Defines the type of log event
+//        /// </summary>
+//        public LogLevel LogLevel { get; set; }
+//
+//        /// <summary>
+//        /// The UTC DateTime the log event was generated
+//        /// </summary>
+//        public DateTime CreatedDateTime { get; private set; }
+//
+//        /// <summary>
+//        /// The content which has been logged
+//        /// </summary>
+//        public string Data { get; set; }
+//
+//        /// <summary>
+//        /// May be populated when when LogLevel is Error or Critical
+//        /// </summary>
+//        public Exception Exception { get; set; }
+  end;
+
+implementation
+
+uses System.DateUtils;
+
+{ TLogEventArgs }
+
+constructor TLogEventArgs.Create;
+begin
+  inherited;
+
+  FData := '';
+  FLogLevel := TLogLevel.None;
+  FException := nil;
+  FCreatedDateTime := TTimeZone.Local.ToUniversalTime(Now);
+
+//            Data = "";
+//            LogLevel = LogLevel.None;
+//            Exception = null;
+//            CreatedDateTime = DateTime.UtcNow;
+
+end;
+
+end.

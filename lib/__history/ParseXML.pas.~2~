@@ -1,0 +1,13 @@
+unit ParseXML;
+
+interface
+
+type
+  TParseXML = class
+  public
+
+  end;
+
+implementation
+
+end.

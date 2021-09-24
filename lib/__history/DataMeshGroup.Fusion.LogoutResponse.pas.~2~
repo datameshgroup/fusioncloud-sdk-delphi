@@ -1,0 +1,12 @@
+unit DataMeshGroup.Fusion.LogoutResponse;
+
+interface
+
+type
+  TLogoutResponse = class
+
+  end;
+
+implementation
+
+end.

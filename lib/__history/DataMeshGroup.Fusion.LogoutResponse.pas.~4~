@@ -1,0 +1,24 @@
+unit DataMeshGroup.Fusion.LogoutResponse;
+
+interface
+
+uses DataMeshGroup.Fusion.MessagePayload;
+
+type
+  TLogoutResponse = class(TMessagePayload)
+  private
+    function CreateDefaultResponseMessagePayload(AResponse: TResponse):
+      TMessagePayload; override;
+  end;
+
+implementation
+
+{ TLogoutResponse }
+
+function TLogoutResponse.CreateDefaultResponseMessagePayload(
+  AResponse: TResponse): TMessagePayload;
+begin
+  raise Exception.Create('Not Implemented');
+end;
+
+end.

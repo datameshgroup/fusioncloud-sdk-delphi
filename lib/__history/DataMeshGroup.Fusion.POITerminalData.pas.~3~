@@ -1,0 +1,22 @@
+unit DataMeshGroup.Fusion.POITerminalData;
+
+interface
+
+uses DataMeshGroup.Fusion.Types;
+
+type
+  TPOITerminalData = class
+  private
+    FTerminalEnvironment: string;
+  public
+    property TerminalEnvironment: string read FTerminalEnvironment
+      write FTerminalEnvironment;
+
+        public List<POICapability> POICapabilities { get; set; } = new List<POICapability>();
+        public POIProfile POIProfile { get; set; }
+        public string POISerialNumber { get; set; }
+  end;
+
+implementation
+
+end.

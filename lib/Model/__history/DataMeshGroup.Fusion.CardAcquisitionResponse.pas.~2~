@@ -1,0 +1,14 @@
+unit DataMeshGroup.Fusion.CardAcquisitionResponse;
+
+interface
+
+uses DataMeshGroup.Fusion.MessagePayload;
+
+type
+  TCardAcquisitionResponse = class(TMessagePayload)
+
+  end;
+
+implementation
+
+end.

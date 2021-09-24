@@ -1,0 +1,13 @@
+unit IFusionClient;
+
+interface
+
+type
+  IFusionClient = interface
+  ['{0F952F88-2741-43C2-B8CF-BA593A42F8B0}']
+
+  end;
+
+implementation
+
+end.

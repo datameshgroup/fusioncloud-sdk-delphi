@@ -1,0 +1,38 @@
+unit DataMeshGroup.Fusion.IMessageParser;
+
+interface
+
+uses DataMeshGroup.Fusion.SaleToPOIMessage,
+  DataMeshGroup.Fusion.MessagePayload;
+
+type
+  IMessageParser = interface
+  ['{6FFC5471-EEC0-4452-BD40-AD35422D6223}']
+
+    function GetProtocolVersion: string;
+    function GetUseTestKeyIdentifier: Boolean;
+    procedure SetUseTestKeyIdentifier(ATestKey: Boolean);
+
+    function BuildSaleToPOIMessage(AServiceID: string; ASaleID: string;
+      APoiID: string; AKek: string; ARequestMessage: TMessagePayload): TSaleToPOIMessage;
+
+    function SaleToPOIMessageToString(ASaleToPOIMessage: TSaleToPOIMessage): string;
+
+    function ParseSaleToPOIMessage(ASaleToPOIMessage: string; AKek: string): TMessagePayload;
+
+
+    /// <summary>
+    /// ProtocolVersion implemented by this NexoMessageParser
+    /// </summary>
+    property ProtocolVersion: string read GetProtocolVersion;
+
+    /// <summary>
+    /// Defines if we should be using production or test keys
+    /// </summary>
+    property UseTestKeyIdentifier: Boolean read GetUseTestKeyIdentifier
+      write SetUseTestKeyIdentifier;
+  end;
+
+implementation
+
+end.

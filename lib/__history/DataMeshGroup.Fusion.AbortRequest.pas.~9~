@@ -1,0 +1,49 @@
+unit DataMeshGroup.Fusion.AbortRequest;
+
+interface
+
+uses DataMeshGroup.Fusion.MessagePayload, DataMeshGroup.Fusion.Types,
+  DataMeshGroup.Fusion.MessageReference, DataMeshGroup.Fusion.Response;
+
+type
+  TAbortRequest = class(TMessagePayload)
+  private
+    FMessageReference: TMessageReference;
+    FAbortReason: string;
+
+    function CreateDefaultResponseMessagePayload(AResponse: TResponse):
+      TMessagePayload; override;
+  public
+    constructor Create(AMessageClass: TMessageClass; AMessageCategory: TMessageCategory;
+      AMessageType: TMessageType); override;
+
+    property MessageReference: TMessageReference read FMessageReference
+       write fMessageReference;
+    property AbortReason: string read FAbortReason write FAbortReason;
+
+//        internal override MessagePayload CreateDefaultResponseMessagePayload(Response response)
+        {
+            return null;
+        }
+
+        //public DisplayOutput DisplayOutput { get; set; }
+  end;
+
+implementation
+
+{ TAbortRequest }
+
+constructor TAbortRequest.Create(AMessageClass: TMessageClass;
+  AMessageCategory: TMessageCategory; AMessageType: TMessageType);
+begin
+  inherited;
+
+end;
+
+function TAbortRequest.CreateDefaultResponseMessagePayload(
+  AResponse: TResponse): TMessagePayload;
+begin
+  Result := nil;
+end;
+
+end.

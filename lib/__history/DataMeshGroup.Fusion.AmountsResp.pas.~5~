@@ -1,0 +1,58 @@
+unit DataMeshGroup.Fusion.AmountsResp;
+
+interface
+
+uses DataMeshGroup.Fusion.Types, Nullable;
+
+type
+  TTNullableCurrencySymbol = TNullable<TCurrencySymbol>;
+
+  TAmountsResp = class
+  private
+    FCurrencySymbol: TTNullableCurrencySymbol;
+    FAuthorizedAmount: TNullableCurrency;
+    FTotalRebatesAmount: TNullableCurrency;
+
+    procedure InitProperties;
+  public
+
+    property Currency: TTNullableCurrencySymbol read FCurrencySymbol
+      write FCurrencySymbol;
+
+    [Newtonsoft.Json.JsonConverter(typeof(DecimalJsonConverter))]
+    property AuthorizedAmount: TNullableCurrency read FAuthorizedAmount
+      write FAuthorizedAmount;
+
+    [Newtonsoft.Json.JsonConverter(typeof(DecimalJsonConverter))]
+    property TotalRebatesAmount: TNullableCurrency read FTotalRebatesAmount
+      write FTotalRebatesAmount;
+
+
+
+  //
+//
+//        public decimal? TotalRebatesAmount { get; set; }
+//
+//        [Newtonsoft.Json.JsonConverter(typeof(DecimalJsonConverter))]
+//        public decimal? TotalFeesAmount { get; set; }
+//
+//        [Newtonsoft.Json.JsonConverter(typeof(DecimalJsonConverter))]
+//        public decimal? CashBackAmount { get; set; }
+//
+//        [Newtonsoft.Json.JsonConverter(typeof(DecimalJsonConverter))]
+//        public decimal? TipAmount { get; set; }
+//
+//        [Newtonsoft.Json.JsonConverter(typeof(DecimalJsonConverter))]
+//        public decimal? SurchargeAmount { get; set; }
+  end;
+
+implementation
+
+{ TAmountsResp }
+
+procedure TAmountsResp.InitProperties;
+begin
+  FCurrencySymbol := TCurrencySymbol.AUD;
+end;
+
+end.

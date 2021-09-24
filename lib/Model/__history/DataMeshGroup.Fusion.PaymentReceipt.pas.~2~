@@ -1,0 +1,12 @@
+unit DataMeshGroup.Fusion.PaymentReceipt;
+
+interface
+
+type
+  TPaymentReceipt = class
+
+  end;
+
+implementation
+
+end.

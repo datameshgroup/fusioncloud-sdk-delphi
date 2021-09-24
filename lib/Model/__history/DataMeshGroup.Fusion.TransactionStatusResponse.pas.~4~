@@ -1,0 +1,37 @@
+unit DataMeshGroup.Fusion.TransactionStatusResponse;
+
+interface
+
+uses DataMeshGroup.Fusion.MessagePayload, DataMeshGroup.Fusion.Types,
+  DataMeshGroup.Fusion.Response;
+
+type
+  TTransactionStatusResponse = class(TMessagePayload)
+  private
+    function CreateDefaultResponseMessagePayload(AResponse: TResponse):
+      TMessagePayload; override;
+  public
+    constructor Create(AMessageClass: TMessageClass; AMessageCategory: TMessageCategory;
+      AMessageType: TMessageType); override;
+  end;
+
+implementation
+
+uses System.SysUtils;
+
+{ TTransactionStatusResponse }
+
+constructor TTransactionStatusResponse.Create(AMessageClass: TMessageClass;
+  AMessageCategory: TMessageCategory; AMessageType: TMessageType);
+begin
+  inherited;
+
+end;
+
+function TTransactionStatusResponse.CreateDefaultResponseMessagePayload(
+  AResponse: TResponse): TMessagePayload;
+begin
+  raise Exception.Create('Not Implemented');
+end;
+
+end.

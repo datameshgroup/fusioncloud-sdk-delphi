@@ -1,0 +1,45 @@
+unit DataMeshGroup.Fusion.CardAcquisitionResponse;
+
+interface
+
+uses DataMeshGroup.Fusion.MessagePayload, DataMeshGroup.Fusion.Types,
+  DataMeshGroup.Fusion.Response, DataMeshGroup.Fusion.SaleData;
+
+type
+  TCardAcquisitionResponse = class(TMessagePayload)
+  private
+    FResponse: TResponse;
+
+    function CreateDefaultResponseMessagePayload(AResponse: TResponse):
+      TMessagePayload; override;
+  public
+   property Response: TResponse read FResponse write FResponse;
+   property SaleData SaleData { get; set; }
+   property POIData POIData { get; set; }
+   property PaymentBrand PaymentBrand { get; set; }
+   property PaymentInstrumentData PaymentInstrumentData { get; set; }
+   //property LoyaltyAccount LoyaltyAccount { get; set; }
+   //property CustomerOrder CustomerOrder { get; set; }
+
+    constructor Create(AMessageClass: TMessageClass; AMessageCategory: TMessageCategory;
+      AMessageType: TMessageType); override;
+  end;
+
+implementation
+
+{ TCardAcquisitionResponse }
+
+constructor TCardAcquisitionResponse.Create(AMessageClass: TMessageClass;
+  AMessageCategory: TMessageCategory; AMessageType: TMessageType);
+begin
+  inherited;
+
+end;
+
+function TCardAcquisitionResponse.CreateDefaultResponseMessagePayload(
+  AResponse: TResponse): TMessagePayload;
+begin
+  raise Exception.Create('Not Implemented');
+end;
+
+end.

@@ -1,0 +1,23 @@
+unit ParseXML;
+
+interface
+
+uses System.RegularExpressions, Xml.xmldom, System.StrUtils;
+//  XMLDoc, XMLIntf, System.SysUtils;
+
+type
+  TParseXML = class
+  public
+    procedure ParseNode(ARootNode: IXMLNode; AReceipt: TStringBuilder);
+  end;
+
+implementation
+
+{ TParseXML }
+
+procedure TParseXML.ParseNode(ARootNode: IXMLNode; AReceipt: TStringBuilder);
+begin
+
+end;
+
+end.

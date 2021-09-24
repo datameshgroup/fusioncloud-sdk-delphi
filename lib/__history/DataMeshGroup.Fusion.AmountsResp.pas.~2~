@@ -1,0 +1,38 @@
+unit DataMeshGroup.Fusion.AmountsResp;
+
+interface
+
+uses DataMeshGroup.Fusion.Types, Nullable;
+
+type
+  TTNullableCurrencySymbol = TNullable<TCurrencySymbol>;
+
+  TAmountsResp = class
+  private
+    FCurrencySymbol: TTNullableCurrencySymbol;
+  public
+
+    property Currency: FCurrencySymbol { get; set; } = CurrencySymbol.AUD;
+
+        [Newtonsoft.Json.JsonConverter(typeof(DecimalJsonConverter))]
+        public decimal? AuthorizedAmount { get; set; }
+
+        [Newtonsoft.Json.JsonConverter(typeof(DecimalJsonConverter))]
+        public decimal? TotalRebatesAmount { get; set; }
+
+        [Newtonsoft.Json.JsonConverter(typeof(DecimalJsonConverter))]
+        public decimal? TotalFeesAmount { get; set; }
+
+        [Newtonsoft.Json.JsonConverter(typeof(DecimalJsonConverter))]
+        public decimal? CashBackAmount { get; set; }
+
+        [Newtonsoft.Json.JsonConverter(typeof(DecimalJsonConverter))]
+        public decimal? TipAmount { get; set; }
+
+        [Newtonsoft.Json.JsonConverter(typeof(DecimalJsonConverter))]
+        public decimal? SurchargeAmount { get; set; }
+  end;
+
+implementation
+
+end.

@@ -1,0 +1,12 @@
+unit DataMeshGroup.Fusion.CurrencyConversion;
+
+interface
+
+type
+  TCurrencyConversion = class
+
+  end;
+
+implementation
+
+end.

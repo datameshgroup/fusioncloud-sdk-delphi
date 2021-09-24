@@ -1,0 +1,61 @@
+unit DataMeshGroup.Fusion.TransactionIdentification;
+
+interface
+
+type
+  TTransactionIdentification = class
+  private
+    FTransactionID: string;
+    FTimeStamp: TDateTime;
+  public
+    property TransactionID: string read FTransactionID write FTransactionID;
+
+    [JsonConverter(typeof(IsoDateTimeConverter))]
+    property TimeStamp: TDateTime read FTimeStamp write FTimeStamp;
+
+    function Equals(AObj: TObject): Boolean; override;
+
+    constructor Create(ATransactionID: string);
+
+//        public override bool Equals(object obj)
+//        {
+//            if (obj is null || !(obj is TransactionIdentification))
+//            {
+//                return false;
+//            }
+//
+//            var ti = obj as TransactionIdentification;
+//            return (TimeStamp == ti.TimeStamp) && (TransactionID == ti.TransactionID);
+//        }
+//
+//        public override int GetHashCode()
+//        {
+//            return TimeStamp.GetHashCode() + TransactionID.GetHashCode();
+//        }
+  end;
+
+implementation
+
+uses System.DateUtils, System.SysUtils, System.Rtti;
+
+{ TTransactionIdentification }
+
+constructor TTransactionIdentification.Create(ATransactionID: string);
+begin
+  FTransactionID := ATransactionID;
+  FTimeStamp :=  TTimeZone.Local.ToUniversalTime(Now);
+end;
+
+function TTransactionIdentification.Equals(AObj: TObject): Boolean;
+var
+  test: TRttiType;
+begin
+  test := TRttiContext.GetType(Self);
+  if (AObj = nil) or (test <> AObj.GetType) then
+//  (AObj <> TTransactionIdentification) then
+    Result := False;
+
+
+end;
+
+end.

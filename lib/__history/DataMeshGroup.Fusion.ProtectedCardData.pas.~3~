@@ -1,0 +1,18 @@
+unit DataMeshGroup.Fusion.ProtectedCardData;
+
+interface
+
+type
+  TProtectedCardData = class
+  private
+    FContentType: string;
+  public
+    property ContentType: string read FContentType write FContentType;
+
+        public EnvelopedData EnvelopedData { get; set; }
+
+  end;
+
+implementation
+
+end.

@@ -1,0 +1,12 @@
+unit DataMeshGroup.Fusion.ProtectedCardData;
+
+interface
+
+type
+  TProtectedCardData = class
+
+  end;
+
+implementation
+
+end.

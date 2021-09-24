@@ -1,0 +1,53 @@
+unit URLChecker;
+
+interface
+
+uses System.RegularExpressions;
+
+type
+  TURLChecker = class
+  private
+    FValid: Boolean;
+
+    const
+      FUrlRegEx: String =
+        '^'#10 +
+        '(# Scheme'#10 +
+        ' [a-z][a-z0-9+\-.]*:'#10 +
+        ' (# Authority & path'#10 +
+        '  //'#10 +
+        '  ([a-z0-9\-._~%!$&''()*+,;=]+@)?              # User'#10 +
+        '  ([a-z0-9\-._~%]+                             # Named host'#10 +
+        '  |\[[a-f0-9:.]+\]                             # IPv6 host'#10 +
+        '  |\[v[a-f0-9][a-z0-9\-._~%!$&''()*+,;=:]+\])  # IPvFuture host'#10 +
+        '  (:[0-9]+)?                                   # Port'#10 +
+        '  (/[a-z0-9\-._~%!$&''()*+,;=:@]+)*/?          # Path'#10 +
+        ' |# Path without authority'#10 +
+        '  (/?[a-z0-9\-._~%!$&''()*+,;=:@]+(/[a-z0-9\-._~%!$&''()*+,;=:@]+)*/?)?'#10 +
+        ' )'#10 +
+        '|# Relative URL (no scheme or authority)'#10 +
+        ' ([a-z0-9\-._~%!$&''()*+,;=@]+(/[a-z0-9\-._~%!$&''()*+,;=:@]+)*/?  # Relative path'#10 +
+        ' |(/[a-z0-9\-._~%!$&''()*+,;=:@]+)+/?)                             # Absolute path'#10 +
+        ')'#10 +
+        '# Query'#10 +
+        '(\?[a-z0-9\-._~%!$&''()*+,;=:@/?]*)?'#10 +
+        '# Fragment'#10 +
+        '(\#[a-z0-9\-._~%!$&''()*+,;=:@/?]*)?'#10 +
+        '$';
+  public
+    property Valid: Boolean read FValid;
+
+    constructor Create(AURL: string);
+  end;
+
+implementation
+
+{ TURLChecker }
+
+constructor TURLChecker.Create(AURL: string);
+begin
+  FValid := TRegEx.IsMatch(AURL, FUrlRegEx,
+    [roIgnoreCase, roIgnorePatternSpace]);
+end;
+
+end.

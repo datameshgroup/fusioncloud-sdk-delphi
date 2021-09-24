@@ -1,0 +1,21 @@
+unit DataMeshGroup.Fusion.EnvelopedData;
+
+interface
+
+uses DataMeshGroup.Fusion.SecurityTrailer;
+
+type
+  TEnvelopedData = class
+  private
+    FVersion: string;
+    FKEK: TKEK;
+  public
+    property Version: string read FVersion write FVersion;
+
+        public KEK KEK { get; set; }
+        public EncryptedContent EncryptedContent { get; set; }
+  end;
+
+implementation
+
+end.
