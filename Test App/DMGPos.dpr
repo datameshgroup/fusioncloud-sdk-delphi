@@ -87,7 +87,9 @@ uses
   Neon.Core.TypeInfo in '..\lib\Third Party Components and Libraries\delphi-neon-master\Source\Neon.Core.TypeInfo.pas',
   Neon.Core.Types in '..\lib\Third Party Components and Libraries\delphi-neon-master\Source\Neon.Core.Types.pas',
   Neon.Core.Utils in '..\lib\Third Party Components and Libraries\delphi-neon-master\Source\Neon.Core.Utils.pas',
-  Main in 'Main.pas' {FrmMain};
+  Main in 'Main.pas' {FrmMain},
+  DataMeshGroup.Fusion.IWebSocket in '..\lib\DataMeshGroup.Fusion.IWebSocket.pas',
+  DataMeshGroup.Fusion.WebSocket in '..\lib\DataMeshGroup.Fusion.WebSocket.pas';
 
 {$R *.res}
 

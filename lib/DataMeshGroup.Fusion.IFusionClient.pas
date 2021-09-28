@@ -18,7 +18,7 @@ uses System.Threading, DataMeshGroup.Fusion.SaleToPOIRequest,
 type
   // events
   TEventOnLog = procedure(out AEventArgs: TLogEventArgs) of object;
-  TEventOnConnect = procedure of object;
+  TEventOnConnect = procedure(ASender: TObject; AErrCode: Word) of object;
   TEventOnConnectError = procedure of object;
   TEventOnDisconnect = procedure of object;
   TEventOnLoginResponse = function(): TMessagePayloadEventArgs<TLoginResponse> of object;
@@ -97,6 +97,12 @@ type
     /// <exception cref="TimeoutException">A timeout occured awaiting a response</exception>
     /// <exception cref="NetworkException">A network error occured awaiting a response</exception>
     function RecvMessage(ARequestMessage: TMessagePayload): TMessagePayload; overload;
+
+    function GetPort: string;
+    procedure SetPort(APort: string);
+
+    function GetProtocol: string;
+    procedure SetProtocol(AProtocol: string);
 
     function GetMessageParser: IMessageParser;
     procedure SetMessageParser(AMessageParser: IMessageParser);
@@ -179,6 +185,8 @@ type
     procedure SetEventOnTransactionStatusResponse(AEventOnTransactionStatusResponse: TEventOnTransactionStatusResponse);
 
     {$REGION 'Properties'}
+    property Port: string read GetPort write SetPort;
+    property Protocol: string read GetProtocol write SetProtocol;
 
     /// <summary>
     /// Parser for converting request/response messages to bytes

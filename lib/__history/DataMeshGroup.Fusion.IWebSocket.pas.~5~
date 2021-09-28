@@ -1,0 +1,31 @@
+unit DataMeshGroup.Fusion.IWebSocket;
+
+interface
+
+type
+  TOnConnect = procedure(ASender: TObject; AErrCode: Word) of object;
+
+  IWebSocket = interface
+  ['{845CC08A-51E5-4B4A-9BBB-919EDAD63D21}']
+    function GetOnConnect: TOnConnect;
+    procedure SetOnConnect(AOnConnect: TOnConnect);
+
+    function GetAddress: string;
+    procedure SetAddress(AAddress: string);
+
+    function GetPort: Integer;
+    procedure SetPort(APort: Integer);
+
+    function GetProtocol: string;
+    procedure SetProtocol(AProtocol: string);
+
+    property OnConnect: TOnConnect read GetOnConnect write SetOnConnect;
+
+    property Address: string read GetAddress write SetAddress;
+    property Port: Integer read GetPort write SetPort;
+    property Protocol: string read GetProtocol write SetProtocol;
+  end;
+
+implementation
+
+end.

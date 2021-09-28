@@ -21,6 +21,7 @@ type
   private
     FFusionClient: IFusionClient;
 
+    procedure OnConnect(ASender: TObject; AErrCode: Word);
     procedure Connect(ASender: TObject);
   public
     { Public declarations }
@@ -37,6 +38,7 @@ uses DataMeshGroup.Fusion.LoginRequest, System.Threading;
 
 procedure TFrmMain.BtnConnectCustomClick(Sender: TObject);
 begin
+  Screen.Cursor := crHourGlass;
   Connect(Sender);
 end;
 
@@ -63,13 +65,23 @@ begin
   end;
 
   FFusionClient.URL := URL;
+  FFusionClient.Port := 'telnet';
+  FFusionClient.Protocol := 'tcp';
 
+
+  FFusionClient.OnConnect := OnConnect;
   FFusionClient.Connect;
 end;
 
 procedure TFrmMain.FormShow(Sender: TObject);
 begin
   EdtCustomURL.Clear;
+end;
+
+procedure TFrmMain.OnConnect(ASender: TObject; AErrCode: Word);
+begin
+  Screen.Cursor := crDefault;
+  ShowMessage('test');
 end;
 
 end.
