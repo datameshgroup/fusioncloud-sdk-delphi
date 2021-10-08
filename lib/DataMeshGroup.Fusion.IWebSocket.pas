@@ -19,7 +19,8 @@ type
 
 
     {$REGION 'properties'}
-    procedure Connect;
+    function Connect: Boolean;
+    procedure Disconnect;
     procedure Send(ASender: TObject; AErrCode: Word);
     procedure Receive(ASender: TObject; AErrCode: Word);
 

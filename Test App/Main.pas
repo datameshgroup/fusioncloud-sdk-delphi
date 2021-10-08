@@ -16,12 +16,18 @@ type
     LblCustomURL: TLabel;
     BtnConnectTest: TButton;
     BtnConnectProd: TButton;
+    LblToEncrypt: TLabel;
+    LblEncryptResult: TLabel;
+    BtnEncrypt: TButton;
+    Lbl1: TLabel;
+    Lbl2: TLabel;
     procedure BtnConnectCustomClick(Sender: TObject);
+    procedure BtnEncryptClick(Sender: TObject);
+    procedure FormClose(Sender: TObject; var Action: TCloseAction);
     procedure FormShow(Sender: TObject);
   private
     FFusionClient: IFusionClient;
 
-    procedure OnConnect(ASender: TObject; AErrCode: Word);
     procedure Connect(ASender: TObject);
   public
     { Public declarations }
@@ -32,14 +38,28 @@ var
 
 implementation
 
-uses DataMeshGroup.Fusion.LoginRequest, System.Threading;
+uses DataMeshGroup.Fusion.LoginRequest, System.Threading,
+  DataMeshGroup.Fusion.Crypto;
 
 {$R *.dfm}
 
 procedure TFrmMain.BtnConnectCustomClick(Sender: TObject);
 begin
-  Screen.Cursor := crHourGlass;
+//  Screen.Cursor := crHourGlass;
   Connect(Sender);
+
+end;
+
+procedure TFrmMain.BtnEncryptClick(Sender: TObject);
+var
+  Crypto: TCrypto;
+begin
+  Crypto := TCrypto.Create;
+  try
+    LblEncryptResult.Caption := Crypto.Encrypt(LblToEncrypt.Caption, TEncEnv.EETest);
+  finally
+    Crypto.free;
+  end;
 end;
 
 // documentation: https://datameshgroup.github.io/fusion/#appendix-terminal-configuration-pax-terminals
@@ -47,6 +67,7 @@ end;
 procedure TFrmMain.Connect(ASender: TObject);
 var
   URL: TUnifyURL;
+  test: string;
 begin
   // init the interface
   FFusionClient := TFusionClient.Create(True);
@@ -65,23 +86,21 @@ begin
   end;
 
   FFusionClient.URL := URL;
-  FFusionClient.Port := 'telnet';
+  FFusionClient.Port := '443';
   FFusionClient.Protocol := 'tcp';
 
-
-  FFusionClient.OnConnect := OnConnect;
   FFusionClient.Connect;
+end;
+
+procedure TFrmMain.FormClose(Sender: TObject; var Action: TCloseAction);
+begin
+  if Assigned(FFusionClient) then
+    FFusionClient.Disconnect;
 end;
 
 procedure TFrmMain.FormShow(Sender: TObject);
 begin
   EdtCustomURL.Clear;
-end;
-
-procedure TFrmMain.OnConnect(ASender: TObject; AErrCode: Word);
-begin
-  Screen.Cursor := crDefault;
-  ShowMessage('test');
 end;
 
 end.

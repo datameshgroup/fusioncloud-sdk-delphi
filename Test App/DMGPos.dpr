@@ -89,7 +89,9 @@ uses
   Neon.Core.Utils in '..\lib\Third Party Components and Libraries\delphi-neon-master\Source\Neon.Core.Utils.pas',
   Main in 'Main.pas' {FrmMain},
   DataMeshGroup.Fusion.IWebSocket in '..\lib\DataMeshGroup.Fusion.IWebSocket.pas',
-  DataMeshGroup.Fusion.WebSocket in '..\lib\DataMeshGroup.Fusion.WebSocket.pas';
+  DataMeshGroup.Fusion.WebSocket in '..\lib\DataMeshGroup.Fusion.WebSocket.pas',
+  WbemScripting_TLB in '..\lib\Third Party Components and Libraries\ICS\icsv867\Source\WbemScripting_TLB.pas',
+  DataMeshGroup.Fusion.Crypto in '..\lib\Security\DataMeshGroup.Fusion.Crypto.pas';
 
 {$R *.res}
 

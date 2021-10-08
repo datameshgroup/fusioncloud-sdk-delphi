@@ -18,7 +18,7 @@ uses System.Threading, DataMeshGroup.Fusion.SaleToPOIRequest,
 type
   // events
   TEventOnLog = procedure(out AEventArgs: TLogEventArgs) of object;
-  TEventOnConnect = procedure(ASender: TObject; AErrCode: Word) of object;
+  TEventOnConnect = procedure(ASender: TObject) of object;
   TEventOnConnectError = procedure of object;
   TEventOnDisconnect = procedure of object;
   TEventOnLoginResponse = function(): TMessagePayloadEventArgs<TLoginResponse> of object;
@@ -31,10 +31,11 @@ type
 
   IFusionClient = interface
   ['{0F952F88-2741-43C2-B8CF-BA593A42F8B0}']
+    function State: string;
     /// <summary>
     /// Connects to the <see cref="URL"/>, or <see cref="CustomURL"/> if <see cref="URL"/> is <see cref="URL"/>
     /// </summary>
-    function Connect: Boolean;
+    function Connect: string;
 
     /// <summary>
     /// Disconnects and releases resources
