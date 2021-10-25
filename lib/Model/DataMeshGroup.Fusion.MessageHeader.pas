@@ -2,7 +2,7 @@ unit DataMeshGroup.Fusion.MessageHeader;
 
 interface
 
-uses DataMeshGroup.Fusion.Types;
+uses DataMeshGroup.Fusion.Types, Neon.Core.Attributes;
 
 type
   TMessageHeader = class
@@ -26,7 +26,10 @@ type
     property MessageType: TMessageType read FMessageType
       write FMessageType;
     property ServiceID: string read FServiceID write FServiceID;
+
+    [NeonInclude(IncludeIf.NotEmpty)]
     property DeviceID: string read FDeviceID write FDeviceID;
+
     property SaleID: string read FSaleID write FSaleID;
     property POIID: string read FPOIID write FPOIID;
 

@@ -62,7 +62,6 @@ uses
   DataMeshGroup.Fusion.SaleProfile in '..\lib\Model\DataMeshGroup.Fusion.SaleProfile.pas',
   DataMeshGroup.Fusion.SaleSoftware in '..\lib\Model\DataMeshGroup.Fusion.SaleSoftware.pas',
   DataMeshGroup.Fusion.SaleTerminalData in '..\lib\Model\DataMeshGroup.Fusion.SaleTerminalData.pas',
-  DataMeshGroup.Fusion.SaleToPOIMessage in '..\lib\Model\DataMeshGroup.Fusion.SaleToPOIMessage.pas',
   DataMeshGroup.Fusion.SaleToPOIRequest in '..\lib\Model\DataMeshGroup.Fusion.SaleToPOIRequest.pas',
   DataMeshGroup.Fusion.SecurityTrailer in '..\lib\Model\DataMeshGroup.Fusion.SecurityTrailer.pas',
   DataMeshGroup.Fusion.SignatureImage in '..\lib\Model\DataMeshGroup.Fusion.SignatureImage.pas',
@@ -89,9 +88,16 @@ uses
   Neon.Core.Utils in '..\lib\Third Party Components and Libraries\delphi-neon-master\Source\Neon.Core.Utils.pas',
   Main in 'Main.pas' {FrmMain},
   DataMeshGroup.Fusion.IWebSocket in '..\lib\DataMeshGroup.Fusion.IWebSocket.pas',
-  DataMeshGroup.Fusion.WebSocket in '..\lib\DataMeshGroup.Fusion.WebSocket.pas',
   WbemScripting_TLB in '..\lib\Third Party Components and Libraries\ICS\icsv867\Source\WbemScripting_TLB.pas',
-  DataMeshGroup.Fusion.Crypto in '..\lib\Security\DataMeshGroup.Fusion.Crypto.pas';
+  DataMeshGroup.Fusion.Crypto in '..\lib\Security\DataMeshGroup.Fusion.Crypto.pas',
+  DataMeshGroup.Fusion.SaleItem in '..\lib\Model\DataMeshGroup.Fusion.SaleItem.pas',
+  DataMeshGroup.Fusion.PaymentTransaction in '..\lib\Model\DataMeshGroup.Fusion.PaymentTransaction.pas',
+  DataMeshGroup.Fusion.OriginalPOITransaction in '..\lib\Model\DataMeshGroup.Fusion.OriginalPOITransaction.pas',
+  DataMeshGroup.Fusion.TransactionConditions in '..\lib\Model\DataMeshGroup.Fusion.TransactionConditions.pas',
+  DataMeshGroup.Fusion.PaymentRequest in '..\lib\Model\DataMeshGroup.Fusion.PaymentRequest.pas',
+  DataMeshGroup.Fusion.PaymentData in '..\lib\Model\DataMeshGroup.Fusion.PaymentData.pas',
+  DataMeshGroup.Fusion.WebSocket in '..\lib\DataMeshGroup.Fusion.WebSocket.pas',
+  DataMeshGroup.Fusion.MessageParser in '..\lib\DataMeshGroup.Fusion.MessageParser.pas';
 
 {$R *.res}
 

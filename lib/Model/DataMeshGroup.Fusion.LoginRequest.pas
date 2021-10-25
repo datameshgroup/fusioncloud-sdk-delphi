@@ -2,10 +2,13 @@ unit DataMeshGroup.Fusion.LoginRequest;
 
 interface
 
-uses System.SysUtils, DataMeshGroup.Fusion.MessagePayload, System.Generics.Collections,
+uses System.SysUtils, DataMeshGroup.Fusion.MessagePayload,
+System.Generics.Collections,
   DataMeshGroup.Fusion.Types, DataMeshGroup.Fusion.SaleSoftware,
   DataMeshGroup.Fusion.Response,DataMeshGroup.Fusion.LoginResponse,
-  DataMeshGroup.Fusion.SaleTerminalData;
+  DataMeshGroup.Fusion.SaleTerminalData,
+
+  Neon.Core.Attributes;
 
 type
   TLoginRequest = class(TMessagePayload)
@@ -29,39 +32,56 @@ type
       TMessagePayload; override;
   public
     property DateTime: string read FDateTime write FDateTime;
+
+    /// <summary>
+    /// Information related to the software of the Sale System which manages the Sale to POI protocol.
+    /// </summary>
     property SaleSoftware: TSaleSoftware read FSaleSoftware write FSaleSoftware;
     property SaleTerminalData: TSaleTerminalData read FSaleTerminalData
       write FSaleTerminalData;
-    property TrainingModeFlag: Boolean read FTrainingModeFlag;
+    property TrainingModeFlag: Boolean read FTrainingModeFlag
+      write FTrainingModeFlag default False;
+
+    [NeonIgnoreAttribute]
     property OperatorLanguage: string read FOperatorLanguage
       write FOperatorLanguage;
+
+    [NeonIgnoreAttribute]
     property OperatorID: string read FOperatorID write FOperatorID;
+
+    [NeonIgnoreAttribute]
     property ShiftNumber: string read FShiftNumber write FShiftNumber;
+
+    [NeonIgnoreAttribute]
     property TokenRequestedType: string read FTokenRequestedType
       write FTokenRequestedType;
+
+    [NeonIgnoreAttribute]
     property CustomerOrderReq: string read FCustomerOrderReq
       write FCustomerOrderReq;
+
+    [NeonIgnoreAttribute]
     property POISerialNumber: string read FPOISerialNumber
       write FPOISerialNumber;
 
-/// <summary>
-/// Create a <see cref="LoginRequest"/> with the minimum required parameters
-/// </summary>
-/// <param name="providerIdentification">SaleSoftware.ProviderIdentification</param>
-/// <param name="applicationName">SaleSoftware.ApplicationName</param>
-/// <param name="softwareVersion">SaleSoftware.SoftwareVersion</param>
-/// <param name="certificationCode">SaleSoftware.CertificationCode</param>
-/// <param name="saleCapabilities">SaleTerminalData.SaleCapabilities. If null will default to POS printer support only</param>
+    /// <summary>
+    /// Create a <see cref="LoginRequest"/> with the minimum required parameters
+    /// </summary>
+    /// <param name="providerIdentification">SaleSoftware.ProviderIdentification</param>
+    /// <param name="applicationName">SaleSoftware.ApplicationName</param>
+    /// <param name="softwareVersion">SaleSoftware.SoftwareVersion</param>
+    /// <param name="certificationCode">SaleSoftware.CertificationCode</param>
+    /// <param name="saleCapabilities">SaleTerminalData.SaleCapabilities. If null will default to POS printer support only</param>
     constructor Create(AProviderIdentification: string; AApplicationName: string;
       ASoftwareVersion: string; ACertificationCode: string;
       ASaleCapabilities: TList<TSaleCapability> = nil); reintroduce; overload;
 
-    constructor Create(AMessageClass: TMessageClass; AMessageCategory: TMessageCategory;
-      AMessageType: TMessageType); overload; override;
     destructor Destroy; override;
   end;
 
 implementation
+
+uses System.DateUtils;
 
 { TLoginRequest }
 
@@ -72,13 +92,13 @@ var
   CashierStatus: TSaleCapability;
   CashierError: TSaleCapability;
 begin
+  inherited Create(TMessageClass.Service, TMessageCategory.Login,
+    TMessageType.Request);
+
   InitProperties;
 
-  FSaleSoftware := TSaleSoftware.Create;
-  FSaleSoftware.ProviderIdentification := AProviderIdentification;
-  FSaleSoftware.ApplicationName := AApplicationName;
-  FSaleSoftware.SoftwareVersion := ASoftwareVersion;
-  FSaleSoftware.CertificationCode := ACertificationCode;
+  FSaleSoftware := TSaleSoftware.Create(AProviderIdentification,
+    AApplicationName, ASoftwareVersion, ACertificationCode);
 
   PrinterReceipt := TSaleCapability.PrinterReceipt;
   CashierStatus := TSaleCapability.CashierStatus;
@@ -94,13 +114,6 @@ begin
 
   FSaleTerminalData := TSaleTerminalData.Create;
   FSaleTerminalData.SaleCapabilities := ASaleCapabilities;
-end;
-
-constructor TLoginRequest.Create(AMessageClass: TMessageClass;
-  AMessageCategory: TMessageCategory; AMessageType: TMessageType);
-begin
-  inherited;
-
 end;
 
 function TLoginRequest.CreateDefaultResponseMessagePayload(
@@ -146,7 +159,7 @@ end;
 
 procedure TLoginRequest.InitProperties;
 begin
-  FDateTime := FormatDateTime('yyyy-MM-ddThh:mm:ss.sszzzzzz', Now);
+  FDateTime := DateToISO8601(Now, True);
   FTrainingModeFlag := False;
   FOperatorLanguage := 'en';
 end;

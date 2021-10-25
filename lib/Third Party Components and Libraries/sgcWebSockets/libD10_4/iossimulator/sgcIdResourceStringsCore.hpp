@@ -1,0 +1,318 @@
+﻿// CodeGear C++Builder
+// Copyright (c) 1995, 2021 by Embarcadero Technologies, Inc.
+// All rights reserved
+
+// (DO NOT EDIT: machine generated header) 'sgcIdResourceStringsCore.pas' rev: 34.00 (iOSSIM)
+
+#ifndef SgcidresourcestringscoreHPP
+#define SgcidresourcestringscoreHPP
+
+#pragma delphiheader begin
+#pragma option push
+#pragma option -w-      // All warnings off
+#pragma option -Vx      // Zero-length empty class member 
+#pragma pack(push,8)
+#include <System.hpp>
+#include <SysInit.hpp>
+
+//-- user supplied -----------------------------------------------------------
+
+namespace Sgcidresourcestringscore
+{
+//-- forward type declarations -----------------------------------------------
+//-- type declarations -------------------------------------------------------
+//-- var, const, procedure ---------------------------------------------------
+extern DELPHI_PACKAGE System::ResourceString _RSNoBindingsSpecified;
+#define Sgcidresourcestringscore_RSNoBindingsSpecified System::LoadResourceString(&Sgcidresourcestringscore::_RSNoBindingsSpecified)
+extern DELPHI_PACKAGE System::ResourceString _RSCannotAllocateSocket;
+#define Sgcidresourcestringscore_RSCannotAllocateSocket System::LoadResourceString(&Sgcidresourcestringscore::_RSCannotAllocateSocket)
+extern DELPHI_PACKAGE System::ResourceString _RSSocksUDPNotSupported;
+#define Sgcidresourcestringscore_RSSocksUDPNotSupported System::LoadResourceString(&Sgcidresourcestringscore::_RSSocksUDPNotSupported)
+extern DELPHI_PACKAGE System::ResourceString _RSSocksRequestFailed;
+#define Sgcidresourcestringscore_RSSocksRequestFailed System::LoadResourceString(&Sgcidresourcestringscore::_RSSocksRequestFailed)
+extern DELPHI_PACKAGE System::ResourceString _RSSocksRequestServerFailed;
+#define Sgcidresourcestringscore_RSSocksRequestServerFailed System::LoadResourceString(&Sgcidresourcestringscore::_RSSocksRequestServerFailed)
+extern DELPHI_PACKAGE System::ResourceString _RSSocksRequestIdentFailed;
+#define Sgcidresourcestringscore_RSSocksRequestIdentFailed System::LoadResourceString(&Sgcidresourcestringscore::_RSSocksRequestIdentFailed)
+extern DELPHI_PACKAGE System::ResourceString _RSSocksUnknownError;
+#define Sgcidresourcestringscore_RSSocksUnknownError System::LoadResourceString(&Sgcidresourcestringscore::_RSSocksUnknownError)
+extern DELPHI_PACKAGE System::ResourceString _RSSocksServerRespondError;
+#define Sgcidresourcestringscore_RSSocksServerRespondError System::LoadResourceString(&Sgcidresourcestringscore::_RSSocksServerRespondError)
+extern DELPHI_PACKAGE System::ResourceString _RSSocksAuthMethodError;
+#define Sgcidresourcestringscore_RSSocksAuthMethodError System::LoadResourceString(&Sgcidresourcestringscore::_RSSocksAuthMethodError)
+extern DELPHI_PACKAGE System::ResourceString _RSSocksAuthError;
+#define Sgcidresourcestringscore_RSSocksAuthError System::LoadResourceString(&Sgcidresourcestringscore::_RSSocksAuthError)
+extern DELPHI_PACKAGE System::ResourceString _RSSocksServerGeneralError;
+#define Sgcidresourcestringscore_RSSocksServerGeneralError System::LoadResourceString(&Sgcidresourcestringscore::_RSSocksServerGeneralError)
+extern DELPHI_PACKAGE System::ResourceString _RSSocksServerPermissionError;
+#define Sgcidresourcestringscore_RSSocksServerPermissionError System::LoadResourceString(&Sgcidresourcestringscore::_RSSocksServerPermissionError)
+extern DELPHI_PACKAGE System::ResourceString _RSSocksServerNetUnreachableError;
+#define Sgcidresourcestringscore_RSSocksServerNetUnreachableError System::LoadResourceString(&Sgcidresourcestringscore::_RSSocksServerNetUnreachableError)
+extern DELPHI_PACKAGE System::ResourceString _RSSocksServerHostUnreachableError;
+#define Sgcidresourcestringscore_RSSocksServerHostUnreachableError System::LoadResourceString(&Sgcidresourcestringscore::_RSSocksServerHostUnreachableError)
+extern DELPHI_PACKAGE System::ResourceString _RSSocksServerConnectionRefusedError;
+#define Sgcidresourcestringscore_RSSocksServerConnectionRefusedError System::LoadResourceString(&Sgcidresourcestringscore::_RSSocksServerConnectionRefusedError)
+extern DELPHI_PACKAGE System::ResourceString _RSSocksServerTTLExpiredError;
+#define Sgcidresourcestringscore_RSSocksServerTTLExpiredError System::LoadResourceString(&Sgcidresourcestringscore::_RSSocksServerTTLExpiredError)
+extern DELPHI_PACKAGE System::ResourceString _RSSocksServerCommandError;
+#define Sgcidresourcestringscore_RSSocksServerCommandError System::LoadResourceString(&Sgcidresourcestringscore::_RSSocksServerCommandError)
+extern DELPHI_PACKAGE System::ResourceString _RSSocksServerAddressError;
+#define Sgcidresourcestringscore_RSSocksServerAddressError System::LoadResourceString(&Sgcidresourcestringscore::_RSSocksServerAddressError)
+extern DELPHI_PACKAGE System::ResourceString _RSInvalidIPAddress;
+#define Sgcidresourcestringscore_RSInvalidIPAddress System::LoadResourceString(&Sgcidresourcestringscore::_RSInvalidIPAddress)
+extern DELPHI_PACKAGE System::ResourceString _RSInterceptCircularLink;
+#define Sgcidresourcestringscore_RSInterceptCircularLink System::LoadResourceString(&Sgcidresourcestringscore::_RSInterceptCircularLink)
+extern DELPHI_PACKAGE System::ResourceString _RSNotEnoughDataInBuffer;
+#define Sgcidresourcestringscore_RSNotEnoughDataInBuffer System::LoadResourceString(&Sgcidresourcestringscore::_RSNotEnoughDataInBuffer)
+extern DELPHI_PACKAGE System::ResourceString _RSTooMuchDataInBuffer;
+#define Sgcidresourcestringscore_RSTooMuchDataInBuffer System::LoadResourceString(&Sgcidresourcestringscore::_RSTooMuchDataInBuffer)
+extern DELPHI_PACKAGE System::ResourceString _RSCapacityTooSmall;
+#define Sgcidresourcestringscore_RSCapacityTooSmall System::LoadResourceString(&Sgcidresourcestringscore::_RSCapacityTooSmall)
+extern DELPHI_PACKAGE System::ResourceString _RSBufferIsEmpty;
+#define Sgcidresourcestringscore_RSBufferIsEmpty System::LoadResourceString(&Sgcidresourcestringscore::_RSBufferIsEmpty)
+extern DELPHI_PACKAGE System::ResourceString _RSBufferRangeError;
+#define Sgcidresourcestringscore_RSBufferRangeError System::LoadResourceString(&Sgcidresourcestringscore::_RSBufferRangeError)
+extern DELPHI_PACKAGE System::ResourceString _RSFileNotFound;
+#define Sgcidresourcestringscore_RSFileNotFound System::LoadResourceString(&Sgcidresourcestringscore::_RSFileNotFound)
+extern DELPHI_PACKAGE System::ResourceString _RSNotConnected;
+#define Sgcidresourcestringscore_RSNotConnected System::LoadResourceString(&Sgcidresourcestringscore::_RSNotConnected)
+extern DELPHI_PACKAGE System::ResourceString _RSObjectTypeNotSupported;
+#define Sgcidresourcestringscore_RSObjectTypeNotSupported System::LoadResourceString(&Sgcidresourcestringscore::_RSObjectTypeNotSupported)
+extern DELPHI_PACKAGE System::ResourceString _RSIdNoDataToRead;
+#define Sgcidresourcestringscore_RSIdNoDataToRead System::LoadResourceString(&Sgcidresourcestringscore::_RSIdNoDataToRead)
+extern DELPHI_PACKAGE System::ResourceString _RSReadTimeout;
+#define Sgcidresourcestringscore_RSReadTimeout System::LoadResourceString(&Sgcidresourcestringscore::_RSReadTimeout)
+extern DELPHI_PACKAGE System::ResourceString _RSReadLnWaitMaxAttemptsExceeded;
+#define Sgcidresourcestringscore_RSReadLnWaitMaxAttemptsExceeded System::LoadResourceString(&Sgcidresourcestringscore::_RSReadLnWaitMaxAttemptsExceeded)
+extern DELPHI_PACKAGE System::ResourceString _RSAcceptTimeout;
+#define Sgcidresourcestringscore_RSAcceptTimeout System::LoadResourceString(&Sgcidresourcestringscore::_RSAcceptTimeout)
+extern DELPHI_PACKAGE System::ResourceString _RSReadLnMaxLineLengthExceeded;
+#define Sgcidresourcestringscore_RSReadLnMaxLineLengthExceeded System::LoadResourceString(&Sgcidresourcestringscore::_RSReadLnMaxLineLengthExceeded)
+extern DELPHI_PACKAGE System::ResourceString _RSRequiresLargeStream;
+#define Sgcidresourcestringscore_RSRequiresLargeStream System::LoadResourceString(&Sgcidresourcestringscore::_RSRequiresLargeStream)
+extern DELPHI_PACKAGE System::ResourceString _RSDataTooLarge;
+#define Sgcidresourcestringscore_RSDataTooLarge System::LoadResourceString(&Sgcidresourcestringscore::_RSDataTooLarge)
+extern DELPHI_PACKAGE System::ResourceString _RSConnectTimeout;
+#define Sgcidresourcestringscore_RSConnectTimeout System::LoadResourceString(&Sgcidresourcestringscore::_RSConnectTimeout)
+extern DELPHI_PACKAGE System::ResourceString _RSICMPNotEnoughtBytes;
+#define Sgcidresourcestringscore_RSICMPNotEnoughtBytes System::LoadResourceString(&Sgcidresourcestringscore::_RSICMPNotEnoughtBytes)
+extern DELPHI_PACKAGE System::ResourceString _RSICMPNonEchoResponse;
+#define Sgcidresourcestringscore_RSICMPNonEchoResponse System::LoadResourceString(&Sgcidresourcestringscore::_RSICMPNonEchoResponse)
+extern DELPHI_PACKAGE System::ResourceString _RSThreadTerminateAndWaitFor;
+#define Sgcidresourcestringscore_RSThreadTerminateAndWaitFor System::LoadResourceString(&Sgcidresourcestringscore::_RSThreadTerminateAndWaitFor)
+extern DELPHI_PACKAGE System::ResourceString _RSAlreadyConnected;
+#define Sgcidresourcestringscore_RSAlreadyConnected System::LoadResourceString(&Sgcidresourcestringscore::_RSAlreadyConnected)
+extern DELPHI_PACKAGE System::ResourceString _RSTerminateThreadTimeout;
+#define Sgcidresourcestringscore_RSTerminateThreadTimeout System::LoadResourceString(&Sgcidresourcestringscore::_RSTerminateThreadTimeout)
+extern DELPHI_PACKAGE System::ResourceString _RSNoExecuteSpecified;
+#define Sgcidresourcestringscore_RSNoExecuteSpecified System::LoadResourceString(&Sgcidresourcestringscore::_RSNoExecuteSpecified)
+extern DELPHI_PACKAGE System::ResourceString _RSNoCommandHandlerFound;
+#define Sgcidresourcestringscore_RSNoCommandHandlerFound System::LoadResourceString(&Sgcidresourcestringscore::_RSNoCommandHandlerFound)
+extern DELPHI_PACKAGE System::ResourceString _RSCannotPerformTaskWhileServerIsActive;
+#define Sgcidresourcestringscore_RSCannotPerformTaskWhileServerIsActive System::LoadResourceString(&Sgcidresourcestringscore::_RSCannotPerformTaskWhileServerIsActive)
+extern DELPHI_PACKAGE System::ResourceString _RSThreadClassNotSpecified;
+#define Sgcidresourcestringscore_RSThreadClassNotSpecified System::LoadResourceString(&Sgcidresourcestringscore::_RSThreadClassNotSpecified)
+extern DELPHI_PACKAGE System::ResourceString _RSMaximumNumberOfCaptureLineExceeded;
+#define Sgcidresourcestringscore_RSMaximumNumberOfCaptureLineExceeded System::LoadResourceString(&Sgcidresourcestringscore::_RSMaximumNumberOfCaptureLineExceeded)
+extern DELPHI_PACKAGE System::ResourceString _RSNoCreateListeningThread;
+#define Sgcidresourcestringscore_RSNoCreateListeningThread System::LoadResourceString(&Sgcidresourcestringscore::_RSNoCreateListeningThread)
+extern DELPHI_PACKAGE System::ResourceString _RSInterceptIsDifferent;
+#define Sgcidresourcestringscore_RSInterceptIsDifferent System::LoadResourceString(&Sgcidresourcestringscore::_RSInterceptIsDifferent)
+extern DELPHI_PACKAGE System::ResourceString _RSchedMaxThreadEx;
+#define Sgcidresourcestringscore_RSchedMaxThreadEx System::LoadResourceString(&Sgcidresourcestringscore::_RSchedMaxThreadEx)
+extern DELPHI_PACKAGE System::ResourceString _RSTransparentProxyCannotBind;
+#define Sgcidresourcestringscore_RSTransparentProxyCannotBind System::LoadResourceString(&Sgcidresourcestringscore::_RSTransparentProxyCannotBind)
+extern DELPHI_PACKAGE System::ResourceString _RSTransparentProxyCanNotSupportUDP;
+#define Sgcidresourcestringscore_RSTransparentProxyCanNotSupportUDP System::LoadResourceString(&Sgcidresourcestringscore::_RSTransparentProxyCanNotSupportUDP)
+extern DELPHI_PACKAGE System::ResourceString _RSFibersNotSupported;
+#define Sgcidresourcestringscore_RSFibersNotSupported System::LoadResourceString(&Sgcidresourcestringscore::_RSFibersNotSupported)
+extern DELPHI_PACKAGE System::ResourceString _RSIPMCastInvalidMulticastAddress;
+#define Sgcidresourcestringscore_RSIPMCastInvalidMulticastAddress System::LoadResourceString(&Sgcidresourcestringscore::_RSIPMCastInvalidMulticastAddress)
+extern DELPHI_PACKAGE System::ResourceString _RSIPMCastNotSupportedOnWin32;
+#define Sgcidresourcestringscore_RSIPMCastNotSupportedOnWin32 System::LoadResourceString(&Sgcidresourcestringscore::_RSIPMCastNotSupportedOnWin32)
+extern DELPHI_PACKAGE System::ResourceString _RSIPMCastReceiveError0;
+#define Sgcidresourcestringscore_RSIPMCastReceiveError0 System::LoadResourceString(&Sgcidresourcestringscore::_RSIPMCastReceiveError0)
+extern DELPHI_PACKAGE System::ResourceString _RSLogConnected;
+#define Sgcidresourcestringscore_RSLogConnected System::LoadResourceString(&Sgcidresourcestringscore::_RSLogConnected)
+extern DELPHI_PACKAGE System::ResourceString _RSLogDisconnected;
+#define Sgcidresourcestringscore_RSLogDisconnected System::LoadResourceString(&Sgcidresourcestringscore::_RSLogDisconnected)
+extern DELPHI_PACKAGE System::ResourceString _RSLogEOL;
+#define Sgcidresourcestringscore_RSLogEOL System::LoadResourceString(&Sgcidresourcestringscore::_RSLogEOL)
+extern DELPHI_PACKAGE System::ResourceString _RSLogCR;
+#define Sgcidresourcestringscore_RSLogCR System::LoadResourceString(&Sgcidresourcestringscore::_RSLogCR)
+extern DELPHI_PACKAGE System::ResourceString _RSLogLF;
+#define Sgcidresourcestringscore_RSLogLF System::LoadResourceString(&Sgcidresourcestringscore::_RSLogLF)
+extern DELPHI_PACKAGE System::ResourceString _RSLogRecv;
+#define Sgcidresourcestringscore_RSLogRecv System::LoadResourceString(&Sgcidresourcestringscore::_RSLogRecv)
+extern DELPHI_PACKAGE System::ResourceString _RSLogSent;
+#define Sgcidresourcestringscore_RSLogSent System::LoadResourceString(&Sgcidresourcestringscore::_RSLogSent)
+extern DELPHI_PACKAGE System::ResourceString _RSLogStat;
+#define Sgcidresourcestringscore_RSLogStat System::LoadResourceString(&Sgcidresourcestringscore::_RSLogStat)
+extern DELPHI_PACKAGE System::ResourceString _RSLogFileAlreadyOpen;
+#define Sgcidresourcestringscore_RSLogFileAlreadyOpen System::LoadResourceString(&Sgcidresourcestringscore::_RSLogFileAlreadyOpen)
+extern DELPHI_PACKAGE System::ResourceString _RSBufferMissingTerminator;
+#define Sgcidresourcestringscore_RSBufferMissingTerminator System::LoadResourceString(&Sgcidresourcestringscore::_RSBufferMissingTerminator)
+extern DELPHI_PACKAGE System::ResourceString _RSBufferInvalidStartPos;
+#define Sgcidresourcestringscore_RSBufferInvalidStartPos System::LoadResourceString(&Sgcidresourcestringscore::_RSBufferInvalidStartPos)
+extern DELPHI_PACKAGE System::ResourceString _RSIOHandlerCannotChange;
+#define Sgcidresourcestringscore_RSIOHandlerCannotChange System::LoadResourceString(&Sgcidresourcestringscore::_RSIOHandlerCannotChange)
+extern DELPHI_PACKAGE System::ResourceString _RSIOHandlerTypeNotInstalled;
+#define Sgcidresourcestringscore_RSIOHandlerTypeNotInstalled System::LoadResourceString(&Sgcidresourcestringscore::_RSIOHandlerTypeNotInstalled)
+extern DELPHI_PACKAGE System::ResourceString _RSReplyInvalidCode;
+#define Sgcidresourcestringscore_RSReplyInvalidCode System::LoadResourceString(&Sgcidresourcestringscore::_RSReplyInvalidCode)
+extern DELPHI_PACKAGE System::ResourceString _RSReplyCodeAlreadyExists;
+#define Sgcidresourcestringscore_RSReplyCodeAlreadyExists System::LoadResourceString(&Sgcidresourcestringscore::_RSReplyCodeAlreadyExists)
+extern DELPHI_PACKAGE System::ResourceString _RSThreadSchedulerThreadRequired;
+#define Sgcidresourcestringscore_RSThreadSchedulerThreadRequired System::LoadResourceString(&Sgcidresourcestringscore::_RSThreadSchedulerThreadRequired)
+extern DELPHI_PACKAGE System::ResourceString _RSNoOnExecute;
+#define Sgcidresourcestringscore_RSNoOnExecute System::LoadResourceString(&Sgcidresourcestringscore::_RSNoOnExecute)
+extern DELPHI_PACKAGE System::ResourceString _RSThreadComponentLoopAlreadyRunning;
+#define Sgcidresourcestringscore_RSThreadComponentLoopAlreadyRunning System::LoadResourceString(&Sgcidresourcestringscore::_RSThreadComponentLoopAlreadyRunning)
+extern DELPHI_PACKAGE System::ResourceString _RSThreadComponentThreadNameAlreadyRunning;
+#define Sgcidresourcestringscore_RSThreadComponentThreadNameAlreadyRunning System::LoadResourceString(&Sgcidresourcestringscore::_RSThreadComponentThreadNameAlreadyRunning)
+extern DELPHI_PACKAGE System::ResourceString _RSStreamProxyNoStack;
+#define Sgcidresourcestringscore_RSStreamProxyNoStack System::LoadResourceString(&Sgcidresourcestringscore::_RSStreamProxyNoStack)
+extern DELPHI_PACKAGE System::ResourceString _RSTransparentProxyCyclic;
+#define Sgcidresourcestringscore_RSTransparentProxyCyclic System::LoadResourceString(&Sgcidresourcestringscore::_RSTransparentProxyCyclic)
+extern DELPHI_PACKAGE System::ResourceString _RSTCPServerSchedulerAlreadyActive;
+#define Sgcidresourcestringscore_RSTCPServerSchedulerAlreadyActive System::LoadResourceString(&Sgcidresourcestringscore::_RSTCPServerSchedulerAlreadyActive)
+extern DELPHI_PACKAGE System::ResourceString _RSUDPMustUseProxyOpen;
+#define Sgcidresourcestringscore_RSUDPMustUseProxyOpen System::LoadResourceString(&Sgcidresourcestringscore::_RSUDPMustUseProxyOpen)
+extern DELPHI_PACKAGE System::ResourceString _RSICMPTimeout;
+#define Sgcidresourcestringscore_RSICMPTimeout System::LoadResourceString(&Sgcidresourcestringscore::_RSICMPTimeout)
+extern DELPHI_PACKAGE System::ResourceString _RSICMPNetUnreachable;
+#define Sgcidresourcestringscore_RSICMPNetUnreachable System::LoadResourceString(&Sgcidresourcestringscore::_RSICMPNetUnreachable)
+extern DELPHI_PACKAGE System::ResourceString _RSICMPHostUnreachable;
+#define Sgcidresourcestringscore_RSICMPHostUnreachable System::LoadResourceString(&Sgcidresourcestringscore::_RSICMPHostUnreachable)
+extern DELPHI_PACKAGE System::ResourceString _RSICMPProtUnreachable;
+#define Sgcidresourcestringscore_RSICMPProtUnreachable System::LoadResourceString(&Sgcidresourcestringscore::_RSICMPProtUnreachable)
+extern DELPHI_PACKAGE System::ResourceString _RSICMPPortUnreachable;
+#define Sgcidresourcestringscore_RSICMPPortUnreachable System::LoadResourceString(&Sgcidresourcestringscore::_RSICMPPortUnreachable)
+extern DELPHI_PACKAGE System::ResourceString _RSICMPFragmentNeeded;
+#define Sgcidresourcestringscore_RSICMPFragmentNeeded System::LoadResourceString(&Sgcidresourcestringscore::_RSICMPFragmentNeeded)
+extern DELPHI_PACKAGE System::ResourceString _RSICMPSourceRouteFailed;
+#define Sgcidresourcestringscore_RSICMPSourceRouteFailed System::LoadResourceString(&Sgcidresourcestringscore::_RSICMPSourceRouteFailed)
+extern DELPHI_PACKAGE System::ResourceString _RSICMPDestNetUnknown;
+#define Sgcidresourcestringscore_RSICMPDestNetUnknown System::LoadResourceString(&Sgcidresourcestringscore::_RSICMPDestNetUnknown)
+extern DELPHI_PACKAGE System::ResourceString _RSICMPDestHostUnknown;
+#define Sgcidresourcestringscore_RSICMPDestHostUnknown System::LoadResourceString(&Sgcidresourcestringscore::_RSICMPDestHostUnknown)
+extern DELPHI_PACKAGE System::ResourceString _RSICMPSourceIsolated;
+#define Sgcidresourcestringscore_RSICMPSourceIsolated System::LoadResourceString(&Sgcidresourcestringscore::_RSICMPSourceIsolated)
+extern DELPHI_PACKAGE System::ResourceString _RSICMPDestNetProhibitted;
+#define Sgcidresourcestringscore_RSICMPDestNetProhibitted System::LoadResourceString(&Sgcidresourcestringscore::_RSICMPDestNetProhibitted)
+extern DELPHI_PACKAGE System::ResourceString _RSICMPDestHostProhibitted;
+#define Sgcidresourcestringscore_RSICMPDestHostProhibitted System::LoadResourceString(&Sgcidresourcestringscore::_RSICMPDestHostProhibitted)
+extern DELPHI_PACKAGE System::ResourceString _RSICMPTOSNetUnreach;
+#define Sgcidresourcestringscore_RSICMPTOSNetUnreach System::LoadResourceString(&Sgcidresourcestringscore::_RSICMPTOSNetUnreach)
+extern DELPHI_PACKAGE System::ResourceString _RSICMPTOSHostUnreach;
+#define Sgcidresourcestringscore_RSICMPTOSHostUnreach System::LoadResourceString(&Sgcidresourcestringscore::_RSICMPTOSHostUnreach)
+extern DELPHI_PACKAGE System::ResourceString _RSICMPAdminProhibitted;
+#define Sgcidresourcestringscore_RSICMPAdminProhibitted System::LoadResourceString(&Sgcidresourcestringscore::_RSICMPAdminProhibitted)
+extern DELPHI_PACKAGE System::ResourceString _RSICMPHostPrecViolation;
+#define Sgcidresourcestringscore_RSICMPHostPrecViolation System::LoadResourceString(&Sgcidresourcestringscore::_RSICMPHostPrecViolation)
+extern DELPHI_PACKAGE System::ResourceString _RSICMPPrecedenceCutoffInEffect;
+#define Sgcidresourcestringscore_RSICMPPrecedenceCutoffInEffect System::LoadResourceString(&Sgcidresourcestringscore::_RSICMPPrecedenceCutoffInEffect)
+extern DELPHI_PACKAGE System::ResourceString _RSICMPNoRouteToDest;
+#define Sgcidresourcestringscore_RSICMPNoRouteToDest System::LoadResourceString(&Sgcidresourcestringscore::_RSICMPNoRouteToDest)
+extern DELPHI_PACKAGE System::ResourceString _RSICMPAAdminDestProhibitted;
+#define Sgcidresourcestringscore_RSICMPAAdminDestProhibitted System::LoadResourceString(&Sgcidresourcestringscore::_RSICMPAAdminDestProhibitted)
+extern DELPHI_PACKAGE System::ResourceString _RSICMPSourceFilterFailed;
+#define Sgcidresourcestringscore_RSICMPSourceFilterFailed System::LoadResourceString(&Sgcidresourcestringscore::_RSICMPSourceFilterFailed)
+extern DELPHI_PACKAGE System::ResourceString _RSICMPRejectRoutToDest;
+#define Sgcidresourcestringscore_RSICMPRejectRoutToDest System::LoadResourceString(&Sgcidresourcestringscore::_RSICMPRejectRoutToDest)
+extern DELPHI_PACKAGE System::ResourceString _RSICMPTTLExceeded;
+#define Sgcidresourcestringscore_RSICMPTTLExceeded System::LoadResourceString(&Sgcidresourcestringscore::_RSICMPTTLExceeded)
+extern DELPHI_PACKAGE System::ResourceString _RSICMPHopLimitExceeded;
+#define Sgcidresourcestringscore_RSICMPHopLimitExceeded System::LoadResourceString(&Sgcidresourcestringscore::_RSICMPHopLimitExceeded)
+extern DELPHI_PACKAGE System::ResourceString _RSICMPFragAsmExceeded;
+#define Sgcidresourcestringscore_RSICMPFragAsmExceeded System::LoadResourceString(&Sgcidresourcestringscore::_RSICMPFragAsmExceeded)
+extern DELPHI_PACKAGE System::ResourceString _RSICMPParamError;
+#define Sgcidresourcestringscore_RSICMPParamError System::LoadResourceString(&Sgcidresourcestringscore::_RSICMPParamError)
+extern DELPHI_PACKAGE System::ResourceString _RSICMPParamHeader;
+#define Sgcidresourcestringscore_RSICMPParamHeader System::LoadResourceString(&Sgcidresourcestringscore::_RSICMPParamHeader)
+extern DELPHI_PACKAGE System::ResourceString _RSICMPParamNextHeader;
+#define Sgcidresourcestringscore_RSICMPParamNextHeader System::LoadResourceString(&Sgcidresourcestringscore::_RSICMPParamNextHeader)
+extern DELPHI_PACKAGE System::ResourceString _RSICMPUnrecognizedOpt;
+#define Sgcidresourcestringscore_RSICMPUnrecognizedOpt System::LoadResourceString(&Sgcidresourcestringscore::_RSICMPUnrecognizedOpt)
+extern DELPHI_PACKAGE System::ResourceString _RSICMPSourceQuenchMsg;
+#define Sgcidresourcestringscore_RSICMPSourceQuenchMsg System::LoadResourceString(&Sgcidresourcestringscore::_RSICMPSourceQuenchMsg)
+extern DELPHI_PACKAGE System::ResourceString _RSICMPRedirNet;
+#define Sgcidresourcestringscore_RSICMPRedirNet System::LoadResourceString(&Sgcidresourcestringscore::_RSICMPRedirNet)
+extern DELPHI_PACKAGE System::ResourceString _RSICMPRedirHost;
+#define Sgcidresourcestringscore_RSICMPRedirHost System::LoadResourceString(&Sgcidresourcestringscore::_RSICMPRedirHost)
+extern DELPHI_PACKAGE System::ResourceString _RSICMPRedirTOSNet;
+#define Sgcidresourcestringscore_RSICMPRedirTOSNet System::LoadResourceString(&Sgcidresourcestringscore::_RSICMPRedirTOSNet)
+extern DELPHI_PACKAGE System::ResourceString _RSICMPRedirTOSHost;
+#define Sgcidresourcestringscore_RSICMPRedirTOSHost System::LoadResourceString(&Sgcidresourcestringscore::_RSICMPRedirTOSHost)
+extern DELPHI_PACKAGE System::ResourceString _RSICMPEcho;
+#define Sgcidresourcestringscore_RSICMPEcho System::LoadResourceString(&Sgcidresourcestringscore::_RSICMPEcho)
+extern DELPHI_PACKAGE System::ResourceString _RSICMPTimeStamp;
+#define Sgcidresourcestringscore_RSICMPTimeStamp System::LoadResourceString(&Sgcidresourcestringscore::_RSICMPTimeStamp)
+extern DELPHI_PACKAGE System::ResourceString _RSICMPInfoRequest;
+#define Sgcidresourcestringscore_RSICMPInfoRequest System::LoadResourceString(&Sgcidresourcestringscore::_RSICMPInfoRequest)
+extern DELPHI_PACKAGE System::ResourceString _RSICMPMaskRequest;
+#define Sgcidresourcestringscore_RSICMPMaskRequest System::LoadResourceString(&Sgcidresourcestringscore::_RSICMPMaskRequest)
+extern DELPHI_PACKAGE System::ResourceString _RSICMPTracePacketForwarded;
+#define Sgcidresourcestringscore_RSICMPTracePacketForwarded System::LoadResourceString(&Sgcidresourcestringscore::_RSICMPTracePacketForwarded)
+extern DELPHI_PACKAGE System::ResourceString _RSICMPTraceNoRoute;
+#define Sgcidresourcestringscore_RSICMPTraceNoRoute System::LoadResourceString(&Sgcidresourcestringscore::_RSICMPTraceNoRoute)
+extern DELPHI_PACKAGE System::ResourceString _RSICMPConvUnknownUnspecError;
+#define Sgcidresourcestringscore_RSICMPConvUnknownUnspecError System::LoadResourceString(&Sgcidresourcestringscore::_RSICMPConvUnknownUnspecError)
+extern DELPHI_PACKAGE System::ResourceString _RSICMPConvDontConvOptPresent;
+#define Sgcidresourcestringscore_RSICMPConvDontConvOptPresent System::LoadResourceString(&Sgcidresourcestringscore::_RSICMPConvDontConvOptPresent)
+extern DELPHI_PACKAGE System::ResourceString _RSICMPConvUnknownMandOptPresent;
+#define Sgcidresourcestringscore_RSICMPConvUnknownMandOptPresent System::LoadResourceString(&Sgcidresourcestringscore::_RSICMPConvUnknownMandOptPresent)
+extern DELPHI_PACKAGE System::ResourceString _RSICMPConvKnownUnsupportedOptionPresent;
+#define Sgcidresourcestringscore_RSICMPConvKnownUnsupportedOptionPresent System::LoadResourceString(&Sgcidresourcestringscore::_RSICMPConvKnownUnsupportedOptionPresent)
+extern DELPHI_PACKAGE System::ResourceString _RSICMPConvUnsupportedTransportProtocol;
+#define Sgcidresourcestringscore_RSICMPConvUnsupportedTransportProtocol System::LoadResourceString(&Sgcidresourcestringscore::_RSICMPConvUnsupportedTransportProtocol)
+extern DELPHI_PACKAGE System::ResourceString _RSICMPConvOverallLengthExceeded;
+#define Sgcidresourcestringscore_RSICMPConvOverallLengthExceeded System::LoadResourceString(&Sgcidresourcestringscore::_RSICMPConvOverallLengthExceeded)
+extern DELPHI_PACKAGE System::ResourceString _RSICMPConvIPHeaderLengthExceeded;
+#define Sgcidresourcestringscore_RSICMPConvIPHeaderLengthExceeded System::LoadResourceString(&Sgcidresourcestringscore::_RSICMPConvIPHeaderLengthExceeded)
+extern DELPHI_PACKAGE System::ResourceString _RSICMPConvTransportProtocol_255;
+#define Sgcidresourcestringscore_RSICMPConvTransportProtocol_255 System::LoadResourceString(&Sgcidresourcestringscore::_RSICMPConvTransportProtocol_255)
+extern DELPHI_PACKAGE System::ResourceString _RSICMPConvPortConversionOutOfRange;
+#define Sgcidresourcestringscore_RSICMPConvPortConversionOutOfRange System::LoadResourceString(&Sgcidresourcestringscore::_RSICMPConvPortConversionOutOfRange)
+extern DELPHI_PACKAGE System::ResourceString _RSICMPConvTransportHeaderLengthExceeded;
+#define Sgcidresourcestringscore_RSICMPConvTransportHeaderLengthExceeded System::LoadResourceString(&Sgcidresourcestringscore::_RSICMPConvTransportHeaderLengthExceeded)
+extern DELPHI_PACKAGE System::ResourceString _RSICMPConv32BitRolloverMissingAndACKSet;
+#define Sgcidresourcestringscore_RSICMPConv32BitRolloverMissingAndACKSet System::LoadResourceString(&Sgcidresourcestringscore::_RSICMPConv32BitRolloverMissingAndACKSet)
+extern DELPHI_PACKAGE System::ResourceString _RSICMPConvUnknownMandatoryTransportOptionPresent;
+#define Sgcidresourcestringscore_RSICMPConvUnknownMandatoryTransportOptionPresent System::LoadResourceString(&Sgcidresourcestringscore::_RSICMPConvUnknownMandatoryTransportOptionPresent)
+extern DELPHI_PACKAGE System::ResourceString _RSICMPMobileHostRedirect;
+#define Sgcidresourcestringscore_RSICMPMobileHostRedirect System::LoadResourceString(&Sgcidresourcestringscore::_RSICMPMobileHostRedirect)
+extern DELPHI_PACKAGE System::ResourceString _RSICMPIPv6WhereAreYou;
+#define Sgcidresourcestringscore_RSICMPIPv6WhereAreYou System::LoadResourceString(&Sgcidresourcestringscore::_RSICMPIPv6WhereAreYou)
+extern DELPHI_PACKAGE System::ResourceString _RSICMPIPv6IAmHere;
+#define Sgcidresourcestringscore_RSICMPIPv6IAmHere System::LoadResourceString(&Sgcidresourcestringscore::_RSICMPIPv6IAmHere)
+extern DELPHI_PACKAGE System::ResourceString _RSICMPMobReg;
+#define Sgcidresourcestringscore_RSICMPMobReg System::LoadResourceString(&Sgcidresourcestringscore::_RSICMPMobReg)
+extern DELPHI_PACKAGE System::ResourceString _RSICMPSKIP;
+#define Sgcidresourcestringscore_RSICMPSKIP System::LoadResourceString(&Sgcidresourcestringscore::_RSICMPSKIP)
+extern DELPHI_PACKAGE System::ResourceString _RSICMPSecBadSPI;
+#define Sgcidresourcestringscore_RSICMPSecBadSPI System::LoadResourceString(&Sgcidresourcestringscore::_RSICMPSecBadSPI)
+extern DELPHI_PACKAGE System::ResourceString _RSICMPSecAuthenticationFailed;
+#define Sgcidresourcestringscore_RSICMPSecAuthenticationFailed System::LoadResourceString(&Sgcidresourcestringscore::_RSICMPSecAuthenticationFailed)
+extern DELPHI_PACKAGE System::ResourceString _RSICMPSecDecompressionFailed;
+#define Sgcidresourcestringscore_RSICMPSecDecompressionFailed System::LoadResourceString(&Sgcidresourcestringscore::_RSICMPSecDecompressionFailed)
+extern DELPHI_PACKAGE System::ResourceString _RSICMPSecDecryptionFailed;
+#define Sgcidresourcestringscore_RSICMPSecDecryptionFailed System::LoadResourceString(&Sgcidresourcestringscore::_RSICMPSecDecryptionFailed)
+extern DELPHI_PACKAGE System::ResourceString _RSICMPSecNeedAuthentication;
+#define Sgcidresourcestringscore_RSICMPSecNeedAuthentication System::LoadResourceString(&Sgcidresourcestringscore::_RSICMPSecNeedAuthentication)
+extern DELPHI_PACKAGE System::ResourceString _RSICMPSecNeedAuthorization;
+#define Sgcidresourcestringscore_RSICMPSecNeedAuthorization System::LoadResourceString(&Sgcidresourcestringscore::_RSICMPSecNeedAuthorization)
+extern DELPHI_PACKAGE System::ResourceString _RSICMPPacketTooBig;
+#define Sgcidresourcestringscore_RSICMPPacketTooBig System::LoadResourceString(&Sgcidresourcestringscore::_RSICMPPacketTooBig)
+extern DELPHI_PACKAGE System::ResourceString _RSCannotUseNonSocketIOHandler;
+#define Sgcidresourcestringscore_RSCannotUseNonSocketIOHandler System::LoadResourceString(&Sgcidresourcestringscore::_RSCannotUseNonSocketIOHandler)
+}	/* namespace Sgcidresourcestringscore */
+#if !defined(DELPHIHEADER_NO_IMPLICIT_NAMESPACE_USE) && !defined(NO_USING_NAMESPACE_SGCIDRESOURCESTRINGSCORE)
+using namespace Sgcidresourcestringscore;
+#endif
+#pragma pack(pop)
+#pragma option pop
+
+#pragma delphiheader end.
+//-- end unit ----------------------------------------------------------------
+#endif	// SgcidresourcestringscoreHPP

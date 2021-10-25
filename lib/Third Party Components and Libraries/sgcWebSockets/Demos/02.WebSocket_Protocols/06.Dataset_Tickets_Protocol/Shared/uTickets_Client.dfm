@@ -1,0 +1,46 @@
+object DMTickets_Client: TDMTickets_Client
+  OldCreateOrder = False
+  OnCreate = DataModuleCreate
+  Height = 293
+  Width = 429
+  object WSClient: TsgcWebSocketClient
+    Port = 80
+    ConnectTimeout = 0
+    ReadTimeout = -1
+    TLS = False
+    Proxy.Enabled = False
+    Proxy.Port = 8080
+    HeartBeat.Enabled = False
+    HeartBeat.Interval = 300
+    HeartBeat.Timeout = 0
+    Authentication.Enabled = False
+    Authentication.URL.Enabled = True
+    Authentication.Session.Enabled = True
+    Extensions.DeflateFrame.Enabled = False
+    Extensions.DeflateFrame.WindowBits = 15
+    Options.Parameters = '/'
+    Options.ValidateUTF8 = False
+    Specifications.Drafts.Hixie76 = False
+    Specifications.RFC6455 = True
+    NotifyEvents = neAsynchronous
+    LogFile.Enabled = False
+    Left = 64
+    Top = 40
+  end
+  object WSPClient_Tickets: TsgcWSPClient_Dataset
+    OnConnect = WSPClient_TicketsConnect
+    OnDisconnect = WSPClient_TicketsDisconnect
+    OnRawMessage = WSPClient_TicketsRawMessage
+    OnAfterNewRecord = WSPClient_TicketsAfterNewRecord
+    OnAfterUpdateRecord = WSPClient_TicketsAfterUpdateRecord
+    OnAfterDeleteRecord = WSPClient_TicketsAfterDeleteRecord
+    Client = WSClient
+    AutoSubscribe = True
+    NotifyUpdates = True
+    ApplyUpdates = True
+    UpdateMode = upWhereAll
+    Guid = 'tickets'
+    Left = 208
+    Top = 40
+  end
+end

@@ -19,7 +19,7 @@ type
     constructor Create(AMessageClass: TMessageClass; AMessageCategory: TMessageCategory;
       AMessageType: TMessageType); virtual;
   public
-    [NeonIgnoreAttribute] //[JsonIgnore]
+    [NeonIgnoreAttribute]
     property MessageClass: TMessageClass read FMessageClass write FMessageClass;
     [NeonIgnoreAttribute]
     property MessageCategory: TMessageCategory read FMessageCategory write FMessageCategory;

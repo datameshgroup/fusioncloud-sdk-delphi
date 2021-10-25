@@ -230,7 +230,7 @@ begin
   LJSON := TJSONObject.ParseJSONValue(AWhere.Text);
   if not Assigned(LJSON) then
     raise Exception.Create('Error parsing JSON string');
-
+                          TNeon
   try
     LReader := TNeonDeserializerJSON.Create(AConfig);
     try

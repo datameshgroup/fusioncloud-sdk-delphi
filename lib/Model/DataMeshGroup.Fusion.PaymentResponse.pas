@@ -50,8 +50,7 @@ type
 //        return PaymentReceipt?.FirstOrDefault(r => r.DocumentQualifier == documentQualifier)?.OutputContent?.GetContentAsPlainText();
 //    }
 
-    constructor Create(AMessageClass: TMessageClass; AMessageCategory: TMessageCategory;
-      AMessageType: TMessageType); override;
+    constructor Create;
   end;
 
 implementation
@@ -60,11 +59,10 @@ uses System.SysUtils;
 
 { TPaymentResponse }
 
-constructor TPaymentResponse.Create(AMessageClass: TMessageClass;
-  AMessageCategory: TMessageCategory; AMessageType: TMessageType);
+constructor TPaymentResponse.Create;
 begin
-  inherited;
-
+  inherited Create(TMessageClass.Service,
+    TMessageCategory.Payment, TMessageType.Response);
 end;
 
 function TPaymentResponse.CreateDefaultResponseMessagePayload(

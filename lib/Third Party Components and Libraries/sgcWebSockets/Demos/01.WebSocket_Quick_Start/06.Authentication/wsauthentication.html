@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>Server Authentication Demo</title>
+	<script src="http://127.0.0.1:5418/sgcWebSockets.js"></script>	
+	<link rel="stylesheet" href="http://code.jquery.com/mobile/1.1.0/jquery.mobile-1.1.0.min.css" />
+	<script src="http://code.jquery.com/jquery-1.6.4.min.js"></script>
+	<script src="http://code.jquery.com/mobile/1.1.0/jquery.mobile-1.1.0.min.js"></script>
+	<style>
+	#status {
+		padding: 5px;
+		color: #fff;
+		background: #ccc;
+	}
+
+	#status.fail {
+	  background: #c00;
+	}
+
+	#status.offline {
+	  background: #c00;
+	}
+
+	#status.online {
+	  background: #0c0;
+	}
+	</style>
+	<script type='text/javascript'>
+
+	var ws;
+	function DoOpen(username, password)
+	{
+	  if ("WebSocket" in window)
+	  {
+		  ws = new sgcWebSocket("ws://127.0.0.1:5418/sgc/auth/url/" + username + "/" + password);
+		  ws.on('open', function(evt){		  
+				document.getElementById('status').innerHTML = "Socket Open";
+				document.getElementById('status').className = "online";
+			}
+		  );
+		  ws.on('close', function(evt){
+				document.getElementById('status').innerHTML = "Socket Closed";
+				document.getElementById('status').className = "offline";
+			}		  
+		  );
+		  ws.on('error', function(evt){
+				document.getElementById('status').innerHTML = "Socket Error";
+				document.getElementById('status').className = "fail";
+			}		  
+		  );
+	  }
+	}
+	
+	function DoClose()
+	{
+		ws.close();
+	}
+</script>
+
+</head> 
+<body> 
+<div data-role="page" id="wsdemo_monitor">
+
+	<div data-role="header" data-theme="b">
+		<h1>Server Authentication</h1>
+		<a href="#home" data-icon="home" data-iconpos="notext" data-direction="reverse" class="ui-btn-left jqm-home">Home</a>
+	</div><!-- /header -->
+
+	<div data-role="content">	
+		<h2>Set User and Password to Open a New WebSocket Conection</h2>
+		<p id="status" classname="success"></p>
+		<a href="javascript: DoOpen(document.getElementById('username').value, document.getElementById('password').value)" data-role="button" data-inline="true">Open</a>
+		<a href="javascript: DoClose();" data-role="button" data-inline="true">Close</a>
+			<form>
+				<input type="text" id="username" data-mini="true" placeholder="type your Name" value="user"/>
+				<input type="text" id="password" data-mini="true" placeholder="type your Password" value="1234"/>
+			</form>			
+	</div><!-- /content -->	
+	<div data-role="footer" class="footer-docs" data-theme="c">
+			<p>&copy; 2021 eSeGeCe.com</p>
+	</div>		
+</div><!-- /page -->
+
+</body>
+</html>

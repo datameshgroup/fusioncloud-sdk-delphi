@@ -1,0 +1,3 @@
+/* 'sgcWebSocketsD10_4' Package */
+OUTPUT_FORMAT(macho-x86-64)
+GROUP ( bplsgcWebSocketsD10_4.dylib sgcWebSocketsD10_4_nonshared.a )

@@ -2,6 +2,8 @@ unit DataMeshGroup.Fusion.POISoftware;
 
 interface
 
+uses Neon.Core.Attributes;
+
 type
   TPOISoftware = class
   private
@@ -20,8 +22,12 @@ type
       write FSoftwareVersion;
     property CertificationCode: string read FCertificationCode
       write FCertificationCode;
+
+    [NeonInclude(IncludeIf.NotEmpty)]
     property ComponentDescription: string read FComponentDescription
       write FComponentDescription;
+
+    [NeonInclude(IncludeIf.NotEmpty)]
     property ComponentType: string read FComponentType
       write FComponentType;
   end;

@@ -1,0 +1,37 @@
+unit DataMeshGroup.Fusion.OriginalPOITransaction;
+
+interface
+
+uses NullableTypes, DataMeshGroup.Fusion.TransactionIdentification;
+
+type
+  TOriginalPOITransaction = class
+  private
+    FSaleID: string;
+    FPoiID: string;
+    FPOITransactionID: TTransactionIdentification;
+    FReuseCardDataFlag: TNullableBool;
+    FApprovalCode: string;
+    FCustomerLanguage: string;
+    FAcquirerID: string;
+    FAmountValue: TNullableCurrency;
+    LastTransactionFlag: TNullableBool;
+  public
+    property SaleID: string read FSaleID write FSaleID;
+    property POIID: string
+    property POITransactionID: TTransactionIdentification
+    property ReuseCardDataFlag: TNullableBool
+    property ApprovalCode: string
+    property CustomerLanguage: string
+    property AcquirerID: string
+
+    [JsonConverter(typeof(DecimalJsonConverter))]
+    property decimal? AmountValue { get; set; }
+
+    property HostTransactionID: TTransactionIdentification
+    property LastTransactionFlag: TNullableBool
+  end;
+
+implementation
+
+end.

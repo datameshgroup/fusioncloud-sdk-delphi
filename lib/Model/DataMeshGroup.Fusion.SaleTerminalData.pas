@@ -3,12 +3,12 @@ unit DataMeshGroup.Fusion.SaleTerminalData;
 interface
 
 uses DataMeshGroup.Fusion.Types, DataMeshGroup.Fusion.SaleProfile,
-  System.Generics.Collections;
+  System.Generics.Collections, Neon.Core.Attributes;
 
 type
   TSaleTerminalData = class
   private
-    FTerminalenvironment: TTerminalenvironment;
+    FTerminalEnvironment: TTerminalEnvironment;
     FSaleCapabilities: TList<TSaleCapability>;
     FSaleProfile: TSaleProfile;
     FGenericProfile: TGenericProfile;
@@ -16,11 +16,13 @@ type
 
     procedure InitProperties;
   public
-    property TerminalEnvironment: TTerminalenvironment read FTerminalenvironment
-      write FTerminalenvironment;
+    property TerminalEnvironment: TTerminalEnvironment read FTerminalEnvironment
+      write FTerminalEnvironment;
     property SaleCapabilities: TList<TSaleCapability> read FSaleCapabilities
       write FSaleCapabilities;
     property SaleProfile: TSaleProfile read FSaleProfile write FSaleProfile;
+
+    [NeonInclude(IncludeIf.NotEmpty)]
     property TotalsGroupID: string read FTotalsGroupID write FTotalsGroupID;
 
     constructor Create;

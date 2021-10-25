@@ -13,14 +13,14 @@ uses System.Threading, DataMeshGroup.Fusion.SaleToPOIRequest,
   DataMeshGroup.Fusion.PaymentResponse,
   DataMeshGroup.Fusion.ReconciliationResponse,
   DataMeshGroup.Fusion.DisplayRequest,
-  DataMeshGroup.Fusion.TransactionStatusResponse;
+  DataMeshGroup.Fusion.TransactionStatusResponse,
+  System.Classes;
 
 type
   // events
   TEventOnLog = procedure(out AEventArgs: TLogEventArgs) of object;
-  TEventOnConnect = procedure(ASender: TObject) of object;
   TEventOnConnectError = procedure of object;
-  TEventOnDisconnect = procedure of object;
+  TEventOnReceiveMessage = procedure(ASender: TObject; const AMsg: string) of object;
   TEventOnLoginResponse = function(): TMessagePayloadEventArgs<TLoginResponse> of object;
   TEventOnLogoutResponse = function(): TMessagePayloadEventArgs<TLogoutResponse> of object;
   TEventOnCardAcquisitionResponse = function(): TMessagePayloadEventArgs<TCardAcquisitionResponse> of object;
@@ -42,6 +42,17 @@ type
     /// </summary>
     procedure Disconnect;
 
+    function Login(ARequestMessage: TMessagePayload): TLoginResponse;
+
+    /// <summary>
+    /// Send a request. Timeout will be set to a default value.
+    /// </summary>
+    /// <param name="AMsg">Payload to send</param>
+    /// <param name="ATimeout">Timeout in milliseconds</param>
+    function SendMessage(AMsg:string; ATimeout: Integer): Boolean; overload;
+
+    function RecvMessage: string; overload;
+
     /// <summary>
     /// Send a request. cancellationToken will be set to a default value.
     /// </summary>
@@ -53,40 +64,6 @@ type
     /// <exception cref="NetworkException">A network error occured sending the request</exception>
     function SendMessage(ARequestMessage: TMessagePayload;
       AserviceID: string): TSaleToPOIMessage; overload;
-
-    /// <summary>
-    /// Send a request. serviceId will default to a unique value.
-    /// </summary>
-    /// <param name="requestMessage">Payload to send</param>
-    /// <param name="cancellationToken">Cancellation token used for the request</param>
-    /// <returns>The resulting <see cref="SaleToPOIMessage"/> wrapper. Useful for extracting the ServiceId used in the request</returns>
-    /// <exception cref="MessageFormatException">An error occured converting the request to JSON</exception>
-    /// <exception cref="TaskCanceledException">A timeout occured sending the request</exception>
-    /// <exception cref="NetworkException">A network error occured sending the request</exception>
-    function SendMessage(ARequestMessage: TMessagePayload): TSaleToPOIMessage; overload;
-
-    /// <summary>
-    /// Send a request.
-    /// </summary>
-    /// <param name="requestMessage">Payload to send</param>
-    /// <param name="serviceID">ServiceId sent in the header</param>
-    /// <param name="ensureConnectedAndLoginComplete">If true, will attempt to connect (if required) and send a login (if required) instead of throwing an exception</param>
-    /// <param name="cancellationToken">Cancellation token used for the request</param>
-    /// <returns>The resulting <see cref="SaleToPOIMessage"/> wrapper. Useful for extracting the ServiceId used in the request</returns>
-    /// <exception cref="MessageFormatException">An error occured converting the request to JSON</exception>
-    /// <exception cref="TaskCanceledException">A timeout occured sending the request</exception>
-    /// <exception cref="NetworkException">A network error occured sending the request</exception>
-    function SendMessage(ARequestMessage: TMessagePayload; AServiceID: string;
-      AEnsureConnectedAndLoginComplete: Boolean): TSaleToPOIMessage; overload;
-
-    /// <summary>
-    /// Awaits the next response message from the host. Timeout set to <see cref="DefaultTimeout"/>
-    /// </summary>
-    /// <returns>A response message (if one is avaialble) or null, if none are available</returns>
-    /// <exception cref="InvalidOperationException">Raised when a call is made to <see cref="RecvAsync"/> whilst 'ResponseMessage' events have been subscribed to</exception>
-    /// <exception cref="TimeoutException">A timeout occured awaiting a response</exception>
-    /// <exception cref="NetworkException">A network error occured awaiting a response</exception>
-    function RecvMessage: TMessagePayload; overload;
 
     /// <summary>
     /// Sends a request, and then waits for a specified response message type. Discards all other response types. Timeout set to <see cref="DefaultTimeout"/>
@@ -150,19 +127,17 @@ type
     function GetDefaultHeartbeatTimeout: TTimeSpan;
     procedure SetDefaultHeartbeatTimeout(ADefaultHeartbeatTimeout: TTimeSpan);
 
-    function GetIsEventModeEnabled: Boolean;
-
     function GetEventOnLog: TEventOnLog;
     procedure SetEventOnLog(AEventOnLog: TEventOnLog);
 
-    function GetEventOnConnect: TEventOnConnect;
-    procedure SetEventOnConnect(AEventOnConnect: TEventOnConnect);
+    function GetEventOnConnect: TNotifyEvent;
+    procedure SetEventOnConnect(AEventOnConnect: TNotifyEvent);
 
     function GetEventOnConnectError: TEventOnConnectError;
     procedure SetEventOnConnectError(AEventOnConnectError: TEventOnConnectError);
 
-    function GetEventOnDisconnect: TEventOnDisconnect;
-    procedure SetEventOnDisconnect(AEventOnDisconnect: TEventOnDisconnect);
+    function GetEventOnDisconnect: TNotifyEvent;
+    procedure SetEventOnDisconnect(AEventOnDisconnect: TNotifyEvent);
 
     function GetEventOnLoginResponse: TEventOnLoginResponse;
     procedure SetEventOnLoginResponse(AEventOnLoginResponse: TEventOnLoginResponse);
@@ -184,6 +159,9 @@ type
 
     function GetEventOnTransactionStatusResponse: TEventOnTransactionStatusResponse;
     procedure SetEventOnTransactionStatusResponse(AEventOnTransactionStatusResponse: TEventOnTransactionStatusResponse);
+
+    function GetEventOnReceiveMessage: TEventOnReceiveMessage;
+    procedure SetEventOnReceiveMessage(AEventOnReceiveMessage: TEventOnReceiveMessage);
 
     {$REGION 'Properties'}
     property Port: string read GetPort write SetPort;
@@ -248,17 +226,6 @@ type
       write SetLoginResponse;
 
     /// <summary>
-    /// Byte size of the receive buffer
-    /// </summary>
-    property ReceiveBufferSize: Integer read GetReceiveBufferSize
-      write SetReceiveBufferSize;// 1Kb
-
-    /// <summary>
-    /// Level of logging which should be returned in the OnLog event. Default is <see cref="LogLevel.None"/>
-    /// </summary>
-    property LogLevel: TLogLevel read GetLogLevel write SetLogLevel;
-
-    /// <summary>
     /// Default amount of time we wait for responses from the switch. Default is 90 seconds.
     /// </summary>
     property DefaultTimeout: TTimeSpan read GetDefaultTimeout
@@ -269,15 +236,6 @@ type
     /// </summary>
     property DefaultHeartbeatTimeout: TTimeSpan read GetDefaultHeartbeatTimeout
       write SetDefaultHeartbeatTimeout;
-
-    /// <summary>
-    /// Indicates if event mode has been enabled. This is set when <see cref="OnLoginResponse"/> or
-    /// <see cref="OnPaymentResponse"/> events have been subscribed to. When events mode is enabled,
-    /// responses will be returned to the owner via <see cref="OnLoginResponse"/> and
-    /// <see cref="OnPaymentResponse"/> events, and all requests to <see cref="RecvAsync"/> will
-    /// throw an <see cref="InvalidOperationException"/>
-    /// </summary>
-    property IsEventModeEnabled: Boolean read GetIsEventModeEnabled;
 
     {$ENDREGION}
 
@@ -291,7 +249,7 @@ type
     /// <summary>
     /// Fired when the socket connects.
     /// </summary>
-    property OnConnect: TEventOnConnect read GetEventOnConnect
+    property OnConnect: TNotifyEvent read GetEventOnConnect
       write SetEventOnConnect;
 
     /// <summary>
@@ -303,7 +261,7 @@ type
     /// <summary>
     /// Fired when the socket disconnects.
     /// </summary>
-    property OnDisconnect: TEventOnDisconnect read GetEventOnDisconnect
+    property OnDisconnect: TNotifyEvent read GetEventOnDisconnect
       write SetEventOnDisconnect;
 
     /// <summary>
@@ -347,6 +305,9 @@ type
     /// </summary>
     property OnTransactionStatusResponse: TEventOnTransactionStatusResponse
       read GetEventOnTransactionStatusResponse write SetEventOnTransactionStatusResponse;
+
+    property OnReceiveMessage: TEventOnReceiveMessage read GetEventOnReceiveMessage
+      write SetEventOnReceiveMessage;
 
     {$ENDREGION}
   end;

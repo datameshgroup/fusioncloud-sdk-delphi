@@ -5,7 +5,7 @@ object FrmMain: TFrmMain
   BorderStyle = bsSingle
   Caption = 'Main'
   ClientHeight = 295
-  ClientWidth = 467
+  ClientWidth = 658
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
@@ -18,99 +18,120 @@ object FrmMain: TFrmMain
   OnShow = FormShow
   PixelsPerInch = 96
   TextHeight = 13
-  object LblCustomURL: TLabel
-    Left = 8
-    Top = 16
-    Width = 58
-    Height = 13
-    Caption = 'Custom URL'
-  end
-  object LblToEncrypt: TLabel
-    Left = 70
-    Top = 187
-    Width = 117
-    Height = 13
-    Caption = 'The quiCk bRown foX'
-    Font.Charset = DEFAULT_CHARSET
-    Font.Color = clWindowText
-    Font.Height = -11
-    Font.Name = 'Tahoma'
-    Font.Style = [fsBold]
-    ParentFont = False
-  end
-  object LblEncryptResult: TLabel
-    Left = 70
-    Top = 218
-    Width = 39
-    Height = 13
-    Caption = 'Result:'
-    Font.Charset = DEFAULT_CHARSET
-    Font.Color = clWindowText
-    Font.Height = -11
-    Font.Name = 'Tahoma'
-    Font.Style = [fsBold]
-    ParentFont = False
-  end
-  object Lbl1: TLabel
-    Left = 8
-    Top = 187
-    Width = 56
-    Height = 13
-    Caption = 'To Encrypt:'
-  end
-  object Lbl2: TLabel
-    Left = 8
-    Top = 218
-    Width = 34
-    Height = 13
-    Caption = 'Result:'
-  end
-  object BtnConnectCustom: TButton
-    Left = 8
-    Top = 35
-    Width = 121
-    Height = 25
-    Cursor = crHandPoint
-    Caption = 'Connect Custom'
-    TabOrder = 0
-    OnClick = BtnConnectCustomClick
-  end
-  object EdtCustomURL: TEdit
-    Left = 80
-    Top = 8
-    Width = 379
-    Height = 21
-    TabOrder = 1
-    Text = 'EdtCustomURL'
-  end
   object BtnConnectTest: TButton
     Left = 8
-    Top = 66
-    Width = 121
+    Top = 8
+    Width = 152
     Height = 25
     Cursor = crHandPoint
-    Caption = 'Connect Test'
+    Caption = 'Connect'
+    TabOrder = 0
+    OnClick = BtnConnectTestClick
+  end
+  object BtnLogInReq: TButton
+    Left = 166
+    Top = 8
+    Width = 152
+    Height = 25
+    Cursor = crHandPoint
+    Caption = 'Login Request'
+    TabOrder = 1
+    OnClick = BtnLogInReqClick
+  end
+  object Mmo1: TMemo
+    Left = 0
+    Top = 148
+    Width = 658
+    Height = 147
+    Align = alBottom
+    Anchors = [akLeft, akTop, akRight, akBottom]
+    Lines.Strings = (
+      'Mmo1')
+    ScrollBars = ssBoth
     TabOrder = 2
-    OnClick = BtnConnectCustomClick
+    ExplicitTop = 147
   end
-  object BtnConnectProd: TButton
+  object BtnDisconnect: TButton
     Left = 8
-    Top = 97
-    Width = 121
+    Top = 39
+    Width = 152
     Height = 25
     Cursor = crHandPoint
-    Caption = 'Connect Production'
+    Caption = 'Disconnect'
     TabOrder = 3
-    OnClick = BtnConnectCustomClick
+    OnClick = BtnDisconnectClick
   end
-  object BtnEncrypt: TButton
-    Left = 8
-    Top = 237
-    Width = 121
+  object BtnPaymentReq: TButton
+    Left = 165
+    Top = 39
+    Width = 152
     Height = 25
     Cursor = crHandPoint
-    Caption = '&Encrypt'
+    Caption = 'Payment Request'
     TabOrder = 4
-    OnClick = BtnEncryptClick
+    OnClick = BtnPaymentReqClick
+  end
+  object BtnLogoutRequest: TButton
+    Left = 322
+    Top = 8
+    Width = 152
+    Height = 25
+    Cursor = crHandPoint
+    Caption = 'Logout Request'
+    TabOrder = 5
+  end
+  object BtnInputRequest: TButton
+    Left = 322
+    Top = 39
+    Width = 152
+    Height = 25
+    Cursor = crHandPoint
+    Caption = 'Input Request'
+    TabOrder = 6
+  end
+  object BtnPrintRequest: TButton
+    Left = 480
+    Top = 8
+    Width = 152
+    Height = 25
+    Cursor = crHandPoint
+    Caption = 'Print Request'
+    TabOrder = 7
+  end
+  object BtnTransStatRequest: TButton
+    Left = 480
+    Top = 39
+    Width = 152
+    Height = 25
+    Cursor = crHandPoint
+    Caption = 'Transaction Status  Request'
+    TabOrder = 8
+  end
+  object BtnAbortTransRequest: TButton
+    Left = 8
+    Top = 86
+    Width = 152
+    Height = 25
+    Cursor = crHandPoint
+    Caption = 'Abort Transaction Request'
+    TabOrder = 9
+  end
+  object BtnReconciliationRequest: TButton
+    Left = 8
+    Top = 117
+    Width = 152
+    Height = 25
+    Cursor = crHandPoint
+    Caption = 'Reconciliation Request'
+    TabOrder = 10
+  end
+  object BtnCardAcquisitionRequest: TButton
+    Left = 166
+    Top = 86
+    Width = 152
+    Height = 25
+    Cursor = crHandPoint
+    Caption = 'Card Acquisition Request'
+    TabOrder = 11
   end
 end

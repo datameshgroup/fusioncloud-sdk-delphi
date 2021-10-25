@@ -1,0 +1,379 @@
+object FRMClientMobile: TFRMClientMobile
+  Left = 0
+  Top = 0
+  ClientHeight = 460
+  ClientWidth = 320
+  FormFactor.Width = 320
+  FormFactor.Height = 480
+  FormFactor.Devices = [Desktop]
+  DesignerMasterStyle = 0
+  object ToolBar1: TToolBar
+    Size.Width = 320.000000000000000000
+    Size.Height = 44.000000000000000000
+    Size.PlatformDefault = False
+    TabOrder = 0
+    object Label1: TLabel
+      Align = Center
+      StyledSettings = [Family, Size, Style]
+      Size.Width = 187.000000000000000000
+      Size.Height = 33.000000000000000000
+      Size.PlatformDefault = False
+      TextSettings.FontColor = claWhite
+      Text = 'sgcWebSockets Mobile Demo'
+    end
+  end
+  object TabControl1: TTabControl
+    Align = Client
+    FullSize = True
+    Size.Width = 320.000000000000000000
+    Size.Height = 416.000000000000000000
+    Size.PlatformDefault = False
+    TabHeight = 49.000000000000000000
+    TabIndex = 0
+    TabOrder = 1
+    TabPosition = Bottom
+    Sizes = (
+      320s
+      367s
+      320s
+      367s)
+    object tabChat: TTabItem
+      CustomIcon = <
+        item
+        end>
+      IsSelected = True
+      Size.Width = 159.000000000000000000
+      Size.Height = 49.000000000000000000
+      Size.PlatformDefault = False
+      StyleLookup = 'tabitemcontacts'
+      TabOrder = 0
+      Text = 'Chat'
+      ExplicitSize.cx = 50.000000000000000000
+      ExplicitSize.cy = 49.000000000000000000
+      object pnlChat: TPanel
+        Align = Client
+        Size.Width = 320.000000000000000000
+        Size.Height = 322.000000000000000000
+        Size.PlatformDefault = False
+        TabOrder = 0
+        object txtMessage: TClearingEdit
+          Touch.InteractiveGestures = [LongTap, DoubleTap]
+          Anchors = [akLeft, akTop, akRight]
+          TabOrder = 0
+          Position.X = 16.000000000000000000
+          Position.Y = 8.000000000000000000
+          Size.Width = 289.000000000000000000
+          Size.Height = 31.000000000000000000
+          Size.PlatformDefault = False
+          OnKeyDown = txtMessageKeyDown
+        end
+        object btnSend: TButton
+          Anchors = [akTop, akRight]
+          Position.X = 248.000000000000000000
+          Position.Y = 48.000000000000000000
+          Size.Width = 57.000000000000000000
+          Size.Height = 33.000000000000000000
+          Size.PlatformDefault = False
+          TabOrder = 1
+          Text = 'Send'
+          OnClick = btnSendClick
+        end
+        object memoLog: TMemo
+          Touch.InteractiveGestures = [Pan, LongTap, DoubleTap]
+          DataDetectorTypes = []
+          ReadOnly = True
+          Anchors = [akLeft, akTop, akRight, akBottom]
+          Position.X = 16.000000000000000000
+          Position.Y = 88.000000000000000000
+          Size.Width = 289.000000000000000000
+          Size.Height = 219.000000000000000000
+          Size.PlatformDefault = False
+          TabOrder = 2
+          Viewport.Width = 285.000000000000000000
+          Viewport.Height = 215.000000000000000000
+        end
+      end
+      object pnlConnection: TPanel
+        Align = Top
+        Size.Width = 320.000000000000000000
+        Size.Height = 45.000000000000000000
+        Size.PlatformDefault = False
+        TabOrder = 1
+        object btnConnect: TButton
+          Position.X = 16.000000000000000000
+          Position.Y = 8.000000000000000000
+          Size.Width = 105.000000000000000000
+          Size.Height = 33.000000000000000000
+          Size.PlatformDefault = False
+          TabOrder = 0
+          Text = 'Connect'
+          OnClick = btnConnectClick
+        end
+        object btnDisconnect: TButton
+          Anchors = [akTop, akRight]
+          Enabled = False
+          Position.X = 200.000000000000000000
+          Position.Y = 8.000000000000000000
+          Size.Width = 105.000000000000000000
+          Size.Height = 33.000000000000000000
+          Size.PlatformDefault = False
+          TabOrder = 1
+          Text = 'Disconnect'
+          OnClick = btnDisconnectClick
+        end
+      end
+    end
+    object tabConfiguration: TTabItem
+      CustomIcon = <
+        item
+        end>
+      IsSelected = False
+      Size.Width = 159.000000000000000000
+      Size.Height = 49.000000000000000000
+      Size.PlatformDefault = False
+      StyleLookup = 'tabitemmore'
+      TabOrder = 0
+      Text = 'Configuration'
+      ExplicitSize.cx = 50.000000000000000000
+      ExplicitSize.cy = 49.000000000000000000
+      object listConfiguration: TListBox
+        Align = Client
+        Size.Width = 320.000000000000000000
+        Size.Height = 367.000000000000000000
+        Size.PlatformDefault = False
+        TabOrder = 0
+        DisableFocusEffect = True
+        DefaultItemStyles.ItemStyle = 'listboxitemnodetail'
+        DefaultItemStyles.GroupHeaderStyle = ''
+        DefaultItemStyles.GroupFooterStyle = ''
+        Viewport.Width = 316.000000000000000000
+        Viewport.Height = 363.000000000000000000
+        object headerWebSockets: TListBoxGroupHeader
+          Size.Width = 316.000000000000000000
+          Size.Height = 23.000000000000000000
+          Size.PlatformDefault = False
+          StyleLookup = 'listboxitemnodetail'
+          TabOrder = 0
+          Text = 'WebSockets Host'
+        end
+        object itemHost: TListBoxItem
+          Selectable = False
+          Position.Y = 23.000000000000000000
+          Size.Width = 316.000000000000000000
+          Size.Height = 44.000000000000000000
+          Size.PlatformDefault = False
+          StyleLookup = 'listboxitemnodetail'
+          TabOrder = 1
+          Text = 'Host'
+          object txtHost: TClearingEdit
+            Touch.InteractiveGestures = [LongTap, DoubleTap]
+            Anchors = [akLeft, akTop, akRight]
+            TabOrder = 0
+            Text = 'www.sgcwebsockets.com'
+            Position.X = 56.000000000000000000
+            Position.Y = 5.000000000000000000
+            Size.Width = 253.000000000000000000
+            Size.Height = 31.000000000000000000
+            Size.PlatformDefault = False
+          end
+        end
+        object itemPort: TListBoxItem
+          Selectable = False
+          Position.Y = 67.000000000000000000
+          Size.Width = 316.000000000000000000
+          Size.Height = 44.000000000000000000
+          Size.PlatformDefault = False
+          StyleLookup = 'listboxitemnodetail'
+          TabOrder = 2
+          Text = 'Port'
+          object txtPort: TClearingEdit
+            Touch.InteractiveGestures = [LongTap, DoubleTap]
+            TabOrder = 0
+            Text = '2052'
+            Position.X = 56.000000000000000000
+            Position.Y = 5.000000000000000000
+            Size.Width = 105.000000000000000000
+            Size.Height = 31.000000000000000000
+            Size.PlatformDefault = False
+          end
+          object chkTLS: TCheckBox
+            Position.X = 176.000000000000000000
+            Position.Y = 8.000000000000000000
+            TabOrder = 1
+            Text = 'TLS'
+          end
+        end
+        object ListBoxItem1: TListBoxItem
+          Selectable = False
+          Position.Y = 111.000000000000000000
+          Size.Width = 316.000000000000000000
+          Size.Height = 44.000000000000000000
+          Size.PlatformDefault = False
+          StyleLookup = 'listboxitemnodetail'
+          TabOrder = 3
+          Text = 'Compressed'
+          object chkCompressed: TSwitch
+            Anchors = [akTop, akRight]
+            IsChecked = False
+            Position.X = 228.000000000000000000
+            Position.Y = 8.000000000000000000
+            Size.Width = 78.000000000000000000
+            Size.Height = 27.000000000000000000
+            Size.PlatformDefault = False
+            TabOrder = 0
+          end
+        end
+        object headerProxy: TListBoxGroupHeader
+          Position.Y = 155.000000000000000000
+          Size.Width = 316.000000000000000000
+          Size.Height = 23.000000000000000000
+          Size.PlatformDefault = False
+          StyleLookup = 'listboxitemnodetail'
+          TabOrder = 4
+          Text = 'Proxy'
+        end
+        object itemProxy: TListBoxItem
+          Selectable = False
+          Position.Y = 178.000000000000000000
+          Size.Width = 316.000000000000000000
+          Size.Height = 105.000000000000000000
+          Size.PlatformDefault = False
+          StyleLookup = 'listboxitemnodetail'
+          TabOrder = 5
+          object txtProxyHost: TClearingEdit
+            Touch.InteractiveGestures = [LongTap, DoubleTap]
+            TabOrder = 0
+            Text = 'Host'
+            Position.X = 16.000000000000000000
+            Position.Y = 32.000000000000000000
+            Enabled = False
+            Size.Width = 145.000000000000000000
+            Size.Height = 31.000000000000000000
+            Size.PlatformDefault = False
+          end
+          object txtProxyPort: TClearingEdit
+            Touch.InteractiveGestures = [LongTap, DoubleTap]
+            Anchors = [akTop, akRight]
+            TabOrder = 1
+            KeyboardType = NumberPad
+            Text = '8080'
+            Position.X = 164.000000000000000000
+            Position.Y = 32.000000000000000000
+            Enabled = False
+            Size.Width = 137.000000000000000000
+            Size.Height = 31.000000000000000000
+            Size.PlatformDefault = False
+          end
+          object txtProxyUser: TClearingEdit
+            Touch.InteractiveGestures = [LongTap, DoubleTap]
+            TabOrder = 2
+            KeyboardType = Alphabet
+            Text = 'User'
+            Position.X = 16.000000000000000000
+            Position.Y = 64.000000000000000000
+            Enabled = False
+            Size.Width = 145.000000000000000000
+            Size.Height = 31.000000000000000000
+            Size.PlatformDefault = False
+          end
+          object txtProxyPass: TClearingEdit
+            Touch.InteractiveGestures = [LongTap, DoubleTap]
+            Anchors = [akTop, akRight]
+            TabOrder = 3
+            KeyboardType = Alphabet
+            Password = True
+            Text = 'Password'
+            Position.X = 164.000000000000000000
+            Position.Y = 64.000000000000000000
+            Enabled = False
+            Size.Width = 137.000000000000000000
+            Size.Height = 31.000000000000000000
+            Size.PlatformDefault = False
+          end
+          object chkProxy: TSwitch
+            Anchors = [akTop, akRight]
+            IsChecked = False
+            Position.X = 164.000000000000000000
+            Position.Y = 3.000000000000000000
+            Size.Width = 78.000000000000000000
+            Size.Height = 27.000000000000000000
+            Size.PlatformDefault = False
+            TabOrder = 4
+            OnSwitch = chkProxySwitch
+          end
+          object Label2: TLabel
+            Position.X = 16.000000000000000000
+            Position.Y = 5.000000000000000000
+            Size.Width = 113.000000000000000000
+            Size.Height = 21.000000000000000000
+            Size.PlatformDefault = False
+            Text = 'Proxy Enabled'
+          end
+        end
+      end
+    end
+  end
+  object WSClient: TsgcWebSocketClient
+    Host = 'esegece.com'
+    Port = 5414
+    ConnectTimeout = 0
+    ReadTimeout = -1
+    WriteTimeout = 0
+    TLS = False
+    Proxy.Enabled = False
+    Proxy.Port = 8080
+    Proxy.ProxyType = pxyHTTP
+    HeartBeat.Enabled = False
+    HeartBeat.Interval = 300
+    HeartBeat.Timeout = 0
+    IPVersion = Id_IPv4
+    OnConnect = WSClientConnect
+    OnMessage = WSClientMessage
+    OnDisconnect = WSClientDisconnect
+    OnError = WSClientError
+    OnException = WSClientException
+    Authentication.Enabled = False
+    Authentication.URL.Enabled = True
+    Authentication.Session.Enabled = True
+    Authentication.Basic.Enabled = True
+    Authentication.Token.Enabled = False
+    Authentication.Token.AuthName = 'Bearer'
+    Extensions.DeflateFrame.Enabled = False
+    Extensions.DeflateFrame.WindowBits = 15
+    Extensions.PerMessage_Deflate.Enabled = False
+    Extensions.PerMessage_Deflate.ClientMaxWindowBits = 15
+    Extensions.PerMessage_Deflate.ClientNoContextTakeOver = False
+    Extensions.PerMessage_Deflate.MemLevel = 1
+    Extensions.PerMessage_Deflate.ServerMaxWindowBits = 15
+    Extensions.PerMessage_Deflate.ServerNoContextTakeOver = False
+    Options.CleanDisconnect = False
+    Options.FragmentedMessages = frgOnlyBuffer
+    Options.Parameters = '/'
+    Options.RaiseDisconnectExceptions = True
+    Options.ValidateUTF8 = False
+    Specifications.Drafts.Hixie76 = False
+    Specifications.RFC6455 = True
+    NotifyEvents = neAsynchronous
+    LogFile.Enabled = False
+    QueueOptions.Binary.Level = qmNone
+    QueueOptions.Ping.Level = qmNone
+    QueueOptions.Text.Level = qmNone
+    WatchDog.Attempts = 0
+    WatchDog.Enabled = False
+    WatchDog.Interval = 10
+    Throttle.BitsPerSec = 0
+    Throttle.Enabled = False
+    LoadBalancer.Enabled = False
+    LoadBalancer.Port = 0
+    TLSOptions.VerifyCertificate = False
+    TLSOptions.VerifyDepth = 0
+    TLSOptions.Version = tlsUndefined
+    TLSOptions.IOHandler = iohOpenSSL
+    TLSOptions.OpenSSL_Options.APIVersion = oslAPI_1_0
+    TLSOptions.OpenSSL_Options.LibPath = oslpNone
+    TLSOptions.SChannel_Options.CertStoreName = scsnMY
+    TLSOptions.SChannel_Options.CertStorePath = scspStoreCurrentUser
+    Left = 8
+    Top = 8
+  end
+end

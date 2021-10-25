@@ -2,7 +2,7 @@ unit DataMeshGroup.Fusion.IMessageParser;
 
 interface
 
-uses DataMeshGroup.Fusion.SaleToPOIMessage,
+uses DataMeshGroup.Fusion.SaleToPOIRequest,
   DataMeshGroup.Fusion.MessagePayload;
 
 type

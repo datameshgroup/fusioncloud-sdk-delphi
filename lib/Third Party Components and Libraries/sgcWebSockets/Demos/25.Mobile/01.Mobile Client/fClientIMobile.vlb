@@ -1,0 +1,13 @@
+﻿[]
+Coordinates=280,133,107,58
+Visible=True
+
+[ToolBar1]
+Coordinates=243,1,67,36
+
+[Label1]
+Coordinates=88,87,53,58
+
+[WSClient]
+Coordinates=173,1,45,36
+

@@ -2,23 +2,23 @@ unit DataMeshGroup.Fusion.WebSocket;
 
 interface
 
-uses DataMeshGroup.Fusion.IWebSocket, OverbyteIcsWSocket,
-  OverbyteIcsIniFiles, StdCtrls, ExtCtrls, OverbyteIcsHttpProt,
-  OverbyteIcsLIBEAY, OverbyteIcsSsLeay, OverbyteIcsSslSessionCache,
-  OverbyteIcsLogger, OverbyteIcsSslX509Utils;
+uses DataMeshGroup.Fusion.IWebSocket, sgcWebSocket, sgcWebSocket_Classes,
+  System.Classes, Vcl.ExtCtrls, System.SysUtils,
+  DataMeshGroup.Fusion.IFusionClient;
 
 type
-  TEventOnSessionConnected = procedure(ASender: TObject) of object;
-
   TWebSocket = class(TInterfacedObject, IWebSocket)
   private
-    FWebSocket: TSslHttpCli;
-    FSslContext: TSslContext;
+    FWebSocket: TsgcWebSocketClient;
     FAddress: string;
+    FIsMsgRecvdFrServer: Boolean;
     FPort: string;
+    FOnConnect: TNotifyEvent;
+    FOnDisconnect: TNotifyEvent;
+    FOnMessage: TEventOnReceiveMessage;
+    FOnError: TEventOnReceiveMessage;
+    FTimeout: Integer;
     FProtocol: string;
-    FOnConnect: TOnConnect;
-    FOnSessionConnected: TEventOnSessionConnected;
 
     function GetAddress: string;
     procedure SetAddress(AAddress: string);
@@ -29,22 +29,28 @@ type
     function GetProtocol: string;
     procedure SetProtocol(AProtocol: string);
 
-    procedure PrepareConnection;
-    function GetConnectionMsg(AMsg: string): string;
+    function GetTimeout: Integer;
+    procedure SetTimeout(ATimeout: Integer);
 
-    procedure SetSSL;
+    function GetOnMessage: TEventOnReceiveMessage;
+    procedure SetOnMessage(AEventOnReceiveMessage: TEventOnReceiveMessage);
+
+    function GetOnError: TEventOnReceiveMessage;
+    procedure SetOnError(AEventOnError: TEventOnReceiveMessage);
   public
-    procedure Send(ASender: TObject; AErrCode: Word);
-    procedure Receive(ASender: TObject; AErrCode: Word);
     function Connect: Boolean;
     procedure Disconnect;
-    function WebSocketState: string;
+    function Send(const AMsg: string): Boolean;
 
+    property Timeout: Integer read GetTimeout write SetTimeout;
     property Address: string read GetAddress write SetAddress;
     property Port: string read GetPort write SetPort;
     property Protocol: string read GetProtocol write SetProtocol;
-    property OnSessionConnected: TEventOnSessionConnected
-      read FOnSessionConnected write FOnSessionConnected;
+    property OnConnect: TNotifyEvent read FOnConnect write FOnConnect;
+    property OnDisconnect: TNotifyEvent read FOnDisconnect write FOnDisconnect;
+    property OnMessage: TEventOnReceiveMessage read GetOnMessage
+      write SetOnMessage;
+    property OnError: TEventOnReceiveMessage read GetOnError write SetOnError;
 
     constructor Create;
     destructor Destroy; override;
@@ -52,56 +58,80 @@ type
 
 implementation
 
+uses System.StrUtils, Vcl.Dialogs;
+
 { TWebSocket }
 
-uses System.SysUtils, System.StrUtils, OverbyteIcsUtils;
-
 function TWebSocket.Connect: Boolean;
-begin
-  SetSSL;
-  // this event will be executed when we have a successful connection
-  //  FWebSocket.OnSessionConnected := FOnSessionConnected;
 
-  // establish connection
-  PrepareConnection;
-  if not FSslContext.IsCtxInitialized then
-    Exit;
+  procedure GetAddressAndParameter(out AUrl: string; out AParameter: string);
+  var
+    CharPos: Integer;
+    Param: string;
 
-  FWebSocket.Get;
-end;
+    function GetParameter(AParam: string; out APos: Integer): string;
+    begin
+      APos := AnsiPos(AParam, AUrl);
 
-function TWebSocket.GetConnectionMsg(AMsg: string): string;
-var
-  i, j: Integer;
-begin
-  while i < Length(AMsg) do
+      if APos > 0 then
+        Result := Trim(Copy(AUrl, APos, Length(AUrl)))
+      else
+        Result := '';
+    end;
+
   begin
-    j := i;
-
-    while (i <= Length(AMsg)) and (AMsg[i] <> #10) do
-      Inc(i);
-
-    if (i > 1) and (i <= Length(AMsg)) and (AMsg[i] = #10) and (AMsg[i-1] = #13) then
-      Result := Copy(AMsg, j, i -j - 1) + sLineBreak
+    // remove wss:// or https:// or http://
+    if ContainsText(FAddress, 'https://') then
+      AUrl := ReplaceText(FAddress, 'https://', '')
     else
-      Result := Copy(AMsg, j, i - j);
+    if ContainsText(FAddress, 'http://') then
+      AUrl := ReplaceText(FAddress, 'http://', '')
+    else
+    if ContainsText(FAddress, 'wss://') then
+      AUrl := ReplaceText(FAddress, 'wss://', '')
+    else
+    if ContainsText(FAddress, 'ws://') then
+      AUrl := ReplaceText(FAddress, 'ws://', '');
 
-    Inc(i);
+    // get the parameter
+    AParameter := GetParameter('/', CharPos);
+    if CharPos = 0 then
+      AParameter := GetParameter(':', CharPos);
+
+    // get the URL
+    AUrl := Copy(AUrl, 1, CharPos - 1);
   end;
 
+var
+  Host: string;
+  HostParam: string;
+begin
+  GetAddressAndParameter(Host, HostParam);
+  FWebSocket.Host := 'www.cloudposintegration.io';// Host;
+  FWebSocket.Options.Parameters := '/nexodev';//HostParam;
+  FWebSocket.Port := 443; // FPort.ToInteger;
+  FWebSocket.TLS := True;
+  FWebSocket.OnConnect := TsgcWSConnectEvent(FOnConnect);
+  FWebSocket.OnDisconnect := TsgcWSDisconnectEvent(FOnDisconnect);
+  FWebSocket.OnMessage := TsgcWSMessageEvent(FOnMessage);
+  FWebSocket.OnError := TsgcWSMessageEvent(OnError);
+
+  FWebSocket.Active := True;
 end;
 
 constructor TWebSocket.Create;
+var
+  OnConnect: TsgcWSConnectEvent;
 begin
-  inherited;
-
-  FWebSocket := TSslHttpCli.Create(nil);
-  FSslContext := TSslContext.Create(nil);
+  FWebSocket := TsgcWebSocketClient.Create(nil);
+  FIsMsgRecvdFrServer := False;
 end;
 
 destructor TWebSocket.Destroy;
 begin
-  FSslContext.Free;
+  if Assigned(FWebSocket) then
+    FWebSocket.Active := False;
+
   FWebSocket.Free;
 
   inherited;
@@ -109,12 +139,23 @@ end;
 
 procedure TWebSocket.Disconnect;
 begin
-  FWebSocket.Close;
+  if Assigned(FWebSocket) then
+    FWebSocket.Active := False;
 end;
 
 function TWebSocket.GetAddress: string;
 begin
   Result := FAddress;
+end;
+
+function TWebSocket.GetOnError: TEventOnReceiveMessage;
+begin
+  Result := FOnError;
+end;
+
+function TWebSocket.GetOnMessage: TEventOnReceiveMessage;
+begin
+  Result := FOnMessage;
 end;
 
 function TWebSocket.GetPort: string;
@@ -127,82 +168,30 @@ begin
   Result := FProtocol;
 end;
 
-procedure TWebSocket.SetSSL;
+function TWebSocket.GetTimeout: Integer;
 begin
-  GSSLEAY_DLL_IgnoreNew := False;  { V8.03 ignore OpenSSL 1.1.0 and later }
-  LoadSsl;                            { V8.66 need version number }
+  Result := FTimeout;
 end;
 
-procedure TWebSocket.PrepareConnection;
-
-  function RemoveProtocol: string;
-  begin
-    // remove wss:// or https:// or http://
-    // these will be converted by the TSslHttpCli to https/wss
-    if ContainsText(FAddress, 'https://') then
-      Result := ReplaceText(FAddress, 'https://', '')
-    else
-    if ContainsText(FAddress, 'http://') then
-      Result := ReplaceText(FAddress, 'http://', '')
-    else
-    if ContainsText(FAddress, 'wss://') then
-      Result := ReplaceText(FAddress, 'wss://', '')
-    else
-    if ContainsText(FAddress, 'ws://') then
-      Result := ReplaceText(FAddress, 'ws://', '');
-  end;
-
+function TWebSocket.Send(const AMsg: string): Boolean;
 begin
-  FWebSocket.SslContext := FSslContext;
-  FWebSocket.SocksAuthentication := socksNoAuthentication;
-  FWebSocket.ProxyAuth := httpAuthNone;
-  FWebSocket.SocksServer := '';
-  FWebSocket.SocksPort   := '';
-  FWebSocket.SocksLevel  := '5';
-  FWebSocket.Proxy         := '';
-  FWebSocket.ProxyPort     := '';
-  FWebSocket.ProxyURL      := '';
-  FWebSocket.URL            := RemoveProtocol;
-  FWebSocket.AcceptLanguage := 'en, fr';
-  FWebSocket.Connection     := 'Keep-Alive';
-  FWebSocket.RequestVer     := '1.1';
-  FWebSocket.SocketFamily   := TSocketFamily(0);
-  FWebSocket.ModifiedSince := 0;
-
-
-  // V8.03 no CA file or path or lines, use defaults Root CA Certs Bundle
-  if (FSslContext.SslCAFile = '') and (FSslContext.SslCAPath = '') and
-     (FSslContext.SslCALines.Count = 0) then
-    FSslContext.SslCALines.Text := sslRootCACertsBundle;
-
-  FSslContext.SslVerifyPeer       := False;
-  // V8.03 SslVersionMethod is ignored by OpenSSL 1.1.0 and later which uses SslMinVersion and SslMaxVersion instead
-  FSslContext.SslMinVersion       := TSslVerMethod (0);  { V8.03}
-  FSslContext.SslMaxVersion       := TSslVerMethod (5);  { V8.03}
-  FSslContext.SslCipherList       := 'ALL:!ADH:RC4+RSA:+SSLv2:@STRENGTH';                 { V8.01 }
-  FSslContext.SslCliSecurity      := TSslcliSecurity(0);   { V8.62 }
-
-  try
-    FSslContext.InitContext;  { V8.01 get any error now before making request }
-  except
-    on E:Exception do
-      raise Exception.Create('Failed to initialize SSL Context: ' + E.Message);
-  end;
-end;
-
-procedure TWebSocket.Receive(ASender: TObject; AErrCode: Word);
-begin
-
-end;
-
-procedure TWebSocket.Send(ASender: TObject; AErrCode: Word);
-begin
-
+  // try to send the message
+  FWebSocket.WriteData(AMsg);
 end;
 
 procedure TWebSocket.SetAddress(AAddress: string);
 begin
   FAddress := AAddress;
+end;
+
+procedure TWebSocket.SetOnError(AEventOnError: TEventOnReceiveMessage);
+begin
+  FOnError := AEventOnError;
+end;
+
+procedure TWebSocket.SetOnMessage(AEventOnReceiveMessage: TEventOnReceiveMessage);
+begin
+  FOnMessage := AEventOnReceiveMessage;
 end;
 
 procedure TWebSocket.SetPort(APort: string);
@@ -215,26 +204,9 @@ begin
   FProtocol := AProtocol;
 end;
 
-function TWebSocket.WebSocketState: string;
+procedure TWebSocket.SetTimeout(ATimeout: Integer);
 begin
-//  case FWebSocket.State of
-//    httpReady: Result := 'Ready';
-//    httpNotConnected: Result := 'Not Connected';
-//    httpConnected: Result := 'Connected';
-//    httpDnsLookup: Result := 'DNS Lookup';
-//    httpDnsLookupDone: Result := 'DNS Lookup Done';
-//    httpWaitingHeader: Result := 'Waiting Header';
-//    httpWaitingBody: Result := 'Waiting Body';
-//    httpBodyReceived: Result := 'Body Received';
-//    httpWaitingProxyConnect: Result := 'Waiting Proxy Connect';
-//    httpClosing: Result := 'Closing';
-//    httpAborting: Result := 'Aborting';
-//  end;
-
-//  if FWebSocket. Connected then
-//    Result := Result + ' connected'
-//  else
-//    Result := Result + ' ...';
+  FTimeout := ATimeout;
 end;
 
 end.

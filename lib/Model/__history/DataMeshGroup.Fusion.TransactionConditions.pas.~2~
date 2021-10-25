@@ -1,0 +1,12 @@
+unit DataMeshGroup.Fusion.TransactionConditions;
+
+interface
+
+type
+  TTransactionConditions = class
+
+  end;
+
+implementation
+
+end.

@@ -1,0 +1,38 @@
+unit DataMeshGroup.Fusion.PaymentData;
+
+interface
+
+uses DataMeshGroup.Fusion.Types, NullableTypes;
+
+type
+  TPaymentData = class
+  private
+    FPaymentType: TPaymentType;
+    FSplitPaymentFlag: TNullableBool;
+  public
+    /// <summary>
+    /// Defaults to "Normal". Indicates the type of payment to process. "Normal", "Refund", or "CashAdvance".
+    /// </summary>
+    property PaymentType: TPaymentType read FPaymentType write FPaymentType;
+
+    property SplitPaymentFlag: TNullableBool read FSplitPaymentFlag
+      write FSplitPaymentFlag;
+    property TransactionIdentification CardAcquisitionReference { get; set; }
+    property string RequestedValidityDate { get; set; }
+    //public Instalment Instalment { get; set; }
+    //public CustomerOrder CustomerOrder { get; set; }
+    property PaymentInstrumentData PaymentInstrumentData { get; set; }
+
+    constructor Create;
+  end;
+
+implementation
+
+{ TPaymentData }
+
+constructor TPaymentData.Create;
+begin
+  FPaymentType := TPaymentType.Normal;
+end;
+
+end.

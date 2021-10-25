@@ -1,0 +1,54 @@
+﻿<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <ProjectGuid>{f8c902dd-9e7f-4df6-97f7-bec4c9538dd0}</ProjectGuid>
+  </PropertyGroup>
+  <ItemGroup />
+  <ItemGroup>
+    <Projects Include="sgcAppClient.dproj" />
+    <Projects Include="sgcAppServer.dproj" />
+    <Projects Include="sgcLibrary.dproj" />
+  </ItemGroup>
+  <ProjectExtensions>
+    <Borland.Personality>Default.Personality</Borland.Personality>
+    <Borland.ProjectType />
+    <BorlandProject>
+  <BorlandProject xmlns=""> <Default.Personality> </Default.Personality> </BorlandProject></BorlandProject>
+  </ProjectExtensions>
+  <Target Name="sgcLibrary">
+    <MSBuild Projects="sgcLibrary.dproj" Targets="" />
+  </Target>
+  <Target Name="sgcLibrary:Clean">
+    <MSBuild Projects="sgcLibrary.dproj" Targets="Clean" />
+  </Target>
+  <Target Name="sgcLibrary:Make">
+    <MSBuild Projects="sgcLibrary.dproj" Targets="Make" />
+  </Target>
+  <Target Name="sgcAppClient">
+    <MSBuild Projects="sgcAppClient.dproj" Targets="" />
+  </Target>
+  <Target Name="sgcAppClient:Clean">
+    <MSBuild Projects="sgcAppClient.dproj" Targets="Clean" />
+  </Target>
+  <Target Name="sgcAppClient:Make">
+    <MSBuild Projects="sgcAppClient.dproj" Targets="Make" />
+  </Target>
+  <Target Name="sgcAppServer">
+    <MSBuild Projects="sgcAppServer.dproj" Targets="" />
+  </Target>
+  <Target Name="sgcAppServer:Clean">
+    <MSBuild Projects="sgcAppServer.dproj" Targets="Clean" />
+  </Target>
+  <Target Name="sgcAppServer:Make">
+    <MSBuild Projects="sgcAppServer.dproj" Targets="Make" />
+  </Target>
+  <Target Name="Build">
+    <CallTarget Targets="sgcLibrary;sgcAppClient;sgcAppServer" />
+  </Target>
+  <Target Name="Clean">
+    <CallTarget Targets="sgcLibrary:Clean;sgcAppClient:Clean;sgcAppServer:Clean" />
+  </Target>
+  <Target Name="Make">
+    <CallTarget Targets="sgcLibrary:Make;sgcAppClient:Make;sgcAppServer:Make" />
+  </Target>
+  <Import Condition="Exists('$(MSBuildBinPath)\Borland.Group.Targets')" Project="$(MSBuildBinPath)\Borland.Group.Targets" />
+</Project>

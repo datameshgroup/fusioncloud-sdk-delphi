@@ -1,0 +1,52 @@
+unit DataMeshGroup.Fusion.AmountsReq;
+
+interface
+
+uses DataMeshGroup.Fusion.Types, NullableTypes,
+  Neon.Core.Attributes;
+
+type
+  TAmountsReq = class
+  private
+    FCurrencySymbol: TCurrencySymbol;
+    FRequestedAmount: TNullableCurrency;
+    FCashBackAmount: TNullableCurrency;
+    FTipAmount: TNullableCurrency;
+    FSurchargeAmount: TNullableCurrency;
+    FPaidAmount: TNullableCurrency;
+    FMinimumAmountDeliver: TNullableCurrency;
+    FMaximumCashBackAmount: TNullableCurrency;
+    FMinimumSplitAmount: TNullableCurrency;
+  public
+    [NeonInclude(IncludeIf.NotEmpty)]
+    property CurrencySymbol: TCurrencySymbol read FCurrencySymbol
+      write FCurrencySymbol default TCurrencySymbol.AUD;
+    [NeonInclude(IncludeIf.NotEmpty)]
+    property RequestedAmount: TNullableCurrency read FRequestedAmount
+      write FRequestedAmount;
+    [NeonInclude(IncludeIf.NotEmpty)]
+    property CashBackAmount: TNullableCurrency read FCashBackAmount
+      write FCashBackAmount;
+    [NeonInclude(IncludeIf.NotEmpty)]
+    property TipAmount: TNullableCurrency read FTipAmount
+      write FTipAmount;
+    [NeonInclude(IncludeIf.NotEmpty)]
+    property SurchargeAmount: TNullableCurrency read FSurchargeAmount
+      write FSurchargeAmount;
+    [NeonInclude(IncludeIf.NotEmpty)]
+    property PaidAmount: TNullableCurrency read FPaidAmount
+      write FPaidAmount;
+    [NeonInclude(IncludeIf.NotEmpty)]
+    property MinimumAmountDeliver: TNullableCurrency read FMinimumAmountDeliver
+      write FMinimumAmountDeliver;
+    [NeonInclude(IncludeIf.NotEmpty)]
+    property MaximumCashBackAmount: TNullableCurrency read FMaximumCashBackAmount
+      write FMaximumCashBackAmount;
+    [NeonInclude(IncludeIf.NotEmpty)]
+    property MinimumSplitAmount: TNullableCurrency read FMinimumSplitAmount
+      write FMinimumSplitAmount;
+  end;
+
+implementation
+
+end.

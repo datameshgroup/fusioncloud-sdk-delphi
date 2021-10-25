@@ -7,26 +7,48 @@ uses
   System.Classes, Vcl.Graphics,
   Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls,
   DataMeshGroup.Fusion.FusionClient, DataMeshGroup.Fusion.IFusionClient,
-  DataMeshGroup.Fusion.Types;
+  DataMeshGroup.Fusion.Types, DataMeshGroup.Fusion.MessagePayload,
+  System.Generics.Collections, Vcl.ExtCtrls,
+
+  // tests
+  sgcWebSocket, sgcWebSocket_Classes, sgcBase_Classes, sgcSocket_Classes,
+  sgcTCP_Classes, sgcWebSocket_Classes_Indy, sgcWebSocket_Client,
+  DataMeshGroup.Fusion.WebSocket;
 
 type
   TFrmMain = class(TForm)
-    BtnConnectCustom: TButton;
-    EdtCustomURL: TEdit;
-    LblCustomURL: TLabel;
     BtnConnectTest: TButton;
-    BtnConnectProd: TButton;
-    LblToEncrypt: TLabel;
-    LblEncryptResult: TLabel;
-    BtnEncrypt: TButton;
-    Lbl1: TLabel;
-    Lbl2: TLabel;
-    procedure BtnConnectCustomClick(Sender: TObject);
-    procedure BtnEncryptClick(Sender: TObject);
+    BtnLogInReq: TButton;
+    Mmo1: TMemo;
+    BtnDisconnect: TButton;
+    BtnPaymentReq: TButton;
+    BtnLogoutRequest: TButton;
+    BtnInputRequest: TButton;
+    BtnPrintRequest: TButton;
+    BtnTransStatRequest: TButton;
+    BtnAbortTransRequest: TButton;
+    BtnReconciliationRequest: TButton;
+    BtnCardAcquisitionRequest: TButton;
+    procedure BtnConnectTestClick(Sender: TObject);
+    procedure BtnDisconnectClick(Sender: TObject);
+    procedure OnConnect(ASender: TObject);
+    procedure OnDisconnect(ASender: TObject);
+    procedure OnReceiveMessage(ASender: TObject; const Text: string);
+    procedure BtnLogInReqClick(Sender: TObject);
+    procedure BtnPaymentReqClick(Sender: TObject);
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
     procedure FormShow(Sender: TObject);
+    procedure ws1Connect(Connection: TsgcWSConnection);
+  private const
+    ProvIdent = '<set the provider identification>';
+    AppName = '<set the application name>';
+    SoftwareVer = '<set the version number>';
+    CertCode = 'set the certification code';
+
   private
-    FFusionClient: IFusionClient;
+    ws: TsgcWebSocketClient;
+    FFusionClient: TFusionClient;
+    FIsConnected: Boolean;
 
     procedure Connect(ASender: TObject);
   public
@@ -38,56 +60,87 @@ var
 
 implementation
 
-uses DataMeshGroup.Fusion.LoginRequest, System.Threading,
-  DataMeshGroup.Fusion.Crypto;
+uses DataMeshGroup.Fusion.LoginRequest,
+  DataMeshGroup.Fusion.PaymentRequest,
+  DataMeshGroup.Fusion.Crypto, DataMeshGroup.Fusion.SaleData,
+  DataMeshGroup.Fusion.TransactionIdentification,
+  DataMeshGroup.Fusion.PaymentTransaction,
+  DataMeshGroup.Fusion.SaleItem;
 
 {$R *.dfm}
 
-procedure TFrmMain.BtnConnectCustomClick(Sender: TObject);
+procedure TFrmMain.BtnConnectTestClick(Sender: TObject);
 begin
-//  Screen.Cursor := crHourGlass;
-  Connect(Sender);
-
+  Connect(BtnConnectTest);
 end;
 
-procedure TFrmMain.BtnEncryptClick(Sender: TObject);
-var
-  Crypto: TCrypto;
+procedure TFrmMain.BtnDisconnectClick(Sender: TObject);
 begin
-  Crypto := TCrypto.Create;
+  FFusionClient.Disconnect;
+end;
+
+procedure TFrmMain.BtnLogInReqClick(Sender: TObject);
+var
+  LoginReq: TLoginRequest;
+begin
+  LoginReq := TLoginRequest.Create(ProvIdent, AppName, SoftwareVer, CertCode);
   try
-    LblEncryptResult.Caption := Crypto.Encrypt(LblToEncrypt.Caption, TEncEnv.EETest);
+    FFusionClient.SendMessage(LoginReq, FFusionClient.ServiceID, FFusionClient.SaleID,
+      FFusionClient.PoiID, FFusionClient.KEK);
   finally
-    Crypto.free;
+    LoginReq.Free;
+  end;
+end;
+
+procedure TFrmMain.BtnPaymentReqClick(Sender: TObject);
+var
+  PaymentReq: TPaymentRequest;
+  SaleItem: TSaleItem;
+  SaleItemArr: TList<TSaleItem>;
+begin
+  SaleItem := TSaleItem.Create;
+  try
+    SaleItem.ItemID := 23;
+    SaleItem.ProductCode := 'Test Prod Code001';
+    SaleItem.UnitOfMeasure := TUnitOfMeasure.Litre;
+    SaleItem.UnitPrice := 12.53;
+    SaleItem.ProductLabel := 'Test Prod Label';
+
+    SaleItemArr := TList<TSaleItem>.Create;
+    SaleItemArr.Add(SaleItem);
+
+    PaymentReq := TPaymentRequest.Create('0001TransID', 4.03, SaleItemArr,
+      TPaymentType.Normal);
+    try
+      FFusionClient.SendMessage(PaymentReq, FFusionClient.ServiceID,
+        FFusionClient.SaleID, FFusionClient.PoiID, FFusionClient.KEK);
+    finally
+      PaymentReq.Free;
+    end;
+  finally
+    SaleItem.Free;
   end;
 end;
 
 // documentation: https://datameshgroup.github.io/fusion/#appendix-terminal-configuration-pax-terminals
 
 procedure TFrmMain.Connect(ASender: TObject);
-var
-  URL: TUnifyURL;
-  test: string;
 begin
   // init the interface
   FFusionClient := TFusionClient.Create(True);
 
-  // set the url to connect to
-  if ASender = BtnConnectTest then
-    URL := TUnifyURL.Test
-  else
-  if ASender = BtnConnectProd then
-    URL := TUnifyURL.Production
-  else
-  if ASender = BtnConnectCustom then
-  begin
-    URL := TUnifyURL.Custom;
-    FFusionClient.CustomURL := EdtCustomURL.Text;
-  end;
-
-  FFusionClient.URL := URL;
+  // set the fusion client
+  FFusionClient.URL := TUnifyURL.Test;
   FFusionClient.Port := '443';
   FFusionClient.Protocol := 'tcp';
+  FFusionClient.OnConnect := OnConnect;
+  FFusionClient.OnDisconnect := OnDisconnect;
+  FFusionClient.OnReceiveMessage := OnReceiveMessage;
+  FFusionClient.DefaultTimeout := 10;
+  FFusionClient.ServiceID := FFusionClient.UpdateServiceID;
+  FFusionClient.SaleID := '<set the sale id>';
+  FFusionClient.PoiID := '<set the poi id>';
+  FFusionClient.Kek := '<set the kek>';
 
   FFusionClient.Connect;
 end;
@@ -100,7 +153,34 @@ end;
 
 procedure TFrmMain.FormShow(Sender: TObject);
 begin
-  EdtCustomURL.Clear;
+  FIsConnected := False;
+
+  Mmo1.Lines.Clear;
+end;
+
+procedure TFrmMain.OnDisconnect(ASender: TObject);
+begin
+  FIsConnected := False;
+
+  Mmo1.Lines.Add('Session Closed');
+end;
+
+procedure TFrmMain.OnReceiveMessage(ASender: TObject; const Text: string);
+begin
+  Mmo1.Lines.Add('----------------------------------------');
+  Mmo1.Lines.Add(Text);
+end;
+
+procedure TFrmMain.OnConnect(ASender: TObject);
+begin
+  FIsConnected := True;
+
+  Mmo1.Lines.Add('Session Connected');
+end;
+
+procedure TFrmMain.ws1Connect(Connection: TsgcWSConnection);
+begin
+  Mmo1.Lines.Add('connected');
 end;
 
 end.

@@ -107,8 +107,8 @@ object MsVerifyForm: TMsVerifyForm
       OnClick = ShowCertButtonClick
     end
     object DisconnectButton: TButton
-      Left = 437
-      Top = 36
+      Left = 434
+      Top = 34
       Width = 75
       Height = 25
       Anchors = [akTop, akRight]
@@ -136,10 +136,13 @@ object MsVerifyForm: TMsVerifyForm
     LocalAddr6 = '::'
     LocalPort = '0'
     SocksLevel = '5'
+    ExclusiveAddr = False
     ComponentOptions = []
+    ListenBacklog = 15
     OnDataAvailable = SslWSocket1DataAvailable
     OnSessionClosed = SslWSocket1SessionClosed
     OnSessionConnected = SslWSocket1SessionConnected
+    SocketErrs = wsErrTech
     SslContext = SslContext1
     SslEnable = True
     SslMode = sslModeClient
@@ -168,7 +171,10 @@ object MsVerifyForm: TMsVerifyForm
     SslVerifyPeer = False
     SslVerifyDepth = 9
     SslVerifyFlags = []
+    SslCheckHostFlags = []
+    SslSecLevel = sslSecLevel80bits
     SslOptions = []
+    SslOptions2 = []
     SslVerifyPeerModes = [SslVerifyMode_PEER]
     SslSessionCacheModes = [sslSESS_CACHE_CLIENT, sslSESS_CACHE_NO_INTERNAL_LOOKUP, sslSESS_CACHE_NO_INTERNAL_STORE]
     SslCipherList = 'ALL:!ADH:RC4+RSA:+SSLv2:@STRENGTH'
@@ -176,6 +182,8 @@ object MsVerifyForm: TMsVerifyForm
     SslMinVersion = sslVerSSL3
     SslMaxVersion = sslVerMax
     SslECDHMethod = sslECDHAuto
+    SslCryptoGroups = 'P-256:X25519:P-384:P-512'
+    SslCliSecurity = sslCliSecIgnore
     SslSessionTimeout = 5000
     SslSessionCacheSize = 20480
     AutoEnableBuiltinEngines = False

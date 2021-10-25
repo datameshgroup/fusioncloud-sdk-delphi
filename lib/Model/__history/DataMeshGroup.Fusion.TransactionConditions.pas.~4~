@@ -1,0 +1,32 @@
+unit DataMeshGroup.Fusion.TransactionConditions;
+
+interface
+
+uses System.Generics.Collections, DataMeshGroup.Fusion.Types, NullableTypes;
+
+type
+  TTransactionConditions = class
+  private
+    FAllowedPaymentBrands: TList<TPaymentBrand>;
+    FAcquirerID: TList<string>;
+    DebitPreferredFlag: TNullableBool;
+    LoyaltyHandling: string;
+    FCustomerLanguage: string;
+    FForceOnlineFlag: TNullableBool;
+    FForceEntryMode: TList<TEntryMode>;
+    FMerchantCategoryCode: string;
+  public
+    property AllowedPaymentBrands { get; set; }
+    property AcquirerID { get; set; }
+    property DebitPreferredFlag { get; set; }
+    //property string AllowedLoyaltyBrand { get; set; }
+    property LoyaltyHandling { get; set; }
+    property CustomerLanguage { get; set; }
+    property ForceOnlineFlag { get; set; }
+    property ForceEntryMode { get; set; }
+    property MerchantCategoryCode { get; set; }
+  end;
+
+implementation
+
+end.

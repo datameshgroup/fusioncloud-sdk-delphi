@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>Server Quotes Demo</title>
+	<script src="http://127.0.0.1:5413/sgcWebSockets.js"></script>
+	<script src="http://127.0.0.1:5413/dataset.esegece.com.js"></script>
+	<link rel="stylesheet" href="http://code.jquery.com/mobile/1.1.0/jquery.mobile-1.1.0.min.css" />
+	<script src="http://code.jquery.com/jquery-1.6.4.min.js"></script>
+	<script src="http://code.jquery.com/mobile/1.1.0/jquery.mobile-1.1.0.min.js"></script>
+<script type="text/javascript">
+var ws;
+function wsquotes()
+{
+      var ws = new sgcws_dataset("ws://127.0.0.1:5413");
+	  ws.on('open', function(evt){
+		ws.subscribe_all();
+	  });
+      ws.on('sgcdataset', function(evt){ 
+		var id = evt.dataset["ID"];
+		var symbol = evt.dataset["NAME"];
+		var open = evt.dataset["OPEN"];
+		var high = evt.dataset["HIGH"];
+		var low = evt.dataset["LOW"];
+		var last = evt.dataset["LAST"];
+		if ($('#id' + id).text() == "") {
+			$('#portfolio').append('<tr><td align="left" id="id' + id + '"><b>' + symbol + '</b></td><td align="right">' + open + '</td><td align="right">' + high + '</td><td align="right">' + low + '</td><td align="right" id="last' + id + '">' + last + '</td></tr>'); 	
+		} else {
+		    var oldlast = $('#last' + id).text();
+			if (last > oldlast) {
+				$('#last' + id).css('color', '#03c22b');
+			} else {
+				$('#last' + id).css('color', '#ff0000');
+			}
+			$('#last' + id).css('font-weight', 'bold');
+			$('#last' + id).text(last);
+		  
+		 }
+		$("#portfolio tr:even").css("background-color", "#dedede");
+		$("#portfolio tr:odd").css("background-color", "#ffffff");
+		}
+	);
+}
+</script>
+
+</head> 
+<body> 
+<div data-role="page" id="wsdemo_quotes">
+
+	<div data-role="header" data-theme="b">
+		<h1>Real Time Quotes</h1>
+		<a href="#home" data-icon="home" data-iconpos="notext" data-direction="reverse" class="ui-btn-left jqm-home">Home</a>
+	</div><!-- /header -->
+
+	<div data-role="content">	
+		<h2>Press Start to get Real-Time Quotes</h2>
+			<a href="javascript:wsquotes()" data-role="button" data-inline="true">Start</a>
+			<a href="javascript:ws.close()" data-role="button" data-inline="true">stop</a>
+				<table id="portfolio" class="stockTable" cellSpacing="0" width="500px">
+					<tr>
+						<th class="symbol" width="50px"> Symbol </th>
+						<th class="open" width="40px"> Open </th>
+						<th class="high" width="40px"> High </th>
+						<th class="low" width="40px"> Low </th>
+						<th class="last" width="40px"> Last </th>
+					</tr>
+				</table>		
+	</div><!-- /content -->	
+	<div data-role="footer" class="footer-docs" data-theme="c">
+			<p>&copy; 2021 eSeGeCe.com</p>
+	</div>		
+</div><!-- /page -->
+
+</body>
+</html>

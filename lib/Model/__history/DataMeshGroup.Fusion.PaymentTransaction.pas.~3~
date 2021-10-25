@@ -1,0 +1,27 @@
+unit DataMeshGroup.Fusion.PaymentTransaction;
+
+interface
+
+uses System.Generics.Collections, DataMeshGroup.Fusion.AmountsReq,
+  DataMeshGroup.Fusion.OriginalPOITransaction,
+  DataMeshGroup.Fusion.TransactionConditions, DataMeshGroup.Fusion.SaleItem;
+
+type
+  TPaymentTransaction = class
+  private
+    FAmountsReq: TAmountsReq;
+    FOriginalPOITransaction: TOriginalPOITransaction;
+    FTransactionConditions: TTransactionConditions;
+    FSaleItem: TList<TSaleItem>;
+  public
+    property AmountsReq: TAmountsReq read FAmountsReq write FAmountsReq;
+    property OriginalPOITransaction: TOriginalPOITransaction
+      read FOriginalPOITransaction write FOriginalPOITransaction;
+    property TransactionConditions: TTransactionConditions
+      read FTransactionConditions write FTransactionConditions;
+    property SaleItem: TList<TSaleItem> read FSaleItem write FSaleItem;
+  end;
+
+implementation
+
+end.

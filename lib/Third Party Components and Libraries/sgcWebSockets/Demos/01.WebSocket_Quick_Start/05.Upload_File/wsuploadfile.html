@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>sgcWebSockets Upload File Demo</title>
+	<script src="http://127.0.0.1:5418/sgcWebSockets.js"></script>	
+	<link rel="stylesheet" href="http://code.jquery.com/mobile/1.1.0/jquery.mobile-1.1.0.min.css" />
+	<script src="http://code.jquery.com/jquery-1.6.4.min.js"></script>
+	<script src="http://code.jquery.com/mobile/1.1.0/jquery.mobile-1.1.0.min.js"></script>
+	<style>
+	#status {
+		padding: 5px;
+		color: #fff;
+		background: #ccc;
+	}
+
+	#status.fail {
+	  background: #c00;
+	}
+
+	#status.offline {
+	  background: #c00;
+	}
+
+	#status.online {
+	  background: #0c0;
+	}
+	</style>
+	<script type='text/javascript'>
+
+	var ws;
+	function DoOpen()
+	{
+	  if ("WebSocket" in window)
+	  {
+		  ws = new sgcWebSocket("ws://127.0.0.1:5418");
+		  ws.on('open', function(evt){	
+                ws.binaryType = "arraybuffer";		  
+				document.getElementById('status').innerHTML = "Socket Open";
+				document.getElementById('status').className = "online";
+			}
+		  );
+		  ws.on('close', function(evt){
+				document.getElementById('status').innerHTML = "Socket Closed";
+				document.getElementById('status').className = "offline";
+			}		  
+		  );
+		  ws.on('error', function(evt){
+				document.getElementById('status').innerHTML = "Socket Error";
+				document.getElementById('status').className = "fail";
+			}		  
+		  );
+	  }
+	}
+	
+	function DoClose()
+	{
+		ws.close();
+	}
+	
+	function DoUploadFile() {
+		var file = document.getElementById('filename').files[0];
+        var reader = new FileReader();
+        var rawData = new ArrayBuffer();            
+		
+        reader.loadend = function() {
+		
+        }
+		reader.onload = function(e) {
+		    ws.send("uploadfile:" + file.name);
+			rawData = e.target.result;
+            ws.send(rawData);
+				document.getElementById('status').innerHTML = "File Uploaded";
+				document.getElementById('status').className = "online";
+            }
+            reader.readAsArrayBuffer(file);
+        }
+    </script>
+</script>
+
+</head> 
+<body> 
+<div data-role="page" id="wsdemo_monitor">
+
+	<div data-role="header" data-theme="b">
+		<h1>sgcWebSockets Upload File</h1>
+		<a href="#home" data-icon="home" data-iconpos="notext" data-direction="reverse" class="ui-btn-left jqm-home">Home</a>
+	</div><!-- /header -->
+
+	<div data-role="content">	
+		<h2>Upload File to Server</h2>
+		<p id="status" classname="success"></p>
+		<p>
+		  <a href="javascript: DoOpen()" data-role="button" data-inline="true">Open</a>
+		  <a href="javascript: DoClose();" data-role="button" data-inline="true">Close</a>
+		</p>
+		<p>
+		  <input type="file" id="filename" />
+		  <a href="javascript: DoUploadFile();" data-role="button" data-inline="true">Upload File</a>
+		</p>
+		
+		
+	
+	</div><!-- /content -->	
+	<div data-role="footer" class="footer-docs" data-theme="c">
+			<p>&copy; 2021 eSeGeCe.com</p>
+	</div>		
+</div><!-- /page -->
+
+</body>
+</html>

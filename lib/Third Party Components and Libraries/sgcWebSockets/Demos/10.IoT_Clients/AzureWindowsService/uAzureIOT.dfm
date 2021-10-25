@@ -1,0 +1,33 @@
+object sgcAzureIoT: TsgcAzureIoT
+  OldCreateOrder = False
+  DisplayName = 'sgcAzureIoT'
+  OnExecute = ServiceExecute
+  OnStart = ServiceStart
+  OnStop = ServiceStop
+  Height = 150
+  Width = 215
+  object azure: TsgcIoTAzure_MQTT_Client
+    Active = False
+    Certificate.Enabled = False
+    Certificate.IOHandler = iohOpenSSL
+    Certificate.Version = tlsUndefined
+    SAS.Enabled = True
+    SAS.Expiry = 1440
+    Azure.WebSockets = False
+    MQTTHeartBeat.Enabled = True
+    MQTTHeartBeat.Interval = 300
+    WatchDog.Attempts = 0
+    WatchDog.Enabled = False
+    WatchDog.Interval = 10
+    LogFile.Enabled = False
+    OnException = azureException
+    OnError = azureError
+    OnMQTTConnect = azureMQTTConnect
+    OnMQTTPublish = azureMQTTPublish
+    OnMQTTSubscribe = azureMQTTSubscribe
+    OnMQTTUnSubscribe = azureMQTTUnSubscribe
+    OnMQTTDisconnect = azureMQTTDisconnect
+    Left = 88
+    Top = 56
+  end
+end

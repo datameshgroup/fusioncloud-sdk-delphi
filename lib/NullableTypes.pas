@@ -15,6 +15,7 @@ type
   TNullabeTokenRequestedType = TNullable<TTokenRequestedType>;
   TNullablePaymentInstrumentType = TNullable<TPaymentInstrumentType>;
   TNullableDateTime = TNullable<TDateTime>;
+  TNullableWeightUnitOfMeasure = TNullable<TWeightUnitOfMeasure>;
 
 implementation
 

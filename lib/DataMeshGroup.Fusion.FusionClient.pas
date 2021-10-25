@@ -15,15 +15,15 @@ uses DataMeshGroup.Fusion.IFusionClient,
   DataMeshGroup.Fusion.ReconciliationResponse,
   DataMeshGroup.Fusion.DisplayRequest,
   DataMeshGroup.Fusion.TransactionStatusResponse,
-  DataMeshGroup.Fusion.WebSocket;
+  DataMeshGroup.Fusion.WebSocket,
+  System.Classes;
 
 type
-  TFusionClient = class(TInterfacedObject, IFusionClient)
+  TFusionClient = class//(TInterfacedObject, IFusionClient)
   private
     FWebSocket: TWebSocket;
     FPort: string;
     FProtocol: string;
-    FConnectionMsg: string;
 
     FMessageParser: IMessageParser;
     FServiceId: string;
@@ -38,13 +38,13 @@ type
     FLoginResponse: TLoginResponse;
     FReceiveBufferSize: Integer;
     FLogLevel: TLogLevel;
-    FDefaultTimeout: TTimeSpan;
+    FDefaultTimeout: Integer;
     FDefaultHeartbeatTimeout: TTimeSpan;
     FIsEventModeEnabled: Boolean;
     FEventOnLog: TEventOnLog;
-    FEventOnConnect: TEventOnConnect;
+    FEventOnConnect: TNotifyEvent;
     FEventOnConnectError: TEventOnConnectError;
-    FEventOnDisconnect: TEventOnDisconnect;
+    FEventOnDisconnect: TNotifyEvent;
     FEventOnLoginResponse: TEventOnLoginResponse;
     FEventOnLogoutResponse: TEventOnLogoutResponse;
     FEventOnCardAcquisitionResponse: TEventOnCardAcquisitionResponse;
@@ -52,6 +52,8 @@ type
     FEventOnReconciliationResponse: TEventOnReconciliationResponse;
     FEventOnDisplayRequest: TEventOnDisplayRequest;
     FEventOnTransactionStatusResponse: TEventOnTransactionStatusResponse;
+    FEventOnReceiveMessage:TEventOnReceiveMessage;  //TGetStrProc;
+    FIsTestEnvironment: Boolean;
 
     function GetPort: string;
     procedure SetPort(APort: string);
@@ -92,14 +94,11 @@ type
     function GetLoginResponse: TLoginResponse;
     procedure SetLoginResponse(ALoginResponse: TLoginResponse);
 
-    function GetReceiveBufferSize: Integer;
-    procedure SetReceiveBufferSize(AReceiveBufferSize: Integer);
-
     function GetLogLevel: TLogLevel;
     procedure SetLogLevel(ALogLevel: TLogLevel);
 
-    function GetDefaultTimeout: TTimeSpan;
-    procedure SetDefaultTimeout(ADefaultTimeout: TTimeSpan);
+    function GetDefaultTimeout: Integer;
+    procedure SetDefaultTimeout(ADefaultTimeout: Integer);
 
     function GetDefaultHeartbeatTimeout: TTimeSpan;
     procedure SetDefaultHeartbeatTimeout(ADefaultHeartbeatTimeout: TTimeSpan);
@@ -109,14 +108,14 @@ type
     function GetEventOnLog: TEventOnLog;
     procedure SetEventOnLog(AEventOnLog: TEventOnLog);
 
-    function GetEventOnConnect: TEventOnConnect;
-    procedure SetEventOnConnect(AEventOnConnect: TEventOnConnect);
+    function GetEventOnConnect: TNotifyEvent;
+    procedure SetEventOnConnect(AEventOnConnect: TNotifyEvent);
 
     function GetEventOnConnectError: TEventOnConnectError;
     procedure SetEventOnConnectError(AEventOnConnectError: TEventOnConnectError);
 
-    function GetEventOnDisconnect: TEventOnDisconnect;
-    procedure SetEventOnDisconnect(AEventOnDisconnect: TEventOnDisconnect);
+    function GetEventOnDisconnect: TNotifyEvent;
+    procedure SetEventOnDisconnect(AEventOnDisconnect: TNotifyEvent);
 
     function GetEventOnLoginResponse: TEventOnLoginResponse;
     procedure SetEventOnLoginResponse(AEventOnLoginResponse: TEventOnLoginResponse);
@@ -138,7 +137,13 @@ type
 
     function GetEventOnTransactionStatusResponse: TEventOnTransactionStatusResponse;
     procedure SetEventOnTransactionStatusResponse(AEventOnTransactionStatusResponse: TEventOnTransactionStatusResponse);
+
+    function GetEventOnReceiveMessage: TEventOnReceiveMessage;
+    procedure SetEventOnReceiveMessage(AEventOnReceiveMessage: TEventOnReceiveMessage);
+
   public
+    function UpdateServiceID: string;
+
     function State: string;
     /// <summary>
     /// Connects to the <see cref="URL"/>, or <see cref="CustomURL"/> if <see cref="URL"/> is <see cref="URL"/>
@@ -149,6 +154,15 @@ type
     /// Disconnects and releases resources
     /// </summary>
     procedure Disconnect;
+
+    /// <summary>
+    /// Send a request. Timeout will be set to a default value.
+    /// </summary>
+    /// <param name="AMsg">Payload to send</param>
+    function SendMessage(AMsg: string): Boolean; overload;
+    function SendMessage(AMessage: TMessagePayload; const AServiceID: string;
+      const ASaleID: string; const APoiID: string;
+      const AKek: string): Boolean; overload;
 
     /// <summary>
     /// Send a request. cancellationToken will be set to a default value.
@@ -173,39 +187,6 @@ type
     /// <exception cref="NetworkException">A network error occured sending the request</exception>
     function SendMessage(ARequestMessage: TMessagePayload): TSaleToPOIMessage; overload;
 
-    /// <summary>
-    /// Send a request.
-    /// </summary>
-    /// <param name="requestMessage">Payload to send</param>
-    /// <param name="serviceID">ServiceId sent in the header</param>
-    /// <param name="ensureConnectedAndLoginComplete">If true, will attempt to connect (if required) and send a login (if required) instead of throwing an exception</param>
-    /// <param name="cancellationToken">Cancellation token used for the request</param>
-    /// <returns>The resulting <see cref="SaleToPOIMessage"/> wrapper. Useful for extracting the ServiceId used in the request</returns>
-    /// <exception cref="MessageFormatException">An error occured converting the request to JSON</exception>
-    /// <exception cref="TaskCanceledException">A timeout occured sending the request</exception>
-    /// <exception cref="NetworkException">A network error occured sending the request</exception>
-    function SendMessage(ARequestMessage: TMessagePayload; AServiceID: string;
-      AEnsureConnectedAndLoginComplete: Boolean): TSaleToPOIMessage; overload;
-
-    /// <summary>
-    /// Awaits the next response message from the host. Timeout set to <see cref="DefaultTimeout"/>
-    /// </summary>
-    /// <returns>A response message (if one is avaialble) or null, if none are available</returns>
-    /// <exception cref="InvalidOperationException">Raised when a call is made to <see cref="RecvAsync"/> whilst 'ResponseMessage' events have been subscribed to</exception>
-    /// <exception cref="TimeoutException">A timeout occured awaiting a response</exception>
-    /// <exception cref="NetworkException">A network error occured awaiting a response</exception>
-    function RecvMessage: TMessagePayload; overload;
-
-    /// <summary>
-    /// Sends a request, and then waits for a specified response message type. Discards all other response types. Timeout set to <see cref="DefaultTimeout"/>
-    /// </summary>
-    /// <typeparam name="T">The type of message to await. Must be of type <see cref="MessagePayload"/></typeparam>
-    /// <param name="requestMessage">The payload to send</param>
-    /// <returns>A response message of type 'T', or null if an unknown response was received</returns>
-    /// <exception cref="InvalidOperationException">Raised when a call is made to <see cref="RecvAsync"/> whilst 'ResponseMessage' events have been subscribed to</exception>
-    /// <exception cref="TimeoutException">A timeout occured awaiting a response</exception>
-    /// <exception cref="NetworkException">A network error occured awaiting a response</exception>
-    function RecvMessage(ARequestMessage: TMessagePayload): TMessagePayload; overload;
 
     {$REGION 'Properties'}
 
@@ -271,12 +252,6 @@ type
       write SetLoginResponse;
 
     /// <summary>
-    /// Byte size of the receive buffer
-    /// </summary>
-    property ReceiveBufferSize: Integer read GetReceiveBufferSize
-      write SetReceiveBufferSize;// 1Kb
-
-    /// <summary>
     /// Level of logging which should be returned in the OnLog event. Default is <see cref="LogLevel.None"/>
     /// </summary>
     property LogLevel: TLogLevel read GetLogLevel write SetLogLevel;
@@ -284,7 +259,7 @@ type
     /// <summary>
     /// Default amount of time we wait for responses from the switch. Default is 90 seconds.
     /// </summary>
-    property DefaultTimeout: TTimeSpan read GetDefaultTimeout
+    property DefaultTimeout: Integer read GetDefaultTimeout
       write SetDefaultTimeout;
 
     /// <summary>
@@ -292,15 +267,6 @@ type
     /// </summary>
     property DefaultHeartbeatTimeout: TTimeSpan read GetDefaultHeartbeatTimeout
       write SetDefaultHeartbeatTimeout;
-
-    /// <summary>
-    /// Indicates if event mode has been enabled. This is set when <see cref="OnLoginResponse"/> or
-    /// <see cref="OnPaymentResponse"/> events have been subscribed to. When events mode is enabled,
-    /// responses will be returned to the owner via <see cref="OnLoginResponse"/> and
-    /// <see cref="OnPaymentResponse"/> events, and all requests to <see cref="RecvAsync"/> will
-    /// throw an <see cref="InvalidOperationException"/>
-    /// </summary>
-    property IsEventModeEnabled: Boolean read GetIsEventModeEnabled;
 
     {$ENDREGION}
 
@@ -314,7 +280,7 @@ type
     /// <summary>
     /// Fired when the socket connects.
     /// </summary>
-    property OnConnect: TEventOnConnect read GetEventOnConnect
+    property OnConnect: TNotifyEvent read GetEventOnConnect
       write SetEventOnConnect;
 
     /// <summary>
@@ -326,7 +292,7 @@ type
     /// <summary>
     /// Fired when the socket disconnects.
     /// </summary>
-    property OnDisconnect: TEventOnDisconnect read GetEventOnDisconnect
+    property OnDisconnect: TNotifyEvent read GetEventOnDisconnect
       write SetEventOnDisconnect;
 
     /// <summary>
@@ -371,9 +337,11 @@ type
     property OnTransactionStatusResponse: TEventOnTransactionStatusResponse
       read GetEventOnTransactionStatusResponse write SetEventOnTransactionStatusResponse;
 
+    property OnReceiveMessage: TEventOnReceiveMessage {TGetStrProc} read GetEventOnReceiveMessage
+      write SetEventOnReceiveMessage;
+
     {$ENDREGION}
 
-    property ConnectionMsg: string read FConnectionMsg;
     constructor Create(AUseTestEnvironment: Boolean = False);
     destructor Destroy; override;
   end;
@@ -381,7 +349,8 @@ type
 
 implementation
 
-uses System.SysUtils, System.Net.URLClient;
+uses System.SysUtils, System.Net.URLClient, System.DateUtils,
+  DataMeshGroup.Fusion.MessageParser;
 
 { TFusionClient }
 
@@ -393,7 +362,7 @@ begin
   UrlStr := '';
 
   case URL of
-    TUnifyURL.Test: UrlStr := 'wss://www.cloudposintegration.io/nexouat1';
+    TUnifyURL.Test: UrlStr := 'wss://www.cloudposintegration.io/nexodev';
     TUnifyURL.Production: UrlStr := 'wss://prod1.datameshgroup.io:5000';
     TUnifyURL.Custom: UrlStr := FCustomURL;
   end;
@@ -402,10 +371,13 @@ begin
   URLChecker := TURI.Create(UrlStr);
 
   // proceed with the connection
-  FWebSocket.Address := UrlStr;
+  FWebSocket.Address := URLChecker.ToString;
   FWebSocket.Port := FPort;
   FWebSocket.Protocol := FProtocol;
-  FWebSocket.OnSessionConnected := FEventOnConnect;
+  FWebSocket.OnConnect := FEventOnConnect;
+  FWebSocket.OnDisconnect := FEventOnDisconnect;
+  FWebSocket.OnMessage := FEventOnReceiveMessage;
+  FWebSocket.Timeout := FDefaultTimeout;
   FWebSocket.Connect;
 end;
 
@@ -415,13 +387,15 @@ begin
   begin
     FUnifyURL := TUnifyURL.Test;
     FUnifyRootCA := TUnifyRootCA.Test;
+    FIsTestEnvironment := True;
   end else
   begin
     FUnifyURL := TUnifyURL.Production;
     FUnifyRootCA := TUnifyRootCA.Production;
+    FIsTestEnvironment := False;
   end;
 
-  FDefaultTimeout := TTimeSpan.FromSeconds(60);
+  FDefaultTimeout := 60;
   FDefaultHeartbeatTimeout := TTimeSpan.FromSeconds(15);
   FLoginRequest := nil;
   FLoginResponse := nil;
@@ -458,7 +432,7 @@ begin
   Result := FDefaultHeartbeatTimeout;
 end;
 
-function TFusionClient.GetDefaultTimeout: TTimeSpan;
+function TFusionClient.GetDefaultTimeout: Integer;
 begin
   Result := FDefaultTimeout;
 end;
@@ -468,7 +442,7 @@ begin
   Result := FEventOnCardAcquisitionResponse;
 end;
 
-function TFusionClient.GetEventOnConnect: TEventOnConnect;
+function TFusionClient.GetEventOnConnect: TNotifyEvent;
 begin
   Result := FEventOnConnect;
 end;
@@ -478,7 +452,7 @@ begin
   Result := FEventOnConnectError;
 end;
 
-function TFusionClient.GetEventOnDisconnect: TEventOnDisconnect;
+function TFusionClient.GetEventOnDisconnect: TNotifyEvent;
 begin
   Result := FEventOnDisconnect;
 end;
@@ -506,6 +480,11 @@ end;
 function TFusionClient.GetEventOnPaymentResponse: TEventOnPaymentResponse;
 begin
   Result := FEventOnPaymentResponse;
+end;
+
+function TFusionClient.GetEventOnReceiveMessage: TEventOnReceiveMessage;
+begin
+  Result := FEventOnReceiveMessage;
 end;
 
 function TFusionClient.GetEventOnReconciliationResponse: TEventOnReconciliationResponse;
@@ -563,11 +542,6 @@ begin
   Result := FProtocol;
 end;
 
-function TFusionClient.GetReceiveBufferSize: Integer;
-begin
-  Result := FReceiveBufferSize;
-end;
-
 function TFusionClient.GetSaleID: string;
 begin
   Result := FSaleID;
@@ -588,22 +562,28 @@ begin
   Result := FUnifyURL;
 end;
 
-function TFusionClient.RecvMessage: TMessagePayload;
+function TFusionClient.SendMessage(AMessage: TMessagePayload; const AServiceID,
+  ASaleID, APoiID, AKek: string): Boolean;
+var
+  MessageParser: TMessageParser;
+  Msg: string;
 begin
+  MessageParser := TMessageParser.Create;
+  try
+    MessageParser.UseTestKeyIdentifier := FIsTestEnvironment;
 
+    Msg := MessageParser.BuildMessage(AServiceID, ASaleID,
+      APoiID, AKek, AMessage);
+
+    Result := FWebSocket.Send(Msg);
+  finally
+    MessageParser.Free;
+  end;
 end;
 
-function TFusionClient.RecvMessage(
-  ARequestMessage: TMessagePayload): TMessagePayload;
+function TFusionClient.SendMessage(AMsg: string): Boolean;
 begin
-
-end;
-
-function TFusionClient.SendMessage(ARequestMessage: TMessagePayload;
-  AServiceID: string;
-  AEnsureConnectedAndLoginComplete: Boolean): TSaleToPOIMessage;
-begin
-
+  Result := FWebSocket.Send(AMsg);
 end;
 
 function TFusionClient.SendMessage(
@@ -634,7 +614,7 @@ begin
   FDefaultHeartbeatTimeout := ADefaultHeartbeatTimeout;
 end;
 
-procedure TFusionClient.SetDefaultTimeout(ADefaultTimeout: TTimeSpan);
+procedure TFusionClient.SetDefaultTimeout(ADefaultTimeout: Integer);
 begin
   FDefaultTimeout := ADefaultTimeout;
 end;
@@ -645,7 +625,7 @@ begin
   FEventOnCardAcquisitionResponse := AEventOnCardAcquisitionResponse;
 end;
 
-procedure TFusionClient.SetEventOnConnect(AEventOnConnect: TEventOnConnect);
+procedure TFusionClient.SetEventOnConnect(AEventOnConnect: TNotifyEvent);
 begin
   FEventOnConnect := AEventOnConnect;
 end;
@@ -656,7 +636,7 @@ begin
   FEventOnConnectError := AEventOnConnectError;
 end;
 
-procedure TFusionClient.SetEventOnDisconnect(AEventOnDisconnect: TEventOnDisconnect);
+procedure TFusionClient.SetEventOnDisconnect(AEventOnDisconnect: TNotifyEvent);
 begin
   FEventOnDisconnect := AEventOnDisconnect;
 end;
@@ -688,6 +668,12 @@ procedure TFusionClient.SetEventOnPaymentResponse(
   AEventOnPaymentResponse: TEventOnPaymentResponse);
 begin
   FEventOnPaymentResponse := AEventOnPaymentResponse;
+end;
+
+procedure TFusionClient.SetEventOnReceiveMessage(
+  AEventOnReceiveMessage: TEventOnReceiveMessage);
+begin
+  FEventOnReceiveMessage := AEventOnReceiveMessage;
 end;
 
 procedure TFusionClient.SetEventOnReconciliationResponse(
@@ -742,11 +728,6 @@ begin
   FProtocol := AProtocol;
 end;
 
-procedure TFusionClient.SetReceiveBufferSize(AReceiveBufferSize: Integer);
-begin
-  FReceiveBufferSize := AReceiveBufferSize;
-end;
-
 procedure TFusionClient.SetSaleID(ASaleID: string);
 begin
   FSaleID := ASaleID;
@@ -769,7 +750,12 @@ end;
 
 function TFusionClient.State: string;
 begin
-  result := FWebSocket.websocketstate;
+end;
+
+function TFusionClient.UpdateServiceID: string;
+begin
+  Result := IntToHex(MilliSecondsBetween(TTimeZone.Local.ToUniversalTime(Now),
+    EncodeDate(System.SysUtils.CurrentYear, 1, 1)), 1);
 end;
 
 end.

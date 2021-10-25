@@ -1,0 +1,60 @@
+﻿<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+    <PropertyGroup>
+        <ProjectGuid>{BF0A990A-42B7-4682-8A40-C7B760FE5E04}</ProjectGuid>
+    </PropertyGroup>
+    <ItemGroup>
+        <Projects Include="Server_Indy_HTTP\sgcWebBrokerBridge_IndyHTTP.dproj">
+            <Dependencies/>
+        </Projects>
+        <Projects Include="Server_Indy_HTTP2\sgcWebBrokerBridge_IndyHTTP2.dproj">
+            <Dependencies/>
+        </Projects>
+        <Projects Include="Server_HTTPAPI\sgcWebBrokerBridge_HTPAPI.dproj">
+            <Dependencies/>
+        </Projects>
+    </ItemGroup>
+    <ProjectExtensions>
+        <Borland.Personality>Default.Personality.12</Borland.Personality>
+        <Borland.ProjectType/>
+        <BorlandProject>
+            <Default.Personality/>
+        </BorlandProject>
+    </ProjectExtensions>
+    <Target Name="sgcWebBrokerBridge_IndyHTTP">
+        <MSBuild Projects="Server_Indy_HTTP\sgcWebBrokerBridge_IndyHTTP.dproj"/>
+    </Target>
+    <Target Name="sgcWebBrokerBridge_IndyHTTP:Clean">
+        <MSBuild Projects="Server_Indy_HTTP\sgcWebBrokerBridge_IndyHTTP.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="sgcWebBrokerBridge_IndyHTTP:Make">
+        <MSBuild Projects="Server_Indy_HTTP\sgcWebBrokerBridge_IndyHTTP.dproj" Targets="Make"/>
+    </Target>
+    <Target Name="sgcWebBrokerBridge_IndyHTTP2">
+        <MSBuild Projects="Server_Indy_HTTP2\sgcWebBrokerBridge_IndyHTTP2.dproj"/>
+    </Target>
+    <Target Name="sgcWebBrokerBridge_IndyHTTP2:Clean">
+        <MSBuild Projects="Server_Indy_HTTP2\sgcWebBrokerBridge_IndyHTTP2.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="sgcWebBrokerBridge_IndyHTTP2:Make">
+        <MSBuild Projects="Server_Indy_HTTP2\sgcWebBrokerBridge_IndyHTTP2.dproj" Targets="Make"/>
+    </Target>
+    <Target Name="sgcWebBrokerBridge_HTPAPI">
+        <MSBuild Projects="Server_HTTPAPI\sgcWebBrokerBridge_HTPAPI.dproj"/>
+    </Target>
+    <Target Name="sgcWebBrokerBridge_HTPAPI:Clean">
+        <MSBuild Projects="Server_HTTPAPI\sgcWebBrokerBridge_HTPAPI.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="sgcWebBrokerBridge_HTPAPI:Make">
+        <MSBuild Projects="Server_HTTPAPI\sgcWebBrokerBridge_HTPAPI.dproj" Targets="Make"/>
+    </Target>
+    <Target Name="Build">
+        <CallTarget Targets="sgcWebBrokerBridge_IndyHTTP;sgcWebBrokerBridge_IndyHTTP2;sgcWebBrokerBridge_HTPAPI"/>
+    </Target>
+    <Target Name="Clean">
+        <CallTarget Targets="sgcWebBrokerBridge_IndyHTTP:Clean;sgcWebBrokerBridge_IndyHTTP2:Clean;sgcWebBrokerBridge_HTPAPI:Clean"/>
+    </Target>
+    <Target Name="Make">
+        <CallTarget Targets="sgcWebBrokerBridge_IndyHTTP:Make;sgcWebBrokerBridge_IndyHTTP2:Make;sgcWebBrokerBridge_HTPAPI:Make"/>
+    </Target>
+    <Import Project="$(BDS)\Bin\CodeGear.Group.Targets" Condition="Exists('$(BDS)\Bin\CodeGear.Group.Targets')"/>
+</Project>

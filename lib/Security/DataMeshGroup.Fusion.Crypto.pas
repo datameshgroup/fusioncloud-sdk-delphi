@@ -3,10 +3,11 @@ unit DataMeshGroup.Fusion.Crypto;
 interface
 
 uses System.SysUtils, DECRandom, DECCipherBase, DECCipherModes,
-  DECCipherFormats, DECCiphers, DECFormat, DECHash;
+  DECCipherFormats, DECCiphers, DECFormat, DECHash,
+  DataMeshGroup.Fusion.Types;
 
 type
-  TEncEnv = (EEProd, EETest);
+  TEncryption = (EncKey, EncMsg);
 
   TDECBaseCipherHelper = class helper for TDECCipher
   private
@@ -27,21 +28,20 @@ type
   end;
 
   TCrypto = class
-  type
-    TEncryption = (EncKey, EncMsg);
   strict private
-    function GetEncrypt(ABytesToEncrypt: TBytes; AKey: RawByteString;
-      AEncryption: TEncryption): TBytes;
-    function HexToByteArr(const AHexString: string): TArray<Byte>;
-    function ByteArrToHexStr(ABytes: TBytes): string;
-    function GenerateMAC(AMsg: string; AKey : string): string;
-    function GetSHA(AMsg: UTF8String): TBytes;
     function ConvertUTF8ToBytes(const AMsg: UTF8String): TBytes;
-    function AppendBytes(ABytes : TBytes): TBytes;
     function GetLast8Bytes(ABytes : TBytes): TBytes;
     function GetKey(AEnvironment: TEncEnv): string;
   public
-    function Encrypt(AMsg: string; AEnvironment: TEncEnv): string;
+    function HexToByteArr(const AHexString: string): TArray<Byte>;
+    function GetEncrypt(ABytesToEncrypt: TBytes; AKey: RawByteString;
+      AEncryption: TEncryption): TBytes;
+    function GenerateMAC(AMsg: string; AKey : string): string;
+    function AppendBytes(ABytes : TBytes): TBytes;
+    function ByteArrToHexStr(ABytes: TBytes): string;
+    function GetSHA(AMsg: UTF8String): TBytes;
+    function GenerateKey(AEnvironment: TEncEnv): string;
+    function Encrypt(const AMsg: string; AEnvironment: TEncEnv): string;
   end;
 
 implementation
@@ -106,21 +106,11 @@ begin
     Move(AMsg[1], Result[0], Length(AMsg));
 end;
 
-function TCrypto.Encrypt(AMsg: string; AEnvironment: TEncEnv): string;
+function TCrypto.Encrypt(const AMsg: string; AEnvironment: TEncEnv): string;
 var
-  RandKey: TBytes;
-  EncryptedKey: TBytes;
   EncryptedKeyStr: string;
-  GenMAC: string;
 begin
-  // Generate 16 random bytes
-  RandKey := RandomBytes(16);
-
-  // Encrypt the random key + master key
-  EncryptedKey := GetEncrypt(RandKey, GetKey(AEnvironment), EncKey);
-
-  // Convert the encrypted key to string
-  EncryptedKeyStr := ByteArrToHexStr(EncryptedKey);
+  EncryptedKeyStr := GenerateKey(AEnvironment);
 
   // Generate MAC with the encrypted string
   Result := GenerateMAC(AMsg, EncryptedKeyStr);
@@ -156,6 +146,21 @@ begin
   end;
 end;
 
+function TCrypto.GenerateKey(AEnvironment: TEncEnv): string;
+var
+  RandKey: TBytes;
+  EncryptedKey: TBytes;
+begin
+  /// Generate 16 random bytes
+  RandKey := HexToByteArr('2a38e0f2835f926c455e087ed4744fa7'); //RandomBytes(16);
+
+  // Encrypt the random key + master key
+  EncryptedKey := GetEncrypt(RandKey, GetKey(AEnvironment), EncKey);
+
+  // Convert the encrypted key to string
+  Result := ByteArrToHexStr(EncryptedKey);
+end;
+
 function TCrypto.GenerateMAC(AMsg: string; AKey : string): string;
 var
   HashResults: TBytes;
@@ -163,7 +168,7 @@ var
   Encrypted: TBytes;
   Last8Bytes: TBytes;
   GeneratedMac: string;
-begin
+begin                     //  HexToByteArr(AMsg);
   HashResults := GetSHA(AMsg);
   HashAppendedBytes := AppendBytes(HashResults);
   Encrypted := GetEncrypt(HashAppendedBytes, AKey, EncMsg);
@@ -210,8 +215,8 @@ end;
 function TCrypto.GetKey(AEnvironment: TEncEnv): string;
 begin
   case AEnvironment of
-    EEProd: Result := '';
-    EETest: Result := '44DACB2A22A4A752ADC1BBFFE6CEFB589451E0FFD83F8B21';
+    TEncEnv.EEProd: Result := '';
+    TEncEnv.EETest: Result := '44DACB2A22A4A752ADC1BBFFE6CEFB589451E0FFD83F8B21';
   end;
 end;
 
@@ -310,23 +315,18 @@ var
   i: Integer;
 begin
   Dec(ASize, FBufferSize);
-
   F := FFeedback;
   i := 0;
-
   while i <= ASize do
   begin
     XORBuffers(ASource[i], F[0], FBufferSize, ADest[i]);
     F := @ADest[i];
     DoEncode(F, F, FBufferSize);
-
     Inc(i, FBufferSize);
   end;
-
   if F <> FFeedback then
     Move(F[0], FFeedback[0], FBufferSize);
   Dec(ASize, I - FBufferSize);
-
   FState := csEncode;
 end;
 

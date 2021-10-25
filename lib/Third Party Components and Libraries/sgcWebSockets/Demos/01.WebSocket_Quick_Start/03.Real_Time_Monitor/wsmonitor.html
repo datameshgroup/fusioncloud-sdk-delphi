@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>Server Monitor Demo</title>
+	<script src="http://127.0.0.1:5413/sgcWebSockets.js"></script>	
+	<script src="http://127.0.0.1:5413/esegece.com.js"></script>	
+	<link rel="stylesheet" href="http://code.jquery.com/mobile/1.1.0/jquery.mobile-1.1.0.min.css" />
+	<script src="http://code.jquery.com/jquery-1.6.4.min.js"></script>
+	<script src="http://code.jquery.com/mobile/1.1.0/jquery.mobile-1.1.0.min.js"></script>
+	<script type='text/javascript' src='https://www.google.com/jsapi'></script>
+	<style>
+	#status {
+		padding: 5px;
+		color: #fff;
+		background: #ccc;
+	}
+
+	#status.fail {
+	  background: #c00;
+	}
+
+	#status.offline {
+	  background: #c00;
+	}
+
+	#status.online {
+	  background: #0c0;
+	}
+	</style>
+	<script type='text/javascript'>
+	  var vMemory;
+	  var vCpu;
+	  var vNetwork;
+	  var chart;
+	  var data;
+	  var options;
+	  var ws;
+	  
+	  vMemory=30;
+	  vCpu=55;
+	  vNetwork=68;
+      google.load('visualization', '1', {packages:['gauge']});
+	  google.setOnLoadCallback(drawChart);
+      function drawChart() {
+        data = google.visualization.arrayToDataTable([
+          ['Label', 'Value'],
+          ['Memory', vMemory],
+          ['CPU', vCpu],
+          ['Network', vNetwork]
+        ]);
+
+        options = {
+          width: 400, height: 120,
+          redFrom: 90, redTo: 100,
+          yellowFrom:75, yellowTo: 90,
+          minorTicks: 5
+        };
+
+        chart = new google.visualization.Gauge(document.getElementById('chart_div'));
+        chart.draw(data, options);
+	}
+	
+	function updateChart() {
+		data = google.visualization.arrayToDataTable([
+			['Label', 'Value'],
+			['Memory', vMemory],
+			['CPU', vCpu],
+			['Network', vNetwork]
+		]);			
+		chart.draw(data, options);	
+	}
+	
+	function subscribe(Channel)
+	{
+	  if (document.getElementById(Channel).checked) {	    
+		ws.subscribe(Channel);
+	  } else {
+		ws.unsubscribe(Channel);
+	  }
+	}
+	
+
+	function wsmonitor()
+	{
+	  if ("WebSocket" in window)
+	  {
+		  ws = new sgcws("ws://127.0.0.1:5413");
+		  ws.on('open', function(evt){		  
+				document.getElementById('status').innerHTML = "Socket Open";
+				document.getElementById('status').className = "online";
+				ws.subscribe("memory");
+				ws.subscribe("cpu");
+				ws.subscribe("network");
+			}
+		  );
+		  ws.on('close', function(evt){
+				document.getElementById('status').innerHTML = "Socket Closed";
+				document.getElementById('status').className = "offline";
+			}		  
+		  );
+		  ws.on('sgcevent', function(evt){
+			if (evt.channel == "memory") {
+			  vMemory = parseInt(evt.message);
+			} else if (evt.channel == "cpu") {
+			  vCpu = parseInt(evt.message);
+			} else if (evt.channel == "network") {
+			  vNetwork = parseInt(evt.message);
+			}
+			updateChart();
+			}
+		  );
+		  ws.on('error', function(evt){
+				document.getElementById('status').innerHTML = "Socket Error";
+				document.getElementById('status').className = "fail";
+			}		  
+		  );
+	  }
+	}
+</script>
+
+</head> 
+<body> 
+<div data-role="page" id="wsdemo_monitor">
+
+	<div data-role="header" data-theme="b">
+		<h1>Server Monitor</h1>
+		<a href="#home" data-icon="home" data-iconpos="notext" data-direction="reverse" class="ui-btn-left jqm-home">Home</a>
+	</div><!-- /header -->
+
+	<div data-role="content">	
+		<h2>Press Start to Get Monitor Data</h2>
+		<p id="status" classname="success"></p>
+		<h4>Select which data you want to receive: Memory - CPU - Network</h4>
+		<a href="javascript:wsmonitor()" data-role="button" data-inline="true">Start</a>
+		<div id='chart_div'></div>		
+		<div data-role="fieldcontain">
+		    <fieldset data-role="controlgroup" data-type="horizontal">
+		    	<input type="checkbox" name="memory" id="memory" class="custom" checked="True" onclick="javascript: subscribe('memory');"/>
+				<label for="memory">Memory</label>
+
+				<input type="checkbox" name="cpu" id="cpu" class="custom" checked="True" onclick="javascript: subscribe('cpu');"/>
+				<label for="cpu">CPU</label>
+
+				<input type="checkbox" name="network" id="network" class="custom" checked="True" onclick="javascript: subscribe('network');"/>
+				<label for="network">Network</label>    
+		    </fieldset>
+		</div>			
+	</div><!-- /content -->	
+	<div data-role="footer" class="footer-docs" data-theme="c">
+			<p>&copy; 2021 eSeGeCe.com</p>
+	</div>		
+</div><!-- /page -->
+
+</body>
+</html>

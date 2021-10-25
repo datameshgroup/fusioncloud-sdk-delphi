@@ -1,0 +1,288 @@
+﻿<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<test-results name="D:\Projects\DataMesh Group\dmgpos\lib\Third Party Components and Libraries\delphi-neon-master\Tests\Win32\Debug\Neon.Tests.Framework.exe" total="47" errors="0" failures="0" ignored="0" inconclusive="0" not-run="0" skipped="0" invalid="0" date="2021-10-12" time="0.049">
+  <culture-info current-culture="en" current-uiculture="en" />
+  <test-suite type="Assembly" name="Neon.Tests.Framework.exe" executed="true" result="Success" success="True" time="0.049" asserts="0">
+    <results>
+        <test-suite type="Namespace" name="Neon" executed="true" result="Success" success="True" time="0.342" asserts="0" >
+          <results>
+              <test-suite type="Namespace" name="Tests" executed="true" result="Success" success="True" time="0.342" asserts="0" >
+                <results>
+                    <test-suite type="Namespace" name="Types" executed="true" result="Success" success="True" time="0.281" asserts="0" >
+                      <results>
+                          <test-suite type="Fixture" name="TTestSimpleTypes" executed="True" result="Success" success="True" time="0.049" >
+                            <categories>
+                              <category name="simpletypes" />
+                            </categories>
+                            <results>
+                              <test-case name="TestInteger.TestIntegerPos" executed="True" result="Success" success="True" time="0.000" asserts="0" >
+                                <categories>
+                                  <category name="simpletypes" />
+                                </categories>
+                              </test-case>
+                              <test-case name="TestInteger.TestIntegerNull" executed="True" result="Success" success="True" time="0.000" asserts="0" >
+                                <categories>
+                                  <category name="simpletypes" />
+                                </categories>
+                              </test-case>
+                              <test-case name="TestInteger.TestIntegerNeg" executed="True" result="Success" success="True" time="0.000" asserts="0" >
+                                <categories>
+                                  <category name="simpletypes" />
+                                </categories>
+                              </test-case>
+                              <test-case name="TestString.TestString" executed="True" result="Success" success="True" time="0.000" asserts="0" >
+                                <categories>
+                                  <category name="simpletypes" />
+                                </categories>
+                              </test-case>
+                              <test-case name="TestFloat.TestFloatPos" executed="True" result="Success" success="True" time="0.000" asserts="0" >
+                                <categories>
+                                  <category name="simpletypes" />
+                                </categories>
+                              </test-case>
+                              <test-case name="TestFloat.TestFloatNull" executed="True" result="Success" success="True" time="0.000" asserts="0" >
+                                <categories>
+                                  <category name="simpletypes" />
+                                </categories>
+                              </test-case>
+                              <test-case name="TestFloat.TestFloatNeg" executed="True" result="Success" success="True" time="0.000" asserts="0" >
+                                <categories>
+                                  <category name="simpletypes" />
+                                </categories>
+                              </test-case>
+                              <test-case name="TestBoolean.TestBoolTrue" executed="True" result="Success" success="True" time="0.000" asserts="0" >
+                                <categories>
+                                  <category name="simpletypes" />
+                                </categories>
+                              </test-case>
+                              <test-case name="TestBoolean.TestBoolFalse" executed="True" result="Success" success="True" time="0.000" asserts="0" >
+                                <categories>
+                                  <category name="simpletypes" />
+                                </categories>
+                              </test-case>
+                              <test-case name="TestDateTime.TestDateOnly" executed="True" result="Success" success="True" time="0.000" asserts="0" >
+                                <categories>
+                                  <category name="simpletypes" />
+                                </categories>
+                              </test-case>
+                              <test-case name="TestDateTime.TestDateTime" executed="True" result="Success" success="True" time="0.000" asserts="0" >
+                                <categories>
+                                  <category name="simpletypes" />
+                                </categories>
+                              </test-case>
+                              <test-case name="TestDateTime.TestTimeOnly" executed="True" result="Success" success="True" time="0.000" asserts="0" >
+                                <categories>
+                                  <category name="simpletypes" />
+                                </categories>
+                              </test-case>
+                            </results>
+                          </test-suite>
+                          <test-suite type="Fixture" name="TTestArrayTypes" executed="True" result="Success" success="True" time="0.047" >
+                            <categories>
+                              <category name="arraytypes" />
+                            </categories>
+                            <results>
+                              <test-case name="TestArrayInteger.TestManagedRecord" executed="True" result="Success" success="True" time="0.001" asserts="0" >
+                                <categories>
+                                  <category name="arraytypes" />
+                                </categories>
+                              </test-case>
+                              <test-case name="TestMatrixInteger.TestManagedRecord" executed="True" result="Success" success="True" time="0.000" asserts="0" >
+                                <categories>
+                                  <category name="arraytypes" />
+                                </categories>
+                              </test-case>
+                              <test-case name="TestMatrixIntegerString.TestManagedRecord" executed="True" result="Success" success="True" time="0.000" asserts="0" >
+                                <categories>
+                                  <category name="arraytypes" />
+                                </categories>
+                              </test-case>
+                            </results>
+                          </test-suite>
+                          <test-suite type="Fixture" name="TTestStringsTypes" executed="True" result="Success" success="True" time="0.047" >
+                            <categories>
+                              <category name="stringtypes" />
+                            </categories>
+                            <results>
+                              <test-case name="TestAnsiString.TestAnsiNormal" executed="True" result="Success" success="True" time="0.000" asserts="0" >
+                                <categories>
+                                  <category name="stringtypes" />
+                                </categories>
+                              </test-case>
+                              <test-case name="TestAnsiString.TestAnsiEmpty" executed="True" result="Success" success="True" time="0.000" asserts="0" >
+                                <categories>
+                                  <category name="stringtypes" />
+                                </categories>
+                              </test-case>
+                              <test-case name="TestAnsiString.TestAnsiSpace" executed="True" result="Success" success="True" time="0.000" asserts="0" >
+                                <categories>
+                                  <category name="stringtypes" />
+                                </categories>
+                              </test-case>
+                              <test-case name="TestAnsiString.TestAnsiExtended" executed="True" result="Success" success="True" time="0.000" asserts="0" >
+                                <categories>
+                                  <category name="stringtypes" />
+                                </categories>
+                              </test-case>
+                              <test-case name="TestUnicodeString.TestUnicodeNormal" executed="True" result="Success" success="True" time="0.000" asserts="0" >
+                                <categories>
+                                  <category name="stringtypes" />
+                                </categories>
+                              </test-case>
+                              <test-case name="TestUnicodeString.TestUnicodeEmpty" executed="True" result="Success" success="True" time="0.000" asserts="0" >
+                                <categories>
+                                  <category name="stringtypes" />
+                                </categories>
+                              </test-case>
+                              <test-case name="TestUnicodeString.TestUnicodeSpace" executed="True" result="Success" success="True" time="0.000" asserts="0" >
+                                <categories>
+                                  <category name="stringtypes" />
+                                </categories>
+                              </test-case>
+                              <test-case name="TestUnicodeString.TestUnicodeExtended" executed="True" result="Success" success="True" time="0.000" asserts="0" >
+                                <categories>
+                                  <category name="stringtypes" />
+                                </categories>
+                              </test-case>
+                              <test-case name="TestUTF8String.TestUTF8Normal" executed="True" result="Success" success="True" time="0.000" asserts="0" >
+                                <categories>
+                                  <category name="stringtypes" />
+                                </categories>
+                              </test-case>
+                              <test-case name="TestUTF8String.TestUTF8Empty" executed="True" result="Success" success="True" time="0.001" asserts="0" >
+                                <categories>
+                                  <category name="stringtypes" />
+                                </categories>
+                              </test-case>
+                              <test-case name="TestUTF8String.TestUTF8Space" executed="True" result="Success" success="True" time="0.000" asserts="0" >
+                                <categories>
+                                  <category name="stringtypes" />
+                                </categories>
+                              </test-case>
+                              <test-case name="TestUTF8String.TestUTF8Extended" executed="True" result="Success" success="True" time="0.000" asserts="0" >
+                                <categories>
+                                  <category name="stringtypes" />
+                                </categories>
+                              </test-case>
+                            </results>
+                          </test-suite>
+                          <test-suite type="Fixture" name="TTestRecordTypes" executed="True" result="Success" success="True" time="0.046" >
+                            <categories>
+                              <category name="recordtypes" />
+                            </categories>
+                            <results>
+                              <test-case name="TestSimpleRecord.TestSimpleRecord" executed="True" result="Success" success="True" time="0.000" asserts="0" >
+                                <categories>
+                                  <category name="recordtypes" />
+                                </categories>
+                              </test-case>
+                              <test-case name="TestManagedRecord.TestManagedRecord" executed="True" result="Success" success="True" time="0.000" asserts="0" >
+                                <categories>
+                                  <category name="recordtypes" />
+                                </categories>
+                              </test-case>
+                            </results>
+                          </test-suite>
+                          <test-suite type="Fixture" name="TTestEnumTypes" executed="True" result="Success" success="True" time="0.046" >
+                            <categories>
+                              <category name="enumtypes" />
+                            </categories>
+                            <results>
+                              <test-case name="TestDelphiEnum.TestTDuplicates" executed="True" result="Success" success="True" time="0.000" asserts="0" >
+                                <categories>
+                                  <category name="enumtypes" />
+                                </categories>
+                              </test-case>
+                              <test-case name="TestCustomEnum.TestCustomEnum" executed="True" result="Success" success="True" time="0.000" asserts="0" >
+                                <categories>
+                                  <category name="enumtypes" />
+                                </categories>
+                              </test-case>
+                              <test-case name="TestCustomNames.TestCustomNamesEnum" executed="True" result="Success" success="True" time="0.000" asserts="0" >
+                                <categories>
+                                  <category name="enumtypes" />
+                                </categories>
+                              </test-case>
+                            </results>
+                          </test-suite>
+                          <test-suite type="Fixture" name="TTestReferenceTypes" executed="True" result="Success" success="True" time="0.046" >
+                            <categories>
+                              <category name="reftypes" />
+                            </categories>
+                            <results>
+                              <test-case name="TestPersonAnsi.TestPersonAnsi" executed="True" result="Success" success="True" time="0.018" asserts="0" >
+                                <categories>
+                                  <category name="reftypes" />
+                                </categories>
+                              </test-case>
+                              <test-case name="TestPersonUnicode.TestPersonUnicode" executed="True" result="Success" success="True" time="0.003" asserts="0" >
+                                <categories>
+                                  <category name="reftypes" />
+                                </categories>
+                              </test-case>
+                              <test-case name="TestPersonPretty.TestPersonPretty" executed="True" result="Success" success="True" time="0.002" asserts="0" >
+                                <categories>
+                                  <category name="reftypes" />
+                                </categories>
+                              </test-case>
+                              <test-case name="TestPersonNil.TestPersonNil" executed="True" result="Success" success="True" time="0.000" asserts="0" >
+                                <categories>
+                                  <category name="reftypes" />
+                                </categories>
+                              </test-case>
+                            </results>
+                          </test-suite>
+                      </results>
+                    </test-suite>
+                    <test-suite type="Fixture" name="TTestSerializer" executed="True" result="Success" success="True" time="0.023" >
+                      <results>
+                        <test-case name="TestSerializer" executed="True" result="Success" success="True" time="0.000" asserts="0" />
+                      </results>
+                    </test-suite>
+                    <test-suite type="Fixture" name="TTestCustomSerializers" executed="True" result="Success" success="True" time="0.023" >
+                      <results>
+                        <test-case name="TestSerializerRegistryCount" executed="True" result="Success" success="True" time="0.000" asserts="0" />
+                        <test-case name="TestDistanceAlgorithm" executed="True" result="Success" success="True" time="0.000" asserts="0" />
+                        <test-case name="TestSelectorAlgorithmOnValue" executed="True" result="Success" success="True" time="0.000" asserts="0" />
+                        <test-case name="TestSelectorUnregister" executed="True" result="Success" success="True" time="0.000" asserts="0" />
+                        <test-case name="TestSelectorAlgorithmOnClass" executed="True" result="Success" success="True" time="0.000" asserts="0" />
+                      </results>
+                    </test-suite>
+                    <test-suite type="Fixture" name="TTestConfigMemberCase" executed="True" result="Success" success="True" time="0.016" >
+                      <categories>
+                        <category name="membercase" />
+                      </categories>
+                      <results>
+                        <test-case name="TestPascalCase.TestPascalCase" executed="True" result="Success" success="True" time="0.010" asserts="0" >
+                          <categories>
+                            <category name="membercase" />
+                          </categories>
+                        </test-case>
+                        <test-case name="TestCamelCase.TestCamelCase" executed="True" result="Success" success="True" time="0.001" asserts="0" >
+                          <categories>
+                            <category name="membercase" />
+                          </categories>
+                        </test-case>
+                        <test-case name="TestSnakeCase.TestSnakeCase" executed="True" result="Success" success="True" time="0.002" asserts="0" >
+                          <categories>
+                            <category name="membercase" />
+                          </categories>
+                        </test-case>
+                        <test-case name="TestLowerCase.TestLowerCase" executed="True" result="Success" success="True" time="0.002" asserts="0" >
+                          <categories>
+                            <category name="membercase" />
+                          </categories>
+                        </test-case>
+                        <test-case name="TestUpperCase.TestUpperCase" executed="True" result="Success" success="True" time="0.001" asserts="0" >
+                          <categories>
+                            <category name="membercase" />
+                          </categories>
+                        </test-case>
+                      </results>
+                    </test-suite>
+                </results>
+              </test-suite>
+          </results>
+        </test-suite>
+    </results>
+  </test-suite>
+</test-results>
