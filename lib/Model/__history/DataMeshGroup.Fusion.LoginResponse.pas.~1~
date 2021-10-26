@@ -19,17 +19,19 @@ type
     property POISystemData: TPOISystemData read FPOISystemData
       write FPOISystemData;
 
-    constructor Create;
+    constructor Create(AMessageClass: TMessageClass; AMessageCategory: TMessageCategory;
+      AMessageType: TMessageType); override;
   end;
 
 implementation
 
 { TLoginResponse }
 
-constructor TLoginResponse.Create;
+constructor TLoginResponse.Create(AMessageClass: TMessageClass;
+  AMessageCategory: TMessageCategory; AMessageType: TMessageType);
 begin
-  inherited Create(TMessageClass.Service, TMessageCategory.Login,
-    TMessageType.Response);
+  inherited;
+
 end;
 
 function TLoginResponse.CreateDefaultResponseMessagePayload(

@@ -9,6 +9,9 @@ uses DataMeshGroup.Fusion.MessagePayload, DataMeshGroup.Fusion.Types,
 type
   TLogoutRequest = class(TMessagePayload)
   private
+    FMessageClass: TMessageClass;
+    FMessageCategory: TMessageCategory;
+    FMessageType: TMessageType;
     FMaintenanceAllowed: TNullableBool;
 
     FLogoutResponse: TLogoutResponse;
@@ -21,15 +24,16 @@ type
     property MaintenanceAllowed: TNullableBool read FMaintenanceAllowed
       write FMaintenanceAllowed;
 
-    constructor Create;
-    destructor Destroy; override;
+    constructor Create(AMessageClass: TMessageClass; AMessageCategory: TMessageCategory;
+      AMessageType: TMessageType); override;
   end;
 
 implementation
 
 { TLogoutRequest }
 
-constructor TLogoutRequest.Create;
+constructor TLogoutRequest.Create(AMessageClass: TMessageClass;
+  AMessageCategory: TMessageCategory; AMessageType: TMessageType);
 begin
   inherited Create(TMessageClass.Service, TMessageCategory.Logout,
     TMessageType.Request);
@@ -41,25 +45,19 @@ begin
   // make sure LogoutResponse is nil
   FreeLogoutResponse;
 
-  FLogoutResponse := TLogoutResponse.Create;
+  FLogoutResponse := TLogoutResponse.Create(FMessageClass, FMessageCategory,
+    FMessageType);
 
   Result := FLogoutResponse;
 
-  if AResponse <> nil then
-    FLogoutResponse.Response := AResponse
-  else
-    FLogoutResponse.Response := TResponse.Create;
+    if AResponse <> nil then
+      FLogoutResponse.Response := AResponse
+    else
+      FLogoutResponse.Response := TResponse.Create;
 
-  FLogoutResponse.Response.Result := TResult.Failure;
-  FLogoutResponse.Response.ErrorCondition := TErrorCondition.Aborted;
-  FLogoutResponse.Response.AdditionalResponse := '';
-end;
-
-destructor TLogoutRequest.Destroy;
-begin
-  FreeLogoutResponse;
-
-  inherited;
+    FLogoutResponse.Response.Result := TResult.Failure;
+    FLogoutResponse.Response.ErrorCondition := TErrorCondition.Aborted;
+    FLogoutResponse.Response.AdditionalResponse := '';
 end;
 
 procedure TLogoutRequest.FreeLogoutResponse;

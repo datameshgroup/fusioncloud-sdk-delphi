@@ -1,0 +1,70 @@
+unit DataMeshGroup.Fusion.TransactionStatusRequest;
+
+interface
+
+uses DataMeshGroup.Fusion.MessagePayload, DataMeshGroup.Fusion.Types,
+  DataMeshGroup.Fusion.TransactionStatusResponse;
+
+type
+  TTransactionStatusRequest = class(TMessagePayload)
+  private
+    FTransactionStatusResponse: TTransactionStatusResponse;
+
+    procedure FreeTransactionStaturResponse;
+    function CreateDefaultResponseMessagePayload(AResponse: TResponse):
+      TMessagePayload; override;
+  public
+    constructor Create;
+    destructor Destroy; override;
+  end;
+
+implementation
+
+{ TTransactionStatusRequest }
+
+constructor TTransactionStatusRequest.Create;
+begin
+  inherited Create(TMessageClass.Service, TMessageCategory.Logout,
+    TMessageType.Request);
+end;
+
+function TTransactionStatusRequest.CreateDefaultResponseMessagePayload(
+  AResponse: TResponse): TMessagePayload;
+begin
+  // make sure TransactionStatusResponse is nil
+  FreeLogoutResponse;
+
+  FTransactionStatusResponse := TLogoutResponse.Create(FMessageClass, FMessageCategory,
+    FMessageType);
+
+  Result := FTransactionStatusResponse;
+
+  if AResponse <> nil then
+    FTransactionStatusResponse.Response := AResponse
+  else
+    FTransactionStatusResponse.Response := TResponse.Create;
+
+  FTransactionStatusResponse.Response.Result := TResult.Failure;
+  FTransactionStatusResponse.Response.ErrorCondition := TErrorCondition.Aborted;
+  FTransactionStatusResponse.Response.AdditionalResponse := '';
+end;
+
+destructor TTransactionStatusRequest.Destroy;
+begin
+  FreeTransactionStaturResponse;
+
+  inherited;
+end;
+
+procedure TTransactionStatusRequest.FreeTransactionStaturResponse;
+begin
+  if FTransactionStatusResponse <> nil then
+  begin
+    if FTransactionStatusResponse.Response <> nil then
+      FTransactionStatusResponse.Response.Free;
+
+    FTransactionStatusResponse.Free;
+  end;
+end;
+
+end.

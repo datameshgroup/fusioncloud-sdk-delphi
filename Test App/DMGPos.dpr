@@ -97,7 +97,10 @@ uses
   DataMeshGroup.Fusion.PaymentRequest in '..\lib\Model\DataMeshGroup.Fusion.PaymentRequest.pas',
   DataMeshGroup.Fusion.PaymentData in '..\lib\Model\DataMeshGroup.Fusion.PaymentData.pas',
   DataMeshGroup.Fusion.WebSocket in '..\lib\DataMeshGroup.Fusion.WebSocket.pas',
-  DataMeshGroup.Fusion.MessageParser in '..\lib\DataMeshGroup.Fusion.MessageParser.pas';
+  DataMeshGroup.Fusion.MessageParser in '..\lib\DataMeshGroup.Fusion.MessageParser.pas',
+  DataMeshGroup.Fusion.TransactionStatusRequest in '..\lib\Model\DataMeshGroup.Fusion.TransactionStatusRequest.pas',
+  DataMeshGroup.Fusion.CardAcquisitionRequest in '..\lib\Model\DataMeshGroup.Fusion.CardAcquisitionRequest.pas',
+  DataMeshGroup.Fusion.CardAcquisitionTransaction in '..\lib\Model\DataMeshGroup.Fusion.CardAcquisitionTransaction.pas';
 
 {$R *.res}
 

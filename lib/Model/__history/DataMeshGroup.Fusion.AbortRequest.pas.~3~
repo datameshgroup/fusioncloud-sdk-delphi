@@ -18,7 +18,6 @@ type
        write FMessageReference;
     property AbortReason: string read FAbortReason write FAbortReason;
     //public DisplayOutput DisplayOutput { get; set; }
-
     constructor Create;
   end;
 
@@ -30,6 +29,7 @@ constructor TAbortRequest.Create;
 begin
   inherited Create(TMessageClass.Service, TMessageCategory.Abort,
     TMessageType.Request);
+
 end;
 
 function TAbortRequest.CreateDefaultResponseMessagePayload(

@@ -3,7 +3,7 @@ unit DataMeshGroup.Fusion.LoginRequest;
 interface
 
 uses System.SysUtils, DataMeshGroup.Fusion.MessagePayload,
-System.Generics.Collections, NullableTypes,
+System.Generics.Collections,
   DataMeshGroup.Fusion.Types, DataMeshGroup.Fusion.SaleSoftware,
   DataMeshGroup.Fusion.Response,DataMeshGroup.Fusion.LoginResponse,
   DataMeshGroup.Fusion.SaleTerminalData,
@@ -39,7 +39,8 @@ type
     property SaleSoftware: TSaleSoftware read FSaleSoftware write FSaleSoftware;
     property SaleTerminalData: TSaleTerminalData read FSaleTerminalData
       write FSaleTerminalData;
-    property TrainingModeFlag: Boolean read FTrainingModeFlag;
+    property TrainingModeFlag: Boolean read FTrainingModeFlag
+      write FTrainingModeFlag default False;
 
     [NeonIgnoreAttribute]
     property OperatorLanguage: string read FOperatorLanguage
@@ -79,6 +80,8 @@ type
   end;
 
 implementation
+
+uses System.DateUtils;
 
 { TLoginRequest }
 
@@ -156,7 +159,7 @@ end;
 
 procedure TLoginRequest.InitProperties;
 begin
-  FDateTime := FormatDateTime('yyyy-MM-ddThh:mm:ss.sszzzzzz', Now);
+  FDateTime := DateToISO8601(Now, True);
   FTrainingModeFlag := False;
   FOperatorLanguage := 'en';
 end;

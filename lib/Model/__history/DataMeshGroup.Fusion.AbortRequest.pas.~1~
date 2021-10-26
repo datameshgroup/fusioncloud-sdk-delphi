@@ -18,18 +18,19 @@ type
        write FMessageReference;
     property AbortReason: string read FAbortReason write FAbortReason;
     //public DisplayOutput DisplayOutput { get; set; }
-
-    constructor Create;
+    constructor Create(AMessageClass: TMessageClass; AMessageCategory: TMessageCategory;
+      AMessageType: TMessageType); override;
   end;
 
 implementation
 
 { TAbortRequest }
 
-constructor TAbortRequest.Create;
+constructor TAbortRequest.Create(AMessageClass: TMessageClass;
+  AMessageCategory: TMessageCategory; AMessageType: TMessageType);
 begin
-  inherited Create(TMessageClass.Service, TMessageCategory.Abort,
-    TMessageType.Request);
+  inherited;
+
 end;
 
 function TAbortRequest.CreateDefaultResponseMessagePayload(

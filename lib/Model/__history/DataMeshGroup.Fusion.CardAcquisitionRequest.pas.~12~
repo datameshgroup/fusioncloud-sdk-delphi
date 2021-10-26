@@ -1,0 +1,42 @@
+unit DataMeshGroup.Fusion.CardAcquisitionRequest;
+
+interface
+
+uses DataMeshGroup.Fusion.MessagePayload, DataMeshGroup.Fusion.Types,
+  DataMeshGroup.Fusion.SaleData,
+  DataMeshGroup.Fusion.CardAcquisitionTransaction,
+  DataMeshGroup.Fusion.Response;
+
+type
+  TCardAcquisitionRequest = class(TMessagePayload)
+  private
+    FSaleData: TSaleData;
+    FCardAcquisitionTransaction: TCardAcquisitionTransaction;
+
+    function CreateDefaultResponseMessagePayload(AResponse: TResponse):
+      TMessagePayload; override;
+  public
+    property SaleData: TSaleData read FSaleData write FSaleData;
+    property CardAcquisitionTransaction: TCardAcquisitionTransaction
+      read FCardAcquisitionTransaction write FCardAcquisitionTransaction;
+
+    constructor Create;
+  end;
+
+implementation
+
+{ TCardAcquisitionRequest }
+
+constructor TCardAcquisitionRequest.Create;
+begin
+  inherited Create(TMessageClass.Service, TMessageCategory.CardAcquisition,
+    TMessageType.Request);
+end;
+
+function TCardAcquisitionRequest.CreateDefaultResponseMessagePayload(
+  AResponse: TResponse): TMessagePayload;
+begin
+
+end;
+
+end.

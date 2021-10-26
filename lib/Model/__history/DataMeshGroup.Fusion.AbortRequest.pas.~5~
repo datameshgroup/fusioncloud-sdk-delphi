@@ -18,7 +18,6 @@ type
        write FMessageReference;
     property AbortReason: string read FAbortReason write FAbortReason;
     //public DisplayOutput DisplayOutput { get; set; }
-
     constructor Create;
   end;
 

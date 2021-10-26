@@ -4,7 +4,7 @@ object FrmMain: TFrmMain
   Cursor = crHandPoint
   BorderStyle = bsSingle
   Caption = 'Main'
-  ClientHeight = 295
+  ClientHeight = 409
   ClientWidth = 658
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
@@ -29,7 +29,7 @@ object FrmMain: TFrmMain
     OnClick = BtnConnectTestClick
   end
   object BtnLogInReq: TButton
-    Left = 166
+    Left = 164
     Top = 8
     Width = 152
     Height = 25
@@ -40,16 +40,15 @@ object FrmMain: TFrmMain
   end
   object Mmo1: TMemo
     Left = 0
-    Top = 148
+    Top = 208
     Width = 658
-    Height = 147
+    Height = 201
     Align = alBottom
     Anchors = [akLeft, akTop, akRight, akBottom]
     Lines.Strings = (
       'Mmo1')
     ScrollBars = ssBoth
     TabOrder = 2
-    ExplicitTop = 147
   end
   object BtnDisconnect: TButton
     Left = 8
@@ -79,6 +78,7 @@ object FrmMain: TFrmMain
     Cursor = crHandPoint
     Caption = 'Logout Request'
     TabOrder = 5
+    OnClick = BtnLogoutRequestClick
   end
   object BtnInputRequest: TButton
     Left = 322
@@ -106,6 +106,7 @@ object FrmMain: TFrmMain
     Cursor = crHandPoint
     Caption = 'Transaction Status  Request'
     TabOrder = 8
+    OnClick = BtnTransStatRequestClick
   end
   object BtnAbortTransRequest: TButton
     Left = 8
@@ -115,6 +116,7 @@ object FrmMain: TFrmMain
     Cursor = crHandPoint
     Caption = 'Abort Transaction Request'
     TabOrder = 9
+    OnClick = BtnAbortTransRequestClick
   end
   object BtnReconciliationRequest: TButton
     Left = 8
@@ -133,5 +135,22 @@ object FrmMain: TFrmMain
     Cursor = crHandPoint
     Caption = 'Card Acquisition Request'
     TabOrder = 11
+    OnClick = BtnCardAcquisitionRequestClick
+  end
+  object BtnClear: TButton
+    Left = 8
+    Top = 177
+    Width = 152
+    Height = 25
+    Cursor = crHandPoint
+    Caption = 'Clear'
+    Font.Charset = DEFAULT_CHARSET
+    Font.Color = clGreen
+    Font.Height = -11
+    Font.Name = 'Tahoma'
+    Font.Style = []
+    ParentFont = False
+    TabOrder = 12
+    OnClick = BtnClearClick
   end
 end

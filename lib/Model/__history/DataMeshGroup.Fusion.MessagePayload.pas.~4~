@@ -16,8 +16,8 @@ type
     function CreateDefaultResponseMessagePayload(AResponse: TResponse):
       TMessagePayload; virtual; abstract;
 
-    constructor Create(AMessageClass: TMessageClass;
-      AMessageCategory: TMessageCategory; AMessageType: TMessageType); virtual;
+    constructor Create(AMessageClass: TMessageClass; AMessageCategory: TMessageCategory;
+      AMessageType: TMessageType); virtual;
   public
     [NeonIgnoreAttribute]
     property MessageClass: TMessageClass read FMessageClass write FMessageClass;

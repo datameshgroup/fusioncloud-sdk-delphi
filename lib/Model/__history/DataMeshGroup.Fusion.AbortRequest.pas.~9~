@@ -19,7 +19,7 @@ type
     property AbortReason: string read FAbortReason write FAbortReason;
     //public DisplayOutput DisplayOutput { get; set; }
 
-    constructor Create;
+    constructor Create; override;
   end;
 
 implementation

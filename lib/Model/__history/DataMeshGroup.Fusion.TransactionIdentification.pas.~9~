@@ -3,26 +3,38 @@ unit DataMeshGroup.Fusion.TransactionIdentification;
 interface
 
 type
-  TVarRec = record
-    case Integer of
-      0: ( FInt1, FInt2: Integer; );
-      1: ( FDouble: Double; )
-  end;
-
   TTransactionIdentification = class
   private
     FTransactionID: string;
     FTimeStamp: TDateTime;
 
-    function Convert(const ADouble: Double): Integer;
     function GetHashCode: Integer; override;
-    function Equals(AObj: TObject): Boolean; override;
   public
     property TransactionID: string read FTransactionID write FTransactionID;
 
+    [JsonConverter(typeof(IsoDateTimeConverter))]
     property TimeStamp: TDateTime read FTimeStamp write FTimeStamp;
 
+    function Equals(AObj: TObject): Boolean; override;
+//    function GetHashCode:Integer; override;
+
     constructor Create(ATransactionID: string);
+
+//        public override bool Equals(object obj)
+//        {
+//            if (obj is null || !(obj is TransactionIdentification))
+//            {
+//                return false;
+//            }
+//
+//            var ti = obj as TransactionIdentification;
+//            return (TimeStamp == ti.TimeStamp) && (TransactionID == ti.TransactionID);
+//        }
+//
+//        public override int GetHashCode()
+//        {
+//            return TimeStamp.GetHashCode() + TransactionID.GetHashCode();
+//        }
   end;
 
 implementation
@@ -30,14 +42,6 @@ implementation
 uses System.DateUtils, System.SysUtils;
 
 { TTransactionIdentification }
-
-function TTransactionIdentification.Convert(const ADouble: Double): Integer;
-var
-  arec : TVarRec;
-begin
-  arec.FDouble := ADouble;
-  Result := arec.FInt1 xor arec.FInt2;
-end;
 
 constructor TTransactionIdentification.Create(ATransactionID: string);
 begin
@@ -60,10 +64,10 @@ end;
 
 function TTransactionIdentification.GetHashCode: Integer;
 var
-  Ft: Integer;
+  test: TDateTime;
 begin
-  Ft := Convert(FTimeStamp);
-  Result := Ft + FTransactionID.GetHashCode;
+  test := FTimeStamp;
+  Result := Self.FTimeStamp.GetHashCode + FTransactionID.GetHashCode;
 end;
 
 end.

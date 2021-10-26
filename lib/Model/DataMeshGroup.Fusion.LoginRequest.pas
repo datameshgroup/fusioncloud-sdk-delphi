@@ -122,8 +122,7 @@ begin
   // make sure LoginResponse is nil
   FreeLoginResponse;
 
-  FLoginResponse := TLoginResponse.Create(TMessageClass.Service,
-    TMessageCategory.Login, TMessageType.Response);
+  FLoginResponse := TLoginResponse.Create;
 
   Result := FLoginResponse;
 

@@ -15,17 +15,19 @@ type
     public
       property Response: TResponse read FResponse write FResponse;
 
-    constructor Create;
+    constructor Create(AMessageClass: TMessageClass; AMessageCategory: TMessageCategory;
+      AMessageType: TMessageType); override;
   end;
 
 implementation
 
 { TLogoutResponse }
 
-constructor TLogoutResponse.Create;
+constructor TLogoutResponse.Create(AMessageClass: TMessageClass;
+  AMessageCategory: TMessageCategory; AMessageType: TMessageType);
 begin
-  inherited Create(TMessageClass.Service, TMessageCategory.Logout,
-    TMessageType.Response);
+  inherited;
+
 end;
 
 function TLogoutResponse.CreateDefaultResponseMessagePayload(

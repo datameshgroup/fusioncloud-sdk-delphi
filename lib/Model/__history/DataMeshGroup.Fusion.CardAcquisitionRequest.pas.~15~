@@ -1,0 +1,72 @@
+unit DataMeshGroup.Fusion.CardAcquisitionRequest;
+
+interface
+
+uses DataMeshGroup.Fusion.MessagePayload, DataMeshGroup.Fusion.Types,
+  DataMeshGroup.Fusion.SaleData,
+  DataMeshGroup.Fusion.CardAcquisitionTransaction,
+  DataMeshGroup.Fusion.CardAcquisitionResponse;
+  DataMeshGroup.Fusion.Response;
+
+type
+  TCardAcquisitionRequest = class(TMessagePayload)
+  private
+    FSaleData: TSaleData;
+    FCardAcquisitionTransaction: TCardAcquisitionTransaction;
+    FCardAcquisitionResponse: TCardAcquisitionResponse;
+
+    procedure FreeCardAcquisitionResponse;
+
+    function CreateDefaultResponseMessagePayload(AResponse: TResponse):
+      TMessagePayload; override;
+  public
+    property SaleData: TSaleData read FSaleData write FSaleData;
+    property CardAcquisitionTransaction: TCardAcquisitionTransaction
+      read FCardAcquisitionTransaction write FCardAcquisitionTransaction;
+
+    constructor Create;
+  end;
+
+implementation
+
+{ TCardAcquisitionRequest }
+
+constructor TCardAcquisitionRequest.Create;
+begin
+  inherited Create(TMessageClass.Service, TMessageCategory.CardAcquisition,
+    TMessageType.Request);
+end;
+
+function TCardAcquisitionRequest.CreateDefaultResponseMessagePayload(
+  AResponse: TResponse): TMessagePayload;
+begin
+  // make sure LogoutResponse is nil
+  FreeLogoutResponse;
+
+  FLogoutResponse := TLogoutResponse.Create(TMessageClass.Service,
+    TMessageCategory.Logout, TMessageType.Response);
+
+  Result := FLogoutResponse;
+
+  if AResponse <> nil then
+    FLogoutResponse.Response := AResponse
+  else
+    FLogoutResponse.Response := TResponse.Create;
+
+  FLogoutResponse.Response.Result := TResult.Failure;
+  FLogoutResponse.Response.ErrorCondition := TErrorCondition.Aborted;
+  FLogoutResponse.Response.AdditionalResponse := '';
+end;
+
+procedure TCardAcquisitionRequest.FreeCardAcquisitionResponse;
+begin
+  if FCardAcquisitionTransactionResponse <> nil then
+  begin
+    if FLogoutResponse.Response <> nil then
+      FLogoutResponse.Response.Free;
+
+    FLogoutResponse.Free;
+  end;
+end;
+
+end.

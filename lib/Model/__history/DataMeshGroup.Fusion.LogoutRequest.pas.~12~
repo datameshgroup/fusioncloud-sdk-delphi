@@ -9,6 +9,9 @@ uses DataMeshGroup.Fusion.MessagePayload, DataMeshGroup.Fusion.Types,
 type
   TLogoutRequest = class(TMessagePayload)
   private
+    FMessageClass: TMessageClass;
+    FMessageCategory: TMessageCategory;
+    FMessageType: TMessageType;
     FMaintenanceAllowed: TNullableBool;
 
     FLogoutResponse: TLogoutResponse;
@@ -41,7 +44,8 @@ begin
   // make sure LogoutResponse is nil
   FreeLogoutResponse;
 
-  FLogoutResponse := TLogoutResponse.Create;
+  FLogoutResponse := TLogoutResponse.Create(FMessageClass, FMessageCategory,
+    FMessageType);
 
   Result := FLogoutResponse;
 

@@ -26,6 +26,7 @@ constructor TLogoutResponse.Create;
 begin
   inherited Create(TMessageClass.Service, TMessageCategory.Logout,
     TMessageType.Response);
+
 end;
 
 function TLogoutResponse.CreateDefaultResponseMessagePayload(

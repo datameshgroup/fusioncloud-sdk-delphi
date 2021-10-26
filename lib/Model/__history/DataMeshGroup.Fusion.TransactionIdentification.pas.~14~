@@ -20,6 +20,7 @@ type
   public
     property TransactionID: string read FTransactionID write FTransactionID;
 
+    [JsonConverter(typeof(IsoDateTimeConverter))]
     property TimeStamp: TDateTime read FTimeStamp write FTimeStamp;
 
     constructor Create(ATransactionID: string);

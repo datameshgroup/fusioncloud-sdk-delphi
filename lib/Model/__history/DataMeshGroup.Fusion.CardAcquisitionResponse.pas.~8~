@@ -29,17 +29,18 @@ type
    //property LoyaltyAccount LoyaltyAccount { get; set; }
    //property CustomerOrder CustomerOrder { get; set; }
 
-    constructor Create;
+    constructor Create(AMessageClass: TMessageClass; AMessageCategory: TMessageCategory;
+      AMessageType: TMessageType); override;
   end;
 
 implementation
 
 { TCardAcquisitionResponse }
 
-constructor TCardAcquisitionResponse.Create;
+constructor TCardAcquisitionResponse.Create(AMessageClass: TMessageClass;
+  AMessageCategory: TMessageCategory; AMessageType: TMessageType);
 begin
-  inherited Create(TMessageClass.Service,
-    TMessageCategory.CardAcquisition, TMessageType.Response);
+  inherited;
 
 end;
 

@@ -1,47 +1,41 @@
-unit DataMeshGroup.Fusion.LogoutRequest;
+unit DataMeshGroup.Fusion.TransactionStatusRequest;
 
 interface
 
 uses DataMeshGroup.Fusion.MessagePayload, DataMeshGroup.Fusion.Types,
-  DataMeshGroup.Fusion.Response, DataMeshGroup.Fusion.LogoutResponse,
-  NullableTypes;
+  DataMeshGroup.Fusion.TransactionStatusResponse;
 
 type
-  TLogoutRequest = class(TMessagePayload)
+  TTransactionStatusRequest = class(TMessagePayload)
   private
-    FMaintenanceAllowed: TNullableBool;
+    FTransactionStatusResponse: TTransactionStatusResponse;
 
-    FLogoutResponse: TLogoutResponse;
-
-    procedure FreeLogoutResponse;
-
+    procedure FreeTransactionStaturResponse;
     function CreateDefaultResponseMessagePayload(AResponse: TResponse):
       TMessagePayload; override;
   public
-    property MaintenanceAllowed: TNullableBool read FMaintenanceAllowed
-      write FMaintenanceAllowed;
-
     constructor Create;
     destructor Destroy; override;
   end;
 
 implementation
 
-{ TLogoutRequest }
+{ TTransactionStatusRequest }
 
-constructor TLogoutRequest.Create;
+constructor TTransactionStatusRequest.Create;
 begin
   inherited Create(TMessageClass.Service, TMessageCategory.Logout,
     TMessageType.Request);
 end;
 
-function TLogoutRequest.CreateDefaultResponseMessagePayload(
+function TTransactionStatusRequest.CreateDefaultResponseMessagePayload(
   AResponse: TResponse): TMessagePayload;
 begin
   // make sure LogoutResponse is nil
   FreeLogoutResponse;
 
-  FLogoutResponse := TLogoutResponse.Create;
+  FLogoutResponse := TLogoutResponse.Create(FMessageClass, FMessageCategory,
+    FMessageType);
 
   Result := FLogoutResponse;
 
@@ -55,21 +49,21 @@ begin
   FLogoutResponse.Response.AdditionalResponse := '';
 end;
 
-destructor TLogoutRequest.Destroy;
+destructor TTransactionStatusRequest.Destroy;
 begin
-  FreeLogoutResponse;
+  FreeTransactionStaturResponse;
 
   inherited;
 end;
 
-procedure TLogoutRequest.FreeLogoutResponse;
+procedure TTransactionStatusRequest.FreeTransactionStaturResponse;
 begin
-  if FLogoutResponse <> nil then
+  if FTransactionStatusResponse <> nil then
   begin
-    if FLogoutResponse.Response <> nil then
-      FLogoutResponse.Response.Free;
+    if FTransactionStatusResponse.Response <> nil then
+      FTransactionStatusResponse.Response.Free;
 
-    FLogoutResponse.Free;
+    FTransactionStatusResponse.Free;
   end;
 end;
 
