@@ -30,7 +30,8 @@ implementation
 
 { TDisplayRequest }
 
-constructor TDisplayRequest.Create;
+constructor TDisplayRequest.Create(AMessageClass: TMessageClass;
+  AMessageCategory: TMessageCategory; AMessageType: TMessageType);
 begin
   inherited Create(TMessageClass.Service,
     TMessageCategory.Display, TMessageType.Request);

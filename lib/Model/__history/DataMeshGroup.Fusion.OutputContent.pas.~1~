@@ -34,6 +34,7 @@ type
     /// <summary>
     /// The content in XHTML format BASE64 encoded. Only set if <see cref="OutputFormat"/> is XHTML, and null otherwise
     /// </summary>
+    [Newtonsoft.Json.JsonConverter(typeof(Base64JsonConverter))]
     property OutputXHTML: string read FOutputXHTML write FOutputXHTML;
 
     /// <summary>

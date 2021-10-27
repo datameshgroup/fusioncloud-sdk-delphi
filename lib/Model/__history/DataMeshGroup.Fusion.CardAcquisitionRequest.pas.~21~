@@ -41,7 +41,7 @@ end;
 function TCardAcquisitionRequest.CreateDefaultResponseMessagePayload(
   AResponse: TResponse): TMessagePayload;
 begin
-  // make sure CardAcquisitionResponse is nil
+  // make sure LogoutResponse is nil
   FreeCardAcquisitionResponse;
 
   FCardAcquisitionResponse := TCardAcquisitionResponse.Create;

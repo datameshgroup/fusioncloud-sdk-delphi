@@ -126,6 +126,7 @@ object FrmMain: TFrmMain
     Cursor = crHandPoint
     Caption = 'Reconciliation Request'
     TabOrder = 10
+    OnClick = BtnReconciliationRequestClick
   end
   object BtnCardAcquisitionRequest: TButton
     Left = 166
@@ -152,5 +153,15 @@ object FrmMain: TFrmMain
     ParentFont = False
     TabOrder = 12
     OnClick = BtnClearClick
+  end
+  object BtnDisplayRequest: TButton
+    Left = 166
+    Top = 117
+    Width = 152
+    Height = 25
+    Cursor = crHandPoint
+    Caption = 'Display Request'
+    TabOrder = 13
+    OnClick = BtnDisplayRequestClick
   end
 end

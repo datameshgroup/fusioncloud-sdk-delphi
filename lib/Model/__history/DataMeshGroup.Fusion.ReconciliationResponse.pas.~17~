@@ -46,7 +46,6 @@ type
     property MID: string read FMID write FMID;
     property AcquirerID: string read FAcquirerID write FAcquirerID;
 
-    [Newtonsoft.Json.JsonConverter(typeof(Newtonsoft.Json.Converters.IsoDateTimeConverter))]
     property LastShiftTotalTime: TNullableDatetime read FLastShiftTotalTime
       write FLastShiftTotalTime;
 
@@ -56,62 +55,71 @@ type
     /// <returns>
     /// A plain text version of the receipt, or null if no values exist
     /// </returns>
-    public string GetReceiptAsPlainText()
-    {
-        StringBuilder sb = new StringBuilder();
+    function GetReceiptAsPlainText: string;
 
-        _ = sb.AppendLine("Datamesh Terminal");
-        _ = sb.AppendLine(GetEnumDescription(ReconciliationType).ToUpper());
-        _ = sb.AppendLine();
-        _ = sb.AppendLine(DateTime.Now.ToString("G"));
-        _ = sb.AppendLine($"Merchant ID\t\t{MID}");
-        _ = sb.AppendLine($"Terminal ID\t\t{TID}");
-        _ = sb.AppendLine();
-        if (LastShiftTotalTime != null)
-        {
-        _ = sb.AppendLine("Previous Reset");
-        _ = sb.AppendLine(LastShiftTotalTime?.ToString("G"));
-        _ = sb.AppendLine();
-        }
-
-        // TODO: populate receipt based on TransactionTotals
-
-        return sb.ToString();
-    }
-
-    protected static string GetEnumDescription(Enum value)
-    {
-        FieldInfo fi = value.GetType().GetField(value.ToString());
-
-        DescriptionAttribute[] attributes = fi.GetCustomAttributes(typeof(DescriptionAttribute), false) as DescriptionAttribute[];
-
-        if (attributes != null && attributes.Any())
-        {
-        return attributes.First().Description;
-        }
-
-        return value.ToString();
-    }
+//    protected static string GetEnumDescription(Enum value)
+//    {
+//        FieldInfo fi = value.GetType().GetField(value.ToString());
+//
+//        DescriptionAttribute[] attributes = fi.GetCustomAttributes(typeof(DescriptionAttribute), false) as DescriptionAttribute[];
+//
+//        if (attributes != null && attributes.Any())
+//        {
+//        return attributes.First().Description;
+//        }
+//
+//        return value.ToString();
+//    }
 
 
-    constructor Create(AMessageClass: TMessageClass; AMessageCategory: TMessageCategory;
-      AMessageType: TMessageType); override;
+    constructor Create;
   end;
 
 implementation
 
+uses System.SysUtils;
+
 { TReconciliationResponse }
 
-constructor TReconciliationResponse.Create(AMessageClass: TMessageClass;
-  AMessageCategory: TMessageCategory; AMessageType: TMessageType);
+constructor TReconciliationResponse.Create;
 begin
-  inherited;
+  inherited Create(TMessageClass.Service, TMessageCategory.Reconciliation,
+    TMessageType.Response);
 
 end;
 
 function TReconciliationResponse.CreateDefaultResponseMessagePayload(
   AResponse: TResponse): TMessagePayload;
 begin
+  raise Exception.Create('Not Implemented');
+end;
+
+function TReconciliationResponse.GetReceiptAsPlainText: string;
+var
+  sb: TStringBuilder;
+begin
+//    public string GetReceiptAsPlainText()
+//    {
+//        StringBuilder sb = new StringBuilder();
+//
+//        _ = sb.AppendLine("Datamesh Terminal");
+//        _ = sb.AppendLine(GetEnumDescription(ReconciliationType).ToUpper());
+//        _ = sb.AppendLine();
+//        _ = sb.AppendLine(DateTime.Now.ToString("G"));
+//        _ = sb.AppendLine($"Merchant ID\t\t{MID}");
+//        _ = sb.AppendLine($"Terminal ID\t\t{TID}");
+//        _ = sb.AppendLine();
+//        if (LastShiftTotalTime != null)
+//        {
+//        _ = sb.AppendLine("Previous Reset");
+//        _ = sb.AppendLine(LastShiftTotalTime?.ToString("G"));
+//        _ = sb.AppendLine();
+//        }
+//
+//        // TODO: populate receipt based on TransactionTotals
+//
+//        return sb.ToString();
+//    }
 
 end;
 

@@ -25,31 +25,35 @@ type
     BtnReconciliationRequest: TButton;
     BtnCardAcquisitionRequest: TButton;
     BtnClear: TButton;
+    BtnDisplayRequest: TButton;
     procedure BtnAbortTransRequestClick(Sender: TObject);
     procedure BtnCardAcquisitionRequestClick(Sender: TObject);
     procedure BtnClearClick(Sender: TObject);
     procedure BtnConnectTestClick(Sender: TObject);
     procedure BtnDisconnectClick(Sender: TObject);
+    procedure BtnDisplayRequestClick(Sender: TObject);
     procedure OnConnect(ASender: TObject);
     procedure OnDisconnect(ASender: TObject);
     procedure OnReceiveMessage(ASender: TObject; const Text: string);
     procedure BtnLogInReqClick(Sender: TObject);
     procedure BtnLogoutRequestClick(Sender: TObject);
     procedure BtnPaymentReqClick(Sender: TObject);
+    procedure BtnReconciliationRequestClick(Sender: TObject);
     procedure BtnTransStatRequestClick(Sender: TObject);
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
     procedure FormShow(Sender: TObject);
   private const
-    ProvIdent = '<set the provider identification>';
-    AppName = '<set the application name>';
-    SoftwareVer = '<set the version number>';
-    CertCode = 'set the certification code';
+    ProvIdent = 'BlackLabel';
+    AppName = 'BlackLabel';
+    SoftwareVer = '1.0.0';
+    CertCode = '0x47CD40C6C54D9A';
 
   private
     FFusionClient: TFusionClient;
     FIsConnected: Boolean;
 
     procedure Connect(ASender: TObject);
+    procedure SendRequest(AMsg: TMessagePayload);
   public
     { Public declarations }
   end;
@@ -69,7 +73,13 @@ uses DataMeshGroup.Fusion.LoginRequest, DataMeshGroup.Fusion.LogoutRequest,
   DataMeshGroup.Fusion.CardAcquisitionRequest,
   DataMeshGroup.Fusion.SaleTerminalData,
   DataMeshGroup.Fusion.SaleProfile,
-  DataMeshGroup.Fusion.CardAcquisitionTransaction;
+  DataMeshGroup.Fusion.CardAcquisitionTransaction,
+  DataMeshGroup.Fusion.DisplayRequest,
+  DataMeshGroup.Fusion.DisplayOutput,
+  DataMeshGroup.Fusion.OutputContent,
+  DataMeshGroup.Fusion.PredefinedContent,
+  DataMeshGroup.Fusion.OutputText,
+  DataMeshGroup.Fusion.ReconciliationRequest;
 
 {$R *.dfm}
 
@@ -79,8 +89,7 @@ var
 begin
   AbortReq := TAbortRequest.Create;
   try
-    FFusionClient.SendMessage(AbortReq, FFusionClient.ServiceID, FFusionClient.SaleID,
-      FFusionClient.PoiID, FFusionClient.KEK);
+    SendRequest(AbortReq);
   finally
     AbortReq.Free;
   end;
@@ -95,30 +104,8 @@ var
   SaleCapabilityList: TList<TSaleCapability>;
   SaleProfile: TSaleProfile;
   ServiceProfileList: TList<TServiceProfile>;
-
-  function GetCardAcquisitionTransaction: TCardAcquisitionTransaction;
-  var
-    CardAcquisitionTransaction: TCardAcquisitionTransaction;
-    PaymentBrand: TList<TPaymentBrand>;
-  begin
-    PaymentBrand := nil;
-    CardAcquisitionTransaction := nil;
-    try
-      PaymentBrand := TList<TPaymentBrand>.Create;
-      CardAcquisitionTransaction := TCardAcquisitionTransaction.Create;
-
-      PaymentBrand.Add(TPaymentBrand.VISA);
-      PaymentBrand.Add(TPaymentBrand.MasterCard);
-
-      CardAcquisitionTransaction.AllowedPaymentBrand := PaymentBrand;
-      CardAcquisitionTransaction.ForceEntryMode := TForceEntryMode.Manual;
-
-      Result := CardAcquisitionTransaction;
-    finally
-      CardAcquisitionTransaction.Free;
-      PaymentBrand.Free;
-    end;
-  end;
+  CardAcquisitionTransaction: TCardAcquisitionTransaction;
+  PaymentBrand: TList<TPaymentBrand>;
 
 begin
   SaleTerminal := nil;
@@ -128,6 +115,10 @@ begin
 
   TransIdent := nil;
   SaleData := nil;
+
+  PaymentBrand := nil;
+  CardAcquisitionTransaction := nil;
+
   try
     TransIdent := TTransactionIdentification.Create('test trans id');
     SaleData := TSaleData.Create;
@@ -162,16 +153,27 @@ begin
     SaleData.SaleTerminalData := SaleTerminal;
 
     CardAcquisitionReq := TCardAcquisitionRequest.Create;
+
+    PaymentBrand := TList<TPaymentBrand>.Create;
+    CardAcquisitionTransaction := TCardAcquisitionTransaction.Create;
+
     try
       CardAcquisitionReq.SaleData := SaleData;
-      CardAcquisitionReq.CardAcquisitionTransaction := GetCardAcquisitionTransaction;
+      PaymentBrand.Add(TPaymentBrand.VISA);
+      PaymentBrand.Add(TPaymentBrand.MasterCard);
 
-      FFusionClient.SendMessage(CardAcquisitionReq, FFusionClient.ServiceID,
-        FFusionClient.SaleID, FFusionClient.PoiID, FFusionClient.KEK);
+      CardAcquisitionTransaction.AllowedPaymentBrand := PaymentBrand;
+      CardAcquisitionTransaction.ForceEntryMode := TForceEntryMode.Manual;
+
+      CardAcquisitionReq.CardAcquisitionTransaction := CardAcquisitionTransaction;
+
+      SendRequest(CardAcquisitionReq);
     finally
       CardAcquisitionReq.Free;
     end;
   finally
+    CardAcquisitionTransaction.Free;
+    PaymentBrand.Free;
     SaleProfile.Free;
 
     SaleData.Free;
@@ -194,14 +196,66 @@ begin
   FFusionClient.Disconnect;
 end;
 
+procedure TFrmMain.BtnDisplayRequestClick(Sender: TObject);
+var
+  DisplayReq: TDisplayRequest;
+  DisplayOutput: TDisplayOutput;
+  OutputContent: TOutputContent;
+  PredefinedContent: TPredefinedContent;
+  OutputText: TOutputText;
+begin
+  DisplayReq := TDisplayRequest.Create;
+  try
+    DisplayOutput := TDisplayOutput.Create;
+    try
+      DisplayOutput.ResponseRequiredFlag := False;
+      DisplayOutput.Device := TDevice.CashierDisplay;
+      DisplayOutput.InfoQualify := TInfoQualify.Sound;
+
+      OutputContent := TOutputContent.Create;
+      try
+        OutputContent.OutputFormat := TOutputFormat.Text;
+
+        PredefinedContent := TPredefinedContent.Create;
+        try
+          PredefinedContent.Language := 'en';
+
+          OutputContent.PredefinedContent := PredefinedContent;
+
+          OutputText := TOutputText.Create;
+          try
+            OutputText.Text := 'Output text';
+            OutputContent.OutputText := OutputText;
+
+            DisplayOutput.OutputContent := OutputContent;
+
+            DisplayReq.DisplayOutput := DisplayOutput;
+
+            SendRequest(DisplayReq);
+          finally
+            OutputText.Free;
+          end;
+        finally
+          PredefinedContent.Free;
+        end;
+      finally
+        OutputContent.Free;
+      end;
+    finally
+      DisplayOutput.Free;
+    end;
+  finally
+    DisplayReq.Free;
+  end;
+end;
+
 procedure TFrmMain.BtnLogInReqClick(Sender: TObject);
 var
   LoginReq: TLoginRequest;
 begin
   LoginReq := TLoginRequest.Create(ProvIdent, AppName, SoftwareVer, CertCode);
   try
-    FFusionClient.SendMessage(LoginReq, FFusionClient.ServiceID, FFusionClient.SaleID,
-      FFusionClient.PoiID, FFusionClient.KEK);
+    SendRequest(LoginReq);
   finally
     LoginReq.Free;
   end;
@@ -213,8 +267,7 @@ var
 begin
   LogoutReq := TLogoutRequest.Create;
   try
-    FFusionClient.SendMessage(LogoutReq, FFusionClient.ServiceID, FFusionClient.SaleID,
-      FFusionClient.PoiID, FFusionClient.KEK);
+    SendRequest(LogoutReq);
   finally
     LogoutReq.Free;
   end;
@@ -240,13 +293,27 @@ begin
     PaymentReq := TPaymentRequest.Create('0001TransID', 4.03, SaleItemArr,
       TPaymentType.Normal);
     try
-      FFusionClient.SendMessage(PaymentReq, FFusionClient.ServiceID,
-        FFusionClient.SaleID, FFusionClient.PoiID, FFusionClient.KEK);
+      SendRequest(PaymentReq);
     finally
       PaymentReq.Free;
     end;
   finally
     SaleItem.Free;
+  end;
+end;
+
+procedure TFrmMain.BtnReconciliationRequestClick(Sender: TObject);
+var
+  ReconciliationReq: TReconciliationRequest;
+begin
+  ReconciliationReq := TReconciliationRequest.Create;
+  try
+    ReconciliationReq.ReconciliationType := TReconciliationType.SaleReconciliation;
+    ReconciliationReq.POIReconciliationID := 'test POI reconciliation ID';
+
+    SendRequest(ReconciliationReq);
+  finally
+    ReconciliationReq.Free;
   end;
 end;
 
@@ -256,8 +323,7 @@ var
 begin
   TransStatReq := TTransactionStatusRequest.Create;
   try
-    FFusionClient.SendMessage(TransStatReq, FFusionClient.ServiceID,
-      FFusionClient.SaleID, FFusionClient.PoiID, FFusionClient.KEK);
+    SendRequest(TransStatReq);
   finally
     TransStatReq.Free;
   end;
@@ -279,9 +345,9 @@ begin
   FFusionClient.OnReceiveMessage := OnReceiveMessage;
   FFusionClient.DefaultTimeout := 10;
   FFusionClient.ServiceID := FFusionClient.UpdateServiceID;
-  FFusionClient.SaleID := '<set the sale id>';
-  FFusionClient.PoiID := '<set the poi id>';
-  FFusionClient.Kek := '<set the kek>';
+  FFusionClient.SaleID := 'BlackLabelUAT1';
+  FFusionClient.PoiID := 'BLBPOI01';
+  FFusionClient.Kek := '44DACB2A22A4A752ADC1BBFFE6CEFB589451E0FFD83F8B21';
 
   FFusionClient.Connect;
 end;
@@ -310,6 +376,12 @@ procedure TFrmMain.OnReceiveMessage(ASender: TObject; const Text: string);
 begin
   Mmo1.Lines.Add('----------------------------------------');
   Mmo1.Lines.Add(Text);
+end;
+
+procedure TFrmMain.SendRequest(AMsg: TMessagePayload);
+begin
+  FFusionClient.SendMessage(AMsg, FFusionClient.ServiceID, FFusionClient.SaleID,
+    FFusionClient.PoiID, FFusionClient.KEK);
 end;
 
 procedure TFrmMain.OnConnect(ASender: TObject);

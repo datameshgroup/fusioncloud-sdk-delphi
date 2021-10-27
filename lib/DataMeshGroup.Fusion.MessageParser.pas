@@ -90,7 +90,6 @@ var
   EncapsulatedContent: TEncapsulatedContent;
   NeonConfig: INeonConfiguration;
   test1: string;
-  testSecurity: string;
 begin
   if AUseTestKeyIdentifier then
   begin
@@ -109,7 +108,6 @@ begin
     NeonConfig := TNeonConfiguration.Create;
     JSon := TNeonSerializerJSON.Create(NeonConfig);
     try
-
       JSonHeaderValue := TJSONValue.Create;
       JSonPayloadValue := TJSONValue.Create;
       try
@@ -118,7 +116,6 @@ begin
         test1 := JSonPayloadValue.ToString;
         MacBody := '"MessageHeader":' + JSonHeaderValue.ToString + ',' +
           '"' + AMessageHeader.GetMessageDescription + '":' + JSonPayloadValue.ToString;
-//        macbody := test;
         SessionKey :=  Crypto.GenerateKey(Env); //'2a38e0f2835f926c455e087ed4744fa7'; //
         Sha256 := Crypto.ByteArrToHexStr(Crypto.GetSHA(MacBody));
         Buffer := Crypto.ByteArrToHexStr(
@@ -126,12 +123,11 @@ begin
                       Crypto.GetSHA(MacBody)
                     )
                   );
-//        EncryptedSha256 := Crypto.Encrypt(Buffer, Env);//SessionKey);
-//        EncryptedSha256 := Crypto.GenerateMAC(Buffer, SessionKey);
-        Mac := Crypto.GenerateMAC(MacBody{SessionKey}, SessionKey{AKek});// EncryptedSha256; //
+        Mac := Crypto.GenerateMAC(MacBody, SessionKey);
 
-        EncryptedKey := Crypto.ByteArrToHexStr(Crypto.GetEncrypt(Crypto.HexToByteArr(SessionKey),
-          AKek, TEncryption.EncKey)); // Encrypt(SessionKey, AKek);
+        EncryptedKey := Crypto.ByteArrToHexStr(
+          Crypto.GetEncrypt(Crypto.HexToByteArr(SessionKey),
+                            AKek, TEncryption.EncKey));
 
         SecurityTrailer := TSecurityTrailer.Create;
         AuthenticatedData := TAuthenticatedData.Create;

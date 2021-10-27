@@ -100,7 +100,8 @@ uses
   DataMeshGroup.Fusion.MessageParser in '..\lib\DataMeshGroup.Fusion.MessageParser.pas',
   DataMeshGroup.Fusion.TransactionStatusRequest in '..\lib\Model\DataMeshGroup.Fusion.TransactionStatusRequest.pas',
   DataMeshGroup.Fusion.CardAcquisitionRequest in '..\lib\Model\DataMeshGroup.Fusion.CardAcquisitionRequest.pas',
-  DataMeshGroup.Fusion.CardAcquisitionTransaction in '..\lib\Model\DataMeshGroup.Fusion.CardAcquisitionTransaction.pas';
+  DataMeshGroup.Fusion.CardAcquisitionTransaction in '..\lib\Model\DataMeshGroup.Fusion.CardAcquisitionTransaction.pas',
+  DataMeshGroup.Fusion.ReconciliationRequest in '..\lib\Model\DataMeshGroup.Fusion.ReconciliationRequest.pas';
 
 {$R *.res}
 

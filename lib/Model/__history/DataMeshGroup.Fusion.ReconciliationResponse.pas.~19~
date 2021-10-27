@@ -4,7 +4,7 @@ interface
 
 uses DataMeshGroup.Fusion.MessagePayload, DataMeshGroup.Fusion.Types,
   DataMeshGroup.Fusion.Response, System.Generics.Collections,
-  DataMeshGroup.Fusion.TransactionTotals;
+  DataMeshGroup.Fusion.TransactionTotals, NullableTypes;
 
 type
   TReconciliationResponse = class(TMessagePayload)
@@ -16,6 +16,7 @@ type
     FTID: string;
     FMID: string;
     FAcquirerID: string;
+    FLastShiftTotalTime: TNullableDateTime;
 
     function CreateDefaultResponseMessagePayload(AResponse: TResponse):
       TMessagePayload; override;
@@ -45,8 +46,8 @@ type
     property MID: string read FMID write FMID;
     property AcquirerID: string read FAcquirerID write FAcquirerID;
 
-    [Newtonsoft.Json.JsonConverter(typeof(Newtonsoft.Json.Converters.IsoDateTimeConverter))]
-    public DateTime? LastShiftTotalTime { get; set; }
+    property LastShiftTotalTime: TNullableDatetime read FLastShiftTotalTime
+      write FLastShiftTotalTime;
 
     /// <summary>
     /// Builds a plain text version of the reconciliation receipt
@@ -54,62 +55,68 @@ type
     /// <returns>
     /// A plain text version of the receipt, or null if no values exist
     /// </returns>
-    public string GetReceiptAsPlainText()
-    {
-        StringBuilder sb = new StringBuilder();
+    function GetReceiptAsPlainText: string;
 
-        _ = sb.AppendLine("Datamesh Terminal");
-        _ = sb.AppendLine(GetEnumDescription(ReconciliationType).ToUpper());
-        _ = sb.AppendLine();
-        _ = sb.AppendLine(DateTime.Now.ToString("G"));
-        _ = sb.AppendLine($"Merchant ID\t\t{MID}");
-        _ = sb.AppendLine($"Terminal ID\t\t{TID}");
-        _ = sb.AppendLine();
-        if (LastShiftTotalTime != null)
-        {
-        _ = sb.AppendLine("Previous Reset");
-        _ = sb.AppendLine(LastShiftTotalTime?.ToString("G"));
-        _ = sb.AppendLine();
-        }
-
-        // TODO: populate receipt based on TransactionTotals
-
-        return sb.ToString();
-    }
-
-    protected static string GetEnumDescription(Enum value)
-    {
-        FieldInfo fi = value.GetType().GetField(value.ToString());
-
-        DescriptionAttribute[] attributes = fi.GetCustomAttributes(typeof(DescriptionAttribute), false) as DescriptionAttribute[];
-
-        if (attributes != null && attributes.Any())
-        {
-        return attributes.First().Description;
-        }
-
-        return value.ToString();
-    }
-
-
-    constructor Create(AMessageClass: TMessageClass; AMessageCategory: TMessageCategory;
-      AMessageType: TMessageType); override;
+    constructor Create;
   end;
 
 implementation
 
+uses System.SysUtils, System.Rtti;
+
 { TReconciliationResponse }
 
-constructor TReconciliationResponse.Create(AMessageClass: TMessageClass;
-  AMessageCategory: TMessageCategory; AMessageType: TMessageType);
+constructor TReconciliationResponse.Create;
 begin
-  inherited;
+  inherited Create(TMessageClass.Service, TMessageCategory.Reconciliation,
+    TMessageType.Response);
 
 end;
 
 function TReconciliationResponse.CreateDefaultResponseMessagePayload(
   AResponse: TResponse): TMessagePayload;
 begin
+  raise Exception.Create('Not Implemented');
+end;
+
+function TReconciliationResponse.GetReceiptAsPlainText: string;
+var
+  StrBuilder: TStringBuilder;
+begin
+  StrBuilder := TStringBuilder.Create;
+  try
+    StrBuilder.Append('Datamesh Terminal');
+    StrBuilder.Append(GetEnumDescription(ReconciliationType).ToUpper());
+        _ = sb.AppendLine();
+        _ = sb.AppendLine(DateTime.Now.ToString("G"));
+        _ = sb.AppendLine($"Merchant ID\t\t{MID}");
+        _ = sb.AppendLine($"Terminal ID\t\t{TID}");
+        _ = sb.AppendLine();
+  finally
+    StrBuilder.Free;
+  end;
+//    public string GetReceiptAsPlainText()
+//    {
+//        StringBuilder sb = new StringBuilder();
+//
+//        _ = sb.AppendLine("Datamesh Terminal");
+//        _ = sb.AppendLine(GetEnumDescription(ReconciliationType).ToUpper());
+//        _ = sb.AppendLine();
+//        _ = sb.AppendLine(DateTime.Now.ToString("G"));
+//        _ = sb.AppendLine($"Merchant ID\t\t{MID}");
+//        _ = sb.AppendLine($"Terminal ID\t\t{TID}");
+//        _ = sb.AppendLine();
+//        if (LastShiftTotalTime != null)
+//        {
+//        _ = sb.AppendLine("Previous Reset");
+//        _ = sb.AppendLine(LastShiftTotalTime?.ToString("G"));
+//        _ = sb.AppendLine();
+//        }
+//
+//        // TODO: populate receipt based on TransactionTotals
+//
+//        return sb.ToString();
+//    }
 
 end;
 

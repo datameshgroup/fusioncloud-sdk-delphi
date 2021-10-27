@@ -11,14 +11,15 @@ type
   private
     FUseTestKeyIdentifier: Boolean;
 
-    function GenerateSecurityTrailer(const AKek: string; AMessageHeader: TMessageHeader;
-      AMessagePayload: TMessagePayload; AUseTestKeyIdentifier: Boolean; test: string): string;
+    function GenerateSecurityTrailer(const AKek: string;
+      AMessageHeader: TMessageHeader; AMessagePayload: TMessagePayload;
+      AUseTestKeyIdentifier: Boolean): string;
     const
       F_PROCOL_VER = '3.1-dmg';
   public
     function BuildMessage(const AServiceID: string; const ASaleID: string;
       const APoiID: string; const AKek: string;
-      AMessage: TMessagePayload; test: string): string;
+      AMessage: TMessagePayload): string;
 
     property UseTestKeyIdentifier: Boolean read FUseTestKeyIdentifier
       write FUseTestKeyIdentifier;
@@ -33,8 +34,7 @@ uses System.SysUtils, System.JSON, Neon.Core.Persistence.JSON,
   DataMeshGroup.Fusion.Crypto;
 
 function TMessageParser.BuildMessage(const AServiceID, ASaleID, APoiID,
-  AKek: string; AMessage: TMessagePayload; test: string): string;
-
+  AKek: string; AMessage: TMessagePayload): string;
 var
   MessageHeader: TMessageHeader;
 begin
@@ -54,7 +54,7 @@ begin
 
     // Create JSON for header and request
     Result := GenerateSecurityTrailer(AKek, MessageHeader, AMessage,
-      FUseTestKeyIdentifier, test);
+      FUseTestKeyIdentifier);
 
   finally
     MessageHeader.Free;
@@ -63,7 +63,7 @@ end;
 
 function TMessageParser.GenerateSecurityTrailer(const AKek: string;
   AMessageHeader: TMessageHeader; AMessagePayload: TMessagePayload;
-  AUseTestKeyIdentifier: Boolean; test: string): string;
+  AUseTestKeyIdentifier: Boolean): string;
 
 var
   EncryptedKey: string;
@@ -116,10 +116,10 @@ begin
         JSonHeaderValue := JSon.ObjectToJSON(AMessageHeader);
         JSonPayloadValue := JSon.ObjectToJSON(AMessagePayload);
         test1 := JSonPayloadValue.ToString;
-//        MacBody := '"MessageHeader":' + JSonHeaderValue.ToString + ',' +
-//          '"' + AMessageHeader.GetMessageDescription + '":' + JSonPayloadValue.ToString;
-        macbody := test;
-        SessionKey :=  '2a38e0f2835f926c455e087ed4744fa7'; //Crypto.GenerateKey(Env); //
+        MacBody := '"MessageHeader":' + JSonHeaderValue.ToString + ',' +
+          '"' + AMessageHeader.GetMessageDescription + '":' + JSonPayloadValue.ToString;
+//        macbody := test;
+        SessionKey :=  Crypto.GenerateKey(Env); //'2a38e0f2835f926c455e087ed4744fa7'; //
         Sha256 := Crypto.ByteArrToHexStr(Crypto.GetSHA(MacBody));
         Buffer := Crypto.ByteArrToHexStr(
                     Crypto.AppendBytes(
@@ -130,8 +130,8 @@ begin
 //        EncryptedSha256 := Crypto.GenerateMAC(Buffer, SessionKey);
         Mac := Crypto.GenerateMAC(MacBody{SessionKey}, SessionKey{AKek});// EncryptedSha256; //
 
-        EncryptedKey := Crypto.GetEncrypt(Crypto.HexToByteArr(SessionKey),
-          AKek, Env); // Encrypt(SessionKey, AKek);
+        EncryptedKey := Crypto.ByteArrToHexStr(Crypto.GetEncrypt(Crypto.HexToByteArr(SessionKey),
+          AKek, TEncryption.EncKey)); // Encrypt(SessionKey, AKek);
 
         SecurityTrailer := TSecurityTrailer.Create;
         AuthenticatedData := TAuthenticatedData.Create;

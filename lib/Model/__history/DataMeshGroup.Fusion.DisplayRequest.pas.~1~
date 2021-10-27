@@ -23,17 +23,19 @@ type
     property DisplayOutput: TDisplayOutput read FDisplayOutput
       write FDisplayOutput;
 
-    constructor Create;
+    constructor Create(AMessageClass: TMessageClass; AMessageCategory: TMessageCategory;
+      AMessageType: TMessageType); overload; override;
   end;
 
 implementation
 
 { TDisplayRequest }
 
-constructor TDisplayRequest.Create;
+constructor TDisplayRequest.Create(AMessageClass: TMessageClass;
+  AMessageCategory: TMessageCategory; AMessageType: TMessageType);
 begin
-  inherited Create(TMessageClass.Service,
-    TMessageCategory.Display, TMessageType.Request);
+  inherited;
+
 end;
 
 function TDisplayRequest.CreateDefaultResponseMessagePayload(

@@ -96,7 +96,7 @@ begin
     if FLastShiftTotalTime.HasValue then
     begin
       StrBuilder.Append('Previous Reset');
-      StrBuilder.Append(DateTimeToStr(FLastShiftTotalTime.Value));
+      StrBuilder.Append(DateTimeToStr(FLastShiftTotalTime));
       StrBuilder.Append(sLineBreak);
     end;
 
@@ -104,7 +104,39 @@ begin
   finally
     StrBuilder.Free;
   end;
+//    public string GetReceiptAsPlainText()
+//    {
+//        StringBuilder sb = new StringBuilder();
+//
+//        _ = sb.AppendLine("Datamesh Terminal");
+//        _ = sb.AppendLine(GetEnumDescription(ReconciliationType).ToUpper());
+//        _ = sb.AppendLine();
+//        _ = sb.AppendLine(DateTime.Now.ToString("G"));
+//        _ = sb.AppendLine($"Merchant ID\t\t{MID}");
+//        _ = sb.AppendLine($"Terminal ID\t\t{TID}");
+//        _ = sb.AppendLine();
+//        if (LastShiftTotalTime != null)
+//        {
+//        _ = sb.AppendLine("Previous Reset");
+//        _ = sb.AppendLine(LastShiftTotalTime?.ToString("G"));
+//        _ = sb.AppendLine();
+//        }
+//
+//        // TODO: populate receipt based on TransactionTotals
+//
+//        return sb.ToString();
+//    }
+
 end;
 
 end.
 
+
+public Response  { get; set; }
+
+
+
+    internal override MessagePayload CreateDefaultResponseMessagePayload(Response response)
+    {
+        throw new NotImplementedException();
+    }

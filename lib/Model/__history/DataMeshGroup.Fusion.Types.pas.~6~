@@ -798,17 +798,18 @@ type
   /// <summary>
   /// Type of Reconciliation requested by the Sale to the POI.
   /// </summary>
-  [NeonEnumNames('Unknown, Sale Reconciliation, Acquirer Reconciliation, ' +
-    'Previous Reconciliation, Internal Reconciliation')]
+  //[JsonConverter(TJsonEnumNameConverter<TReconciliationType>)]
   TReconciliationType = (
     /// <summary>
     /// Unknown reconciliation type (default)
     /// </summary>
+    [Description('Unknown')]
     Unknown,
 
     /// <summary>
     /// Reconciliation with closure of the current period
     /// </summary>
+    [Description('Sale Reconciliation')]
     SaleReconciliation,
 
     /// <summary>
@@ -820,16 +821,19 @@ type
     /// <summary>
     /// Reconciliation between the POI and one or several Acquirers only. There is no reconciliation between the Sale System and the POI System.
     /// </summary>
+    [Description('Acquirer Reconciliation')]
     AcquirerReconciliation,
 
     /// <summary>
     /// Request result of a previous reconciliation.
     /// </summary>
+    [Description('Previous Reconciliation')]
     PreviousReconciliation,
 
     /// <summary>
     /// Returns the current reconciliation totals without closing the current period
     /// </summary>
+    [Description('Internal Reconciliation')]
     InternalReconciliation
   );
 
