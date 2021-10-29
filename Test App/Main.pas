@@ -26,6 +26,7 @@ type
     BtnCardAcquisitionRequest: TButton;
     BtnClear: TButton;
     BtnDisplayRequest: TButton;
+    BtnRefundRequest: TButton;
     procedure BtnAbortTransRequestClick(Sender: TObject);
     procedure BtnCardAcquisitionRequestClick(Sender: TObject);
     procedure BtnClearClick(Sender: TObject);
@@ -39,14 +40,15 @@ type
     procedure BtnLogoutRequestClick(Sender: TObject);
     procedure BtnPaymentReqClick(Sender: TObject);
     procedure BtnReconciliationRequestClick(Sender: TObject);
+    procedure BtnRefundRequestClick(Sender: TObject);
     procedure BtnTransStatRequestClick(Sender: TObject);
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
     procedure FormShow(Sender: TObject);
   private const
-    ProvIdent = 'BlackLabel';
-    AppName = 'BlackLabel';
-    SoftwareVer = '1.0.0';
-    CertCode = '0x47CD40C6C54D9A';
+    ProvIdent = '<set the provider identification>';
+    AppName = '<set the application name>';
+    SoftwareVer = '<set the version number>';
+    CertCode = 'set the certification code';
 
   private
     FFusionClient: TFusionClient;
@@ -54,8 +56,8 @@ type
 
     procedure Connect(ASender: TObject);
     procedure SendRequest(AMsg: TMessagePayload);
+    procedure PaymentAndRefundRequest(APaymentType: TPaymentType);
   public
-    { Public declarations }
   end;
 
 var
@@ -274,32 +276,8 @@ begin
 end;
 
 procedure TFrmMain.BtnPaymentReqClick(Sender: TObject);
-var
-  PaymentReq: TPaymentRequest;
-  SaleItem: TSaleItem;
-  SaleItemArr: TList<TSaleItem>;
 begin
-  SaleItem := TSaleItem.Create;
-  try
-    SaleItem.ItemID := 23;
-    SaleItem.ProductCode := 'Test Prod Code001';
-    SaleItem.UnitOfMeasure := TUnitOfMeasure.Litre;
-    SaleItem.UnitPrice := 12.53;
-    SaleItem.ProductLabel := 'Test Prod Label';
-
-    SaleItemArr := TList<TSaleItem>.Create;
-    SaleItemArr.Add(SaleItem);
-
-    PaymentReq := TPaymentRequest.Create('0001TransID', 4.03, SaleItemArr,
-      TPaymentType.Normal);
-    try
-      SendRequest(PaymentReq);
-    finally
-      PaymentReq.Free;
-    end;
-  finally
-    SaleItem.Free;
-  end;
+  PaymentAndRefundRequest(TPaymentType.Normal);
 end;
 
 procedure TFrmMain.BtnReconciliationRequestClick(Sender: TObject);
@@ -315,6 +293,11 @@ begin
   finally
     ReconciliationReq.Free;
   end;
+end;
+
+procedure TFrmMain.BtnRefundRequestClick(Sender: TObject);
+begin
+  PaymentAndRefundRequest(TPaymentType.Refund);
 end;
 
 procedure TFrmMain.BtnTransStatRequestClick(Sender: TObject);
@@ -345,9 +328,9 @@ begin
   FFusionClient.OnReceiveMessage := OnReceiveMessage;
   FFusionClient.DefaultTimeout := 10;
   FFusionClient.ServiceID := FFusionClient.UpdateServiceID;
-  FFusionClient.SaleID := 'BlackLabelUAT1';
-  FFusionClient.PoiID := 'BLBPOI01';
-  FFusionClient.Kek := '44DACB2A22A4A752ADC1BBFFE6CEFB589451E0FFD83F8B21';
+  FFusionClient.SaleID := '<set the sale id>';
+  FFusionClient.PoiID := '<set the poi id>';
+  FFusionClient.Kek := '<set the kek>';
 
   FFusionClient.Connect;
 end;
@@ -376,6 +359,35 @@ procedure TFrmMain.OnReceiveMessage(ASender: TObject; const Text: string);
 begin
   Mmo1.Lines.Add('----------------------------------------');
   Mmo1.Lines.Add(Text);
+end;
+
+procedure TFrmMain.PaymentAndRefundRequest(APaymentType: TPaymentType);
+var
+  PaymentReq: TPaymentRequest;
+  SaleItem: TSaleItem;
+  SaleItemArr: TList<TSaleItem>;
+begin
+  SaleItem := TSaleItem.Create;
+  try
+    SaleItem.ItemID := 23;
+    SaleItem.ProductCode := 'Test Prod Code001';
+    SaleItem.UnitOfMeasure := TUnitOfMeasure.Litre;
+    SaleItem.UnitPrice := 12.53;
+    SaleItem.ProductLabel := 'Test Prod Label';
+
+    SaleItemArr := TList<TSaleItem>.Create;
+    SaleItemArr.Add(SaleItem);
+
+    PaymentReq := TPaymentRequest.Create('0001TransID', 4.03, SaleItemArr,
+      APaymentType);
+    try
+      SendRequest(PaymentReq);
+    finally
+      PaymentReq.Free;
+    end;
+  finally
+    SaleItem.Free;
+  end;
 end;
 
 procedure TFrmMain.SendRequest(AMsg: TMessagePayload);

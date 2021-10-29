@@ -61,7 +61,7 @@ object FrmMain: TFrmMain
     OnClick = BtnDisconnectClick
   end
   object BtnPaymentReq: TButton
-    Left = 165
+    Left = 164
     Top = 39
     Width = 152
     Height = 25
@@ -163,5 +163,15 @@ object FrmMain: TFrmMain
     Caption = 'Display Request'
     TabOrder = 13
     OnClick = BtnDisplayRequestClick
+  end
+  object BtnRefundRequest: TButton
+    Left = 324
+    Top = 86
+    Width = 152
+    Height = 25
+    Cursor = crHandPoint
+    Caption = 'Refund Request'
+    TabOrder = 14
+    OnClick = BtnRefundRequestClick
   end
 end
