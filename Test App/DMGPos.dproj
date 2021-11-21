@@ -194,7 +194,6 @@
             <FormType>dfm</FormType>
         </DCCReference>
         <DCCReference Include="..\lib\DataMeshGroup.Fusion.IWebSocket.pas"/>
-        <DCCReference Include="..\lib\Third Party Components and Libraries\ICS\icsv867\Source\WbemScripting_TLB.pas"/>
         <DCCReference Include="..\lib\Security\DataMeshGroup.Fusion.Crypto.pas"/>
         <DCCReference Include="..\lib\Model\DataMeshGroup.Fusion.SaleItem.pas"/>
         <DCCReference Include="..\lib\Model\DataMeshGroup.Fusion.PaymentTransaction.pas"/>

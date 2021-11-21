@@ -31,7 +31,16 @@ type
 
   IFusionClient = interface
   ['{0F952F88-2741-43C2-B8CF-BA593A42F8B0}']
+    /// <summary>
+    /// Get the service ID
+    /// </summary>
+    function UpdateServiceID: string;
+
+    /// <summary>
+    /// Get the websocket connection state
+    /// </summary>
     function State: string;
+
     /// <summary>
     /// Connects to the <see cref="URL"/>, or <see cref="CustomURL"/> if <see cref="URL"/> is <see cref="URL"/>
     /// </summary>
@@ -42,48 +51,32 @@ type
     /// </summary>
     procedure Disconnect;
 
-    function Login(ARequestMessage: TMessagePayload): TLoginResponse;
-
     /// <summary>
-    /// Send a request. Timeout will be set to a default value.
+    /// Send a request
     /// </summary>
     /// <param name="AMsg">Payload to send</param>
-    /// <param name="ATimeout">Timeout in milliseconds</param>
-    function SendMessage(AMsg:string; ATimeout: Integer): Boolean; overload;
-
-    function RecvMessage: string; overload;
-
-    /// <summary>
-    /// Send a request. cancellationToken will be set to a default value.
-    /// </summary>
-    /// <param name="requestMessage">Payload to send</param>
-    /// <param name="serviceID">ServiceId sent in the header</param>
-    /// <returns>The resulting <see cref="SaleToPOIMessage"/> wrapper. Useful for extracting the ServiceId used in the request</returns>
-    /// <exception cref="MessageFormatException">An error occured converting the request to JSON</exception>
-    /// <exception cref="TaskCanceledException">A timeout occured sending the request</exception>
-    /// <exception cref="NetworkException">A network error occured sending the request</exception>
-    function SendMessage(ARequestMessage: TMessagePayload;
-      AserviceID: string): TSaleToPOIMessage; overload;
+    /// <param name="ASeriveID">ServiceId sent in the header</param>
+    /// <param name="ASaleID">SaleId sent in the header</param>
+    /// <param name="APoiID">POIID sent in the header</param>
+    /// <param name="AKek">KEK sent in the header</param>
+    function SendMessage(AMsg: TMessagePayload; const AServiceID: string;
+      const ASaleID: string; const APoiID: string;
+      const AKek: string): Boolean;
 
     /// <summary>
     /// Sends a request, and then waits for a specified response message type. Discards all other response types. Timeout set to <see cref="DefaultTimeout"/>
     /// </summary>
     /// <typeparam name="T">The type of message to await. Must be of type <see cref="MessagePayload"/></typeparam>
-    /// <param name="requestMessage">The payload to send</param>
-    /// <returns>A response message of type 'T', or null if an unknown response was received</returns>
-    /// <exception cref="InvalidOperationException">Raised when a call is made to <see cref="RecvAsync"/> whilst 'ResponseMessage' events have been subscribed to</exception>
-    /// <exception cref="TimeoutException">A timeout occured awaiting a response</exception>
-    /// <exception cref="NetworkException">A network error occured awaiting a response</exception>
-    function RecvMessage(ARequestMessage: TMessagePayload): TMessagePayload; overload;
+    /// <param name="ARequestType">The type of request to deserialize</param>
+    /// <param name="AJSon">JSon response from the requests</param>
+    function ReceiveMessage(ARequestType: TRequestType; AJSon: string;
+      const AKek: string): TMessagePayload; overload;
 
     function GetPort: string;
     procedure SetPort(APort: string);
 
     function GetProtocol: string;
     procedure SetProtocol(AProtocol: string);
-
-    function GetMessageParser: IMessageParser;
-    procedure SetMessageParser(AMessageParser: IMessageParser);
 
     function GetServiceID: string;
     procedure SetServiceID(AServiceID: string);
@@ -103,6 +96,10 @@ type
     function GetCustomURL: string;
     procedure SetCustomURL(ACustomURL: string);
 
+    function GetDefaultTimeout: Integer;
+    procedure SetDefaultTimeout(ADefaultTimeout: Integer);
+
+
     function GetUnifyRootCA: TUnifyRootCA;
     procedure SetUnifyRootCA(AUnifyURL: TUnifyRootCA);
 
@@ -115,14 +112,8 @@ type
     function GetLoginResponse: TLoginResponse;
     procedure SetLoginResponse(ALoginResponse: TLoginResponse);
 
-    function GetReceiveBufferSize: Integer;
-    procedure SetReceiveBufferSize(AReceiveBufferSize: Integer);
-
     function GetLogLevel: TLogLevel;
     procedure SetLogLevel(ALogLevel: TLogLevel);
-
-    function GetDefaultTimeout: TTimeSpan;
-    procedure SetDefaultTimeout(ADefaultTimeout: TTimeSpan);
 
     function GetDefaultHeartbeatTimeout: TTimeSpan;
     procedure SetDefaultHeartbeatTimeout(ADefaultHeartbeatTimeout: TTimeSpan);
@@ -163,15 +154,11 @@ type
     function GetEventOnReceiveMessage: TEventOnReceiveMessage;
     procedure SetEventOnReceiveMessage(AEventOnReceiveMessage: TEventOnReceiveMessage);
 
+    function GetDisplayRequest: TDisplayRequest;
+
     {$REGION 'Properties'}
     property Port: string read GetPort write SetPort;
     property Protocol: string read GetProtocol write SetProtocol;
-
-    /// <summary>
-    /// Parser for converting request/response messages to bytes
-    /// </summary>
-    property MessageParser: IMessageParser read GetMessageParser
-      write SetMessageParser;
 
     /// <summary>
     /// ServiceID of the last message sent
@@ -226,9 +213,9 @@ type
       write SetLoginResponse;
 
     /// <summary>
-    /// Default amount of time we wait for responses from the switch. Default is 90 seconds.
+    /// Default amount of time we wait for responses from the switch
     /// </summary>
-    property DefaultTimeout: TTimeSpan read GetDefaultTimeout
+    property DefaultTimeout: Integer read GetDefaultTimeout
       write SetDefaultTimeout;
 
     /// <summary>
@@ -236,6 +223,11 @@ type
     /// </summary>
     property DefaultHeartbeatTimeout: TTimeSpan read GetDefaultHeartbeatTimeout
       write SetDefaultHeartbeatTimeout;
+
+    /// <summary>
+    /// Get the display request from the server if any
+    /// </summary>
+    property Display: TDisplayRequest read GetDisplayRequest;
 
     {$ENDREGION}
 

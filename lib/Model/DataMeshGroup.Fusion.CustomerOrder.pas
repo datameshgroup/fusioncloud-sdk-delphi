@@ -9,11 +9,11 @@ type
   private
     FCustomerOrderID: string;
     FSaleReferenceId: string;
-    FOpenOrderState: TNullableBool;
+    FOpenOrderState: Boolean;
     FStartDate: string;
     FEndDate: string;
-    FForecastedAmount: TNullableCurrency;
-    FCurrentAmount: TNullableCurrency;
+    FForecastedAmount: Currency;
+    FCurrentAmount: Currency;
     FCurrency: string;
     FAccessedBy: string;
     FAdditionalInformation: string;
@@ -22,17 +22,15 @@ type
       write FCustomerOrderID;
     property SaleReferenceId: string read FSaleReferenceId
       write FSaleReferenceId;
-    property OpenOrderState: TNullableBool read FOpenOrderState
+    property OpenOrderState: Boolean read FOpenOrderState
       write FOpenOrderState;
     property StartDate: string read FStartDate write FStartDate;
     property EndDate: string read FEndDate write FEndDate;
 
-    [JsonConverter(typeof(DecimalJsonConverter))]
-    property ForecastedAmount: TNullableCurrency read FForecastedAmount
+    property ForecastedAmount: Currency read FForecastedAmount
       write FForecastedAmount;
 
-    [JsonConverter(typeof(DecimalJsonConverter))]
-    property CurrentAmount: TNullableCurrency read FCurrentAmount
+    property CurrentAmount: Currency read FCurrentAmount
       write FCurrentAmount;
 
     property Currency: string read FCurrency write FCurrency;

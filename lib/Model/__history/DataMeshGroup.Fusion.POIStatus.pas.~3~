@@ -1,0 +1,36 @@
+unit DataMeshGroup.Fusion.POIStatus;
+
+interface
+
+uses DataMeshGroup.Fusion.Types, DataMeshGroup.Fusion.CashHandlingDevice;
+
+type
+  TPOIStatus = class
+  private
+    FGlobalStatus: string;
+    FSecurityOKFlag: Boolean;
+    FPEDOKFlag: Boolean;
+    FCardReaderOKFlag: Boolean;
+    FPrinterStatus: string;
+    FCommunicationOKFlag: Boolean;
+    FCashHandlingDevice: TCashHandlingDevice;
+    FFraudPreventionFlag: Boolean;
+  public
+    property GlobalStatus: string read FGlobalStatus write FGlobalStatus;
+    property SecurityOKFlag: Boolean read FSecurityOKFlag
+      write FSecurityOKFlag;
+    property PEDOKFlag: Boolean read FPEDOKFlag write FPEDOKFlag;
+    property CardReaderOKFlag: Boolean read FCardReaderOKFlag
+      write FCardReaderOKFlag;
+    property PrinterStatus: string read FPrinterStatus write FPrinterStatus;
+    property CommunicationOKFlag: Boolean read FCommunicationOKFlag
+      write FCommunicationOKFlag;
+    property CashHandlingDevice: TCashHandlingDevice read FCashHandlingDevice
+      write FCashHandlingDevice;
+    property FraudPreventionFlag: Boolean read FFraudPreventionFlag
+      write FFraudPreventionFlag;
+  end;
+
+implementation
+
+end.

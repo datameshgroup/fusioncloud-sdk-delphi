@@ -7,10 +7,10 @@ uses DataMeshGroup.Fusion.Types, NullableTypes, DataMeshGroup.Fusion.CardData;
 type
   TPaymentInstrumentData = class
   private
-    FPaymentInstrumentType: TNullablePaymentInstrumentType;
+    FPaymentInstrumentType: TPaymentInstrumentType;
     FCardData: TCardData;
   public
-    property PaymentInstrumentType: TNullablePaymentInstrumentType
+    property PaymentInstrumentType: TPaymentInstrumentType
       read FPaymentInstrumentType write FPaymentInstrumentType;
     property CardData: TCardData read FCardData write FCardData;
     //public CheckData CheckData { get; set; }

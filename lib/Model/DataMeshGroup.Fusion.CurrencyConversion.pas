@@ -7,14 +7,14 @@ uses NullableTypes, DataMeshGroup.Fusion.AmountType;
 type
   TCurrencyConversion = class
   private
-    FCustomerApprovedFlag: TNullableBool;
+    FCustomerApprovedFlag: Boolean;
     FConvertedAmount: TAmountType;
     FRate: string;
     FMarkup: string;
     FCommission: string;
     FDeclaration: string;
   public
-    property CustomerApprovedFlag: TNullableBool read FCustomerApprovedFlag
+    property CustomerApprovedFlag: Boolean read FCustomerApprovedFlag
       write FCustomerApprovedFlag;
     property ConvertedAmount: TAmountType read FConvertedAmount
       write FConvertedAmount;

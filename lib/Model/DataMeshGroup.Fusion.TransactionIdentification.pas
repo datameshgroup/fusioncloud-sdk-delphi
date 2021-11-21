@@ -22,7 +22,8 @@ type
 
     property TimeStamp: TDateTime read FTimeStamp write FTimeStamp;
 
-    constructor Create(ATransactionID: string);
+    constructor Create(const ATransactionID: string); overload;
+    constructor Create; overload;
   end;
 
 implementation
@@ -39,10 +40,14 @@ begin
   Result := arec.FInt1 xor arec.FInt2;
 end;
 
-constructor TTransactionIdentification.Create(ATransactionID: string);
+constructor TTransactionIdentification.Create;
+begin
+  FTimeStamp :=  TTimeZone.Local.ToUniversalTime(Now);
+end;
+
+constructor TTransactionIdentification.Create(const ATransactionID: string);
 begin
   FTransactionID := ATransactionID;
-  FTimeStamp :=  TTimeZone.Local.ToUniversalTime(Now);
 end;
 
 function TTransactionIdentification.Equals(AObj: TObject): Boolean;

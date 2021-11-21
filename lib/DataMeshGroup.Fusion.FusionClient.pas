@@ -19,13 +19,12 @@ uses DataMeshGroup.Fusion.IFusionClient,
   System.Classes;
 
 type
-  TFusionClient = class//(TInterfacedObject, IFusionClient)
+  TFusionClient = class(TInterfacedObject, IFusionClient)
   private
     FWebSocket: TWebSocket;
     FPort: string;
     FProtocol: string;
 
-    FMessageParser: IMessageParser;
     FServiceId: string;
     FSaleID: string;
     FPoiID: string;
@@ -52,17 +51,15 @@ type
     FEventOnReconciliationResponse: TEventOnReconciliationResponse;
     FEventOnDisplayRequest: TEventOnDisplayRequest;
     FEventOnTransactionStatusResponse: TEventOnTransactionStatusResponse;
-    FEventOnReceiveMessage:TEventOnReceiveMessage;  //TGetStrProc;
+    FEventOnReceiveMessage:TEventOnReceiveMessage;
     FIsTestEnvironment: Boolean;
+    FDisplayRequest: TDisplayRequest;
 
     function GetPort: string;
     procedure SetPort(APort: string);
 
     function GetProtocol: string;
     procedure SetProtocol(AProtocol: string);
-
-    function GetMessageParser: IMessageParser;
-    procedure SetMessageParser(AMessageParser: IMessageParser);
 
     function GetServiceID: string;
     procedure SetServiceID(AServiceID: string);
@@ -141,10 +138,18 @@ type
     function GetEventOnReceiveMessage: TEventOnReceiveMessage;
     procedure SetEventOnReceiveMessage(AEventOnReceiveMessage: TEventOnReceiveMessage);
 
+    function GetDisplayRequest: TDisplayRequest;
   public
+    /// <summary>
+    /// Get the service ID
+    /// </summary>
     function UpdateServiceID: string;
 
+    /// <summary>
+    /// Get the websocket connection state
+    /// </summary>
     function State: string;
+
     /// <summary>
     /// Connects to the <see cref="URL"/>, or <see cref="CustomURL"/> if <see cref="URL"/> is <see cref="URL"/>
     /// </summary>
@@ -156,48 +161,31 @@ type
     procedure Disconnect;
 
     /// <summary>
-    /// Send a request. Timeout will be set to a default value.
+    /// Send a request
     /// </summary>
     /// <param name="AMsg">Payload to send</param>
-    function SendMessage(AMsg: string): Boolean; overload;
-    function SendMessage(AMessage: TMessagePayload; const AServiceID: string;
+    /// <param name="ASeriveID">ServiceId sent in the header</param>
+    /// <param name="ASaleID">SaleId sent in the header</param>
+    /// <param name="APoiID">POIID sent in the header</param>
+    /// <param name="AKek">KEK sent in the header</param>
+    function SendMessage(AMsg: TMessagePayload; const AServiceID: string;
       const ASaleID: string; const APoiID: string;
-      const AKek: string): Boolean; overload;
+      const AKek: string): Boolean;
 
     /// <summary>
-    /// Send a request. cancellationToken will be set to a default value.
+    /// Sends a request, and then waits for a specified response message type. Discards all other response types. Timeout set to <see cref="DefaultTimeout"/>
     /// </summary>
-    /// <param name="requestMessage">Payload to send</param>
-    /// <param name="serviceID">ServiceId sent in the header</param>
-    /// <returns>The resulting <see cref="SaleToPOIMessage"/> wrapper. Useful for extracting the ServiceId used in the request</returns>
-    /// <exception cref="MessageFormatException">An error occured converting the request to JSON</exception>
-    /// <exception cref="TaskCanceledException">A timeout occured sending the request</exception>
-    /// <exception cref="NetworkException">A network error occured sending the request</exception>
-    function SendMessage(ARequestMessage: TMessagePayload;
-      AserviceID: string): TSaleToPOIMessage; overload;
-
-    /// <summary>
-    /// Send a request. serviceId will default to a unique value.
-    /// </summary>
-    /// <param name="requestMessage">Payload to send</param>
-    /// <param name="cancellationToken">Cancellation token used for the request</param>
-    /// <returns>The resulting <see cref="SaleToPOIMessage"/> wrapper. Useful for extracting the ServiceId used in the request</returns>
-    /// <exception cref="MessageFormatException">An error occured converting the request to JSON</exception>
-    /// <exception cref="TaskCanceledException">A timeout occured sending the request</exception>
-    /// <exception cref="NetworkException">A network error occured sending the request</exception>
-    function SendMessage(ARequestMessage: TMessagePayload): TSaleToPOIMessage; overload;
+    /// <typeparam name="T">The type of message to await. Must be of type <see cref="MessagePayload"/></typeparam>
+    /// <param name="ARequestType">The type of request to deserialize</param>
+    /// <param name="AJSon">JSon response from the requests</param>
+    function ReceiveMessage(ARequestType: TRequestType; AJSon: string;
+      const AKek: string): TMessagePayload;
 
 
     {$REGION 'Properties'}
 
     property Port: string read GetPort write SetPort;
     property Protocol: string read GetProtocol write SetProtocol;
-
-    /// <summary>
-    /// Parser for converting request/response messages to bytes
-    /// </summary>
-    property MessageParser: IMessageParser read GetMessageParser
-      write SetMessageParser;
 
     /// <summary>
     /// ServiceID of the last message sent
@@ -267,6 +255,11 @@ type
     /// </summary>
     property DefaultHeartbeatTimeout: TTimeSpan read GetDefaultHeartbeatTimeout
       write SetDefaultHeartbeatTimeout;
+
+    /// <summary>
+    /// Get the display request from the server if any
+    /// </summary>
+    property Display: TDisplayRequest read GetDisplayRequest;
 
     {$ENDREGION}
 
@@ -437,6 +430,11 @@ begin
   Result := FDefaultTimeout;
 end;
 
+function TFusionClient.GetDisplayRequest: TDisplayRequest;
+begin
+  Result := FDisplayRequest;
+end;
+
 function TFusionClient.GetEventOnCardAcquisitionResponse: TEventOnCardAcquisitionResponse;
 begin
   Result := FEventOnCardAcquisitionResponse;
@@ -522,11 +520,6 @@ begin
   Result := FLogLevel;
 end;
 
-function TFusionClient.GetMessageParser: IMessageParser;
-begin
-  Result := FMessageParser;
-end;
-
 function TFusionClient.GetPOIID: string;
 begin
   Result := FPoiID;
@@ -562,7 +555,21 @@ begin
   Result := FUnifyURL;
 end;
 
-function TFusionClient.SendMessage(AMessage: TMessagePayload; const AServiceID,
+function TFusionClient.ReceiveMessage(ARequestType: TRequestType;
+  AJSon: string; const AKek: string): TMessagePayload;
+var
+  MessageParser: TMessageParser;
+begin
+  MessageParser := TMessageParser.Create;
+  try
+    Result := MessageParser.ReceiveMessage(ARequestType, AJSon, AKek);
+  finally
+    MessageParser := nil;
+    MessageParser.Free;
+  end;
+end;
+
+function TFusionClient.SendMessage(AMsg: TMessagePayload; const AServiceID,
   ASaleID, APoiID, AKek: string): Boolean;
 var
   MessageParser: TMessageParser;
@@ -573,29 +580,12 @@ begin
     MessageParser.UseTestKeyIdentifier := FIsTestEnvironment;
 
     Msg := MessageParser.BuildMessage(AServiceID, ASaleID,
-      APoiID, AKek, AMessage);
+      APoiID, AKek, AMsg);
 
     Result := FWebSocket.Send(Msg);
   finally
     MessageParser.Free;
   end;
-end;
-
-function TFusionClient.SendMessage(AMsg: string): Boolean;
-begin
-  Result := FWebSocket.Send(AMsg);
-end;
-
-function TFusionClient.SendMessage(
-  ARequestMessage: TMessagePayload): TSaleToPOIMessage;
-begin
-
-end;
-
-function TFusionClient.SendMessage(ARequestMessage: TMessagePayload;
-  AserviceID: string): TSaleToPOIMessage;
-begin
-
 end;
 
 procedure TFusionClient.SetCustomRootCA(ACustomRootCA: string);
@@ -708,11 +698,6 @@ begin
   FLogLevel := ALogLevel;
 end;
 
-procedure TFusionClient.SetMessageParser(AMessageParser: IMessageParser);
-begin
-  FMessageParser := AMessageParser;
-end;
-
 procedure TFusionClient.SetPOIID(APOIID: string);
 begin
   FPoiID := APOIID;
@@ -757,5 +742,6 @@ begin
   Result := IntToHex(MilliSecondsBetween(TTimeZone.Local.ToUniversalTime(Now),
     EncodeDate(System.SysUtils.CurrentYear, 1, 1)), 1);
 end;
+
 
 end.

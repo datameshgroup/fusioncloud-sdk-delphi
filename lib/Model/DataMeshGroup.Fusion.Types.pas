@@ -11,6 +11,16 @@ uses
 {$SCOPEDENUMS ON}
 
 type
+  TRequestType = (
+    TRLogin,
+    TRLogout,
+    TRTransactionStatus,
+    TRDisplay,
+    TRCardAcquisition,
+    TRReconciliation,
+    TRPayment
+  );
+
   TEncEnv = (EEProd, EETest);
 
 //  [JsonConverter(TJsonEnumNameConverter<TMessageClass>)]

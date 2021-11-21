@@ -15,7 +15,7 @@ type
     FAmountsResp: TAmountsResp;
     FCurrencyConversion: TCurrencyConversion;
     FCustomerLanguage: string;
-    FOnlineFlag: TNullableBool;
+    FOnlineFlag: Boolean;
     FAuthenticationMethod: TList<TAuthenticationMethod>;
     FValidityDate: string;
     FPaymentAcquirerData: TPaymentAcquirerData;
@@ -32,7 +32,7 @@ type
     //property string ProtectedSignature { get; set; }
     property CustomerLanguage: string read FCustomerLanguage
       write FCustomerLanguage;
-    property OnlineFlag: TNullableBool read FOnlineFlag write FOnlineFlag;
+    property OnlineFlag: Boolean read FOnlineFlag write FOnlineFlag;
     property AuthenticationMethod: TList<TAuthenticationMethod>
       read FAuthenticationMethod write FAuthenticationMethod;
     property ValidityDate: string read FValidityDate write FValidityDate;

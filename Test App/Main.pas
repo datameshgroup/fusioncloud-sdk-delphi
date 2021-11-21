@@ -8,7 +8,9 @@ uses
   Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls,
   DataMeshGroup.Fusion.FusionClient, DataMeshGroup.Fusion.IFusionClient,
   DataMeshGroup.Fusion.Types, DataMeshGroup.Fusion.MessagePayload,
-  System.Generics.Collections, Vcl.ExtCtrls;
+  System.Generics.Collections, Vcl.ExtCtrls,
+  DataMeshGroup.Fusion.LoginResponse,
+  DataMeshGroup.Fusion.LogoutResponse;
 
 type
   TFrmMain = class(TForm)
@@ -18,8 +20,6 @@ type
     BtnDisconnect: TButton;
     BtnPaymentReq: TButton;
     BtnLogoutRequest: TButton;
-    BtnInputRequest: TButton;
-    BtnPrintRequest: TButton;
     BtnTransStatRequest: TButton;
     BtnAbortTransRequest: TButton;
     BtnReconciliationRequest: TButton;
@@ -27,6 +27,7 @@ type
     BtnClear: TButton;
     BtnDisplayRequest: TButton;
     BtnRefundRequest: TButton;
+    Edt1: TEdit;
     procedure BtnAbortTransRequestClick(Sender: TObject);
     procedure BtnCardAcquisitionRequestClick(Sender: TObject);
     procedure BtnClearClick(Sender: TObject);
@@ -45,14 +46,15 @@ type
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
     procedure FormShow(Sender: TObject);
   private const
-    ProvIdent = '<set the provider identification>';
-    AppName = '<set the application name>';
-    SoftwareVer = '<set the version number>';
-    CertCode = 'set the certification code';
+    ProvIdent = 'BlackLabel';
+    AppName = 'BlackLabel';
+    SoftwareVer = '1.0.0';
+    CertCode = '0x47CD40C6C54D9A';
 
   private
-    FFusionClient: TFusionClient;
+    FFusionClient: IFusionClient;
     FIsConnected: Boolean;
+    FRequestType: TRequestType;
 
     procedure Connect(ASender: TObject);
     procedure SendRequest(AMsg: TMessagePayload);
@@ -65,7 +67,8 @@ var
 
 implementation
 
-uses DataMeshGroup.Fusion.LoginRequest, DataMeshGroup.Fusion.LogoutRequest,
+uses System.Rtti,
+  DataMeshGroup.Fusion.LoginRequest, DataMeshGroup.Fusion.LogoutRequest,
   DataMeshGroup.Fusion.PaymentRequest, DataMeshGroup.Fusion.AbortRequest,
   DataMeshGroup.Fusion.TransactionStatusRequest,
   DataMeshGroup.Fusion.Crypto, DataMeshGroup.Fusion.SaleData,
@@ -81,7 +84,10 @@ uses DataMeshGroup.Fusion.LoginRequest, DataMeshGroup.Fusion.LogoutRequest,
   DataMeshGroup.Fusion.OutputContent,
   DataMeshGroup.Fusion.PredefinedContent,
   DataMeshGroup.Fusion.OutputText,
-  DataMeshGroup.Fusion.ReconciliationRequest;
+  DataMeshGroup.Fusion.ReconciliationRequest,
+  DataMeshGroup.Fusion.TransactionStatusResponse,
+  DataMeshGroup.Fusion.ReconciliationResponse,
+  DataMeshGroup.Fusion.PaymentResponse;
 
 {$R *.dfm}
 
@@ -255,6 +261,8 @@ procedure TFrmMain.BtnLogInReqClick(Sender: TObject);
 var
   LoginReq: TLoginRequest;
 begin
+  FRequestType := TRequestType.TRLogin;
+
   LoginReq := TLoginRequest.Create(ProvIdent, AppName, SoftwareVer, CertCode);
   try
     SendRequest(LoginReq);
@@ -267,6 +275,8 @@ procedure TFrmMain.BtnLogoutRequestClick(Sender: TObject);
 var
   LogoutReq: TLogoutRequest;
 begin
+  FRequestType := TRequestType.TRLogout;
+
   LogoutReq := TLogoutRequest.Create;
   try
     SendRequest(LogoutReq);
@@ -284,6 +294,8 @@ procedure TFrmMain.BtnReconciliationRequestClick(Sender: TObject);
 var
   ReconciliationReq: TReconciliationRequest;
 begin
+  FRequestType := TRequestType.TRReconciliation;
+
   ReconciliationReq := TReconciliationRequest.Create;
   try
     ReconciliationReq.ReconciliationType := TReconciliationType.SaleReconciliation;
@@ -304,6 +316,8 @@ procedure TFrmMain.BtnTransStatRequestClick(Sender: TObject);
 var
   TransStatReq: TTransactionStatusRequest;
 begin
+  FRequestType := TRequestType.TRTransactionStatus;
+
   TransStatReq := TTransactionStatusRequest.Create;
   try
     SendRequest(TransStatReq);
@@ -328,9 +342,9 @@ begin
   FFusionClient.OnReceiveMessage := OnReceiveMessage;
   FFusionClient.DefaultTimeout := 10;
   FFusionClient.ServiceID := FFusionClient.UpdateServiceID;
-  FFusionClient.SaleID := '<set the sale id>';
-  FFusionClient.PoiID := '<set the poi id>';
-  FFusionClient.Kek := '<set the kek>';
+  FFusionClient.SaleID := 'BlackLabelUAT1';
+  FFusionClient.PoiID := 'BLBPOI01';
+  FFusionClient.Kek := '44DACB2A22A4A752ADC1BBFFE6CEFB589451E0FFD83F8B21';
 
   FFusionClient.Connect;
 end;
@@ -356,9 +370,84 @@ begin
 end;
 
 procedure TFrmMain.OnReceiveMessage(ASender: TObject; const Text: string);
+var
+  i: Integer;
+  LoginResponse: TLoginResponse;
+  LogoutResponse: TLogoutResponse;
+  TransactionStatusResponse: TTransactionStatusResponse;
+  ReconciliationResponse: TReconciliationResponse;
+  PaymentResponse: TPaymentResponse;
+  Test: string;
 begin
   Mmo1.Lines.Add('----------------------------------------');
   Mmo1.Lines.Add(Text);
+
+  if FRequestType = TRequestType.TRLogin then
+  begin
+    LoginResponse := TLoginResponse.Create;
+    try
+      LoginResponse := FFusionClient.ReceiveMessage(TRequestType.TRLogin,
+        Text, FFusionClient.kek) as TLoginResponse;
+
+//      Test := TRttiEnumerationType.GetName(LoginResponse.POISystemData.POIStatus.printerstatus);
+      for i := 0 to LoginResponse.POISystemData.POITerminalData.POICapabilities.Count - 1 do
+      begin
+        test := TRttiEnumerationType.GetName(LoginResponse.POISystemData.POITerminalData.POICapabilities[i]);
+      end;
+      Test := LoginResponse.POISystemData.POIStatus.printerstatus;
+    finally
+      LoginResponse := nil;
+      LoginResponse.Free;
+    end;
+  end else
+  if FRequestType = TRequestType.TRLogout then
+  begin
+    LogoutResponse := TLogoutResponse.Create;
+    try
+      LogoutResponse := FFusionClient.ReceiveMessage(TRequestType.TRLogout,
+        Text, FFusionClient.KEK) as TLogoutResponse;
+
+      Test := TRttiEnumerationType.GetName(LogoutResponse.Response.Result);
+//      ShowMessage(Test);
+    finally
+      LogoutResponse := nil;
+      LogoutResponse.Free;
+    end;
+  end else
+  if FRequestType = TRequestType.TRTransactionStatus then
+  begin
+    TransactionStatusResponse := TTransactionStatusResponse.Create;
+    try
+      TransactionStatusResponse := FFusionClient.ReceiveMessage(TRequestType.TRTransactionStatus,
+        Text, FFusionClient.KEK) as TTransactionStatusResponse;
+    finally
+      TransactionStatusResponse := nil;
+      TransactionStatusResponse.Free;
+    end;
+  end else
+  if FRequestType = TRequestType.TRReconciliation then
+  begin
+    ReconciliationResponse := TReconciliationResponse.Create;
+    try
+      ReconciliationResponse := FFusionClient.ReceiveMessage(TRequestType.TRReconciliation,
+        Text, FFusionClient.KEK) as TReconciliationResponse;
+    finally
+      ReconciliationResponse := nil;
+      ReconciliationResponse.Free;
+    end;
+  end else
+  if FRequestType = TRequestType.TRPayment then
+  begin
+    PaymentResponse := TPaymentResponse.Create;
+    try
+      PaymentResponse := FFusionClient.ReceiveMessage(TRequestType.TRPayment,
+        Text, FFusionClient.KEK) as TPaymentResponse;
+    finally
+      PaymentResponse := nil;
+      PaymentResponse.Free;
+    end;
+  end;
+
 end;
 
 procedure TFrmMain.PaymentAndRefundRequest(APaymentType: TPaymentType);
@@ -377,6 +466,8 @@ begin
 
     SaleItemArr := TList<TSaleItem>.Create;
     SaleItemArr.Add(SaleItem);
+
+    FRequestType := TRequestType.TRPayment;
 
     PaymentReq := TPaymentRequest.Create('0001TransID', 4.03, SaleItemArr,
       APaymentType);

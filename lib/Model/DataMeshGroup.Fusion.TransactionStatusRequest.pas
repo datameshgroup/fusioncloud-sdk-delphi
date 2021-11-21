@@ -39,8 +39,7 @@ begin
   // make sure TransactionStatusResponse is nil
   FreeTransactionStatusResponse;
 
-  FTransactionStatusResponse := TTransactionStatusResponse.Create(TMessageClass.Service,
-    TMessageCategory.TransactionStatus, TMessageType.Response);
+  FTransactionStatusResponse := TTransactionStatusResponse.Create;
 
   Result := FTransactionStatusResponse;
 

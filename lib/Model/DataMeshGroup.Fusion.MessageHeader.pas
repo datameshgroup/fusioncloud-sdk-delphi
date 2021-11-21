@@ -36,7 +36,7 @@ type
     function GetMessageDescription: string;
 
     /// <summary>
-    /// Implementation of Newtonsoft 'ShouldSerialize' method. Ensures ProtocolVersion is only serialized for login message types
+    /// Ensures ProtocolVersion is only serialized for login message types
     /// </summary>
     function ShouldSerializeProtocolVersion: Boolean;
   end;

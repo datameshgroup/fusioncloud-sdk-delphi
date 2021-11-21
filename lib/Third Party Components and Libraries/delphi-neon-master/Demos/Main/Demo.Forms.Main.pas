@@ -20,9 +20,7 @@
 {                                                                              }
 {******************************************************************************}
 unit Demo.Forms.Main;
-
 interface
-
 uses
   System.Classes, System.SysUtils, Vcl.Forms, Vcl.ActnList, Vcl.ComCtrls, System.Rtti,
   Vcl.StdCtrls, Vcl.Controls, Vcl.ExtCtrls, System.Diagnostics, System.Actions,
@@ -31,7 +29,6 @@ uses
   FireDAC.Phys.Intf, FireDAC.DApt.Intf, Data.DB, FireDAC.Comp.DataSet,
   FireDAC.Comp.Client, FireDAC.Stan.StorageBin, Vcl.Grids, Vcl.DBGrids,
   Vcl.ToolWin, System.Contnrs, System.JSON, REST.Json,
-
   Neon.Core.Types,
   Neon.Core.Attributes,
   Neon.Core.Persistence,
@@ -39,7 +36,6 @@ uses
   Neon.Core.Utils,
   Demo.Frame.Configuration,
   Demo.Forms.Serialization.Base, System.ImageList, Vcl.ImgList;
-
 type
   TMainForm = class(TForm)
     TopPanel: TPanel;
@@ -52,23 +48,16 @@ type
     procedure CreateTab(const ACaption: string; AIcon: Integer; AColor: TColor; AClass: TfrmSerializationClass);
   public
   end;
-
 var
   MainForm: TMainForm;
-
 implementation
-
 {$R *.dfm}
-
 uses
   System.Generics.Collections, Vcl.Graphics,
-
   Demo.Forms.Serialization.Custom, Demo.Forms.Serialization.Delphi,
   Demo.Forms.Serialization.Simple, Demo.Forms.Serialization.Records,
   Demo.Forms.Serialization.Schema, Demo.Forms.Serialization.Complex;
-
 { TMainForm }
-
 procedure TMainForm.CreateTab(const ACaption: string; AIcon: Integer; AColor: TColor; AClass: TfrmSerializationClass);
 var
   LTab: TTabSheet;
@@ -78,18 +67,15 @@ begin
   LTab.Caption := ACaption;
   LTab.PageControl := pgcMain;
   LTab.ImageIndex := AIcon;
-
   LForm := AClass.CreateEx(Self, frmConfiguration, AColor);
   LForm.BorderStyle := bsNone;
   LForm.Parent := LTab;
   LForm.Align := alClient;
   LForm.Show;
 end;
-
 procedure TMainForm.FormCreate(Sender: TObject);
 begin
   frmConfiguration.Initialize;
-
   CreateTab('Simple Types', 0, clGreen, TfrmSerializationSimple);
   CreateTab('Value Types', 11, clTeal, TfrmSerializationRecords);
   CreateTab('Reference Types', 3, clNavy, TfrmSerializationComplex);
@@ -97,8 +83,6 @@ begin
   CreateTab('Custom Serializers', 4, clMaroon, TfrmSerializationCustom);
   CreateTab('Attributes && JSON Schema', 16, clWebTan, TfrmSerializationSchema);
 end;
-
 initialization
   ReportMemoryLeaksOnShutdown := True;
-
 end.

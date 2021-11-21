@@ -22,8 +22,7 @@ type
     property RepeatedMessageResponse: TRepeatedMessageResponse
       read FRepeatedMessageResponse write FRepeatedMessageResponse;
 
-    constructor Create(AMessageClass: TMessageClass; AMessageCategory: TMessageCategory;
-      AMessageType: TMessageType); override;
+    constructor Create;
   end;
 
 implementation
@@ -32,11 +31,10 @@ uses System.SysUtils;
 
 { TTransactionStatusResponse }
 
-constructor TTransactionStatusResponse.Create(AMessageClass: TMessageClass;
-  AMessageCategory: TMessageCategory; AMessageType: TMessageType);
+constructor TTransactionStatusResponse.Create;
 begin
-  inherited;
-
+  inherited Create(TMessageClass.Service, TMessageCategory.TransactionStatus,
+    TMessageType.Response);;
 end;
 
 function TTransactionStatusResponse.CreateDefaultResponseMessagePayload(

@@ -14,8 +14,6 @@ type
     property TokenRequestedType: TTokenRequestedType read FTokenRequestedType
       write FTokenRequestedType;
     property TokenValue: string read FTokenValue write FTokenValue;
-
-    [Newtonsoft.Json.JsonConverter(typeof(IsoDateTimeConverter))]
     property ExpiryDateTime: TDateTime read FExpiryDateTime
       write FExpiryDateTime;
   end;

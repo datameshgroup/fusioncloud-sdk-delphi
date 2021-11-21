@@ -7,41 +7,34 @@ uses DataMeshGroup.Fusion.Types, NullableTypes;
 type
   TAmountsResp = class
   private
-    FCurrencySymbol: TNullableCurrencySymbol;
-    FAuthorizedAmount: TNullableCurrency;
-    FTotalRebatesAmount: TNullableCurrency;
-    FTotalFeesAmount: TNullableCurrency;
-    FCashBackAmount: TNullableCurrency;
-    FTipAmount: TNullableCurrency;
-    FSurchargeAmount: TNullableCurrency;
+    FCurrencySymbol: TCurrencySymbol;
+    FAuthorizedAmount: TCurrencySymbol;
+    FTotalRebatesAmount: TCurrencySymbol;
+    FTotalFeesAmount: TCurrencySymbol;
+    FCashBackAmount: TCurrencySymbol;
+    FTipAmount: TCurrencySymbol;
+    FSurchargeAmount: TCurrencySymbol;
 
     procedure InitProperties;
   public
-    property Currency: TNullableCurrencySymbol read FCurrencySymbol
+    property Currency: TCurrencySymbol read FCurrencySymbol
       write FCurrencySymbol;
 
-    [Newtonsoft.Json.JsonConverter(typeof(DecimalJsonConverter))]
-    property AuthorizedAmount: TNullableCurrency read FAuthorizedAmount
+    property AuthorizedAmount: TCurrencySymbol read FAuthorizedAmount
       write FAuthorizedAmount;
 
-    [Newtonsoft.Json.JsonConverter(typeof(DecimalJsonConverter))]
-    property TotalRebatesAmount: TNullableCurrency read FTotalRebatesAmount
+    property TotalRebatesAmount: TCurrencySymbol read FTotalRebatesAmount
       write FTotalRebatesAmount;
 
-    [Newtonsoft.Json.JsonConverter(typeof(DecimalJsonConverter))]
-    property TotalFeesAmount: TNullableCurrency read FTotalFeesAmount
+    property TotalFeesAmount: TCurrencySymbol read FTotalFeesAmount
       write FTotalFeesAmount;
 
-
-    [Newtonsoft.Json.JsonConverter(typeof(DecimalJsonConverter))]
-    property CashBackAmount: TNullableCurrency read FCashBackAmount
+    property CashBackAmount: TCurrencySymbol read FCashBackAmount
       write FCashBackAmount;
 
-    [Newtonsoft.Json.JsonConverter(typeof(DecimalJsonConverter))]
-    property TipAmount: TNullableCurrency read FTipAmount write FTipAmount;
+    property TipAmount: TCurrencySymbol read FTipAmount write FTipAmount;
 
-    [Newtonsoft.Json.JsonConverter(typeof(DecimalJsonConverter))]
-    property SurchargeAmount: TNullableCurrency read FSurchargeAmount
+    property SurchargeAmount: TCurrencySymbol read FSurchargeAmount
       write FSurchargeAmount;
 
     constructor Create;

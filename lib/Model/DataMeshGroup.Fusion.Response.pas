@@ -32,7 +32,7 @@ type
     /// <summary>
     /// Helper function. True when Result is <see cref="Result.Success"/> or <see cref="Result.Partial"/>
     /// </summary>
-    [NeonIgnoreAttribute] //[JsonIgnore]
+    [NeonIgnoreAttribute]
     property Success: Boolean read FSuccess write FSuccess;
 
     constructor Create;

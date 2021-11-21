@@ -1,0 +1,59 @@
+unit DataMeshGroup.Fusion.AmountsResp;
+
+interface
+
+uses DataMeshGroup.Fusion.Types, NullableTypes;
+
+type
+  TAmountsResp = class
+  private
+    FCurrencySymbol: TNullableCurrencySymbol;
+    FAuthorizedAmount: TNullableCurrency;
+    FTotalRebatesAmount: TNullableCurrency;
+    FTotalFeesAmount: TNullableCurrency;
+    FCashBackAmount: TNullableCurrency;
+    FTipAmount: TNullableCurrency;
+    FSurchargeAmount: TNullableCurrency;
+
+    procedure InitProperties;
+  public
+    property Currency: TNullableCurrencySymbol read FCurrencySymbol
+      write FCurrencySymbol;
+
+    property AuthorizedAmount: TNullableCurrency read FAuthorizedAmount
+      write FAuthorizedAmount;
+
+    property TotalRebatesAmount: TNullableCurrency read FTotalRebatesAmount
+      write FTotalRebatesAmount;
+
+    property TotalFeesAmount: TNullableCurrency read FTotalFeesAmount
+      write FTotalFeesAmount;
+
+    property CashBackAmount: TNullableCurrency read FCashBackAmount
+      write FCashBackAmount;
+
+    property TipAmount: TNullableCurrency read FTipAmount write FTipAmount;
+
+    property SurchargeAmount: TNullableCurrency read FSurchargeAmount
+      write FSurchargeAmount;
+
+    constructor Create;
+  end;
+
+implementation
+
+{ TAmountsResp }
+
+constructor TAmountsResp.Create;
+begin
+  inherited;
+
+  InitProperties;
+end;
+
+procedure TAmountsResp.InitProperties;
+begin
+  FCurrencySymbol := TCurrencySymbol.AUD;
+end;
+
+end.

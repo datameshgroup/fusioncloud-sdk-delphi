@@ -1,0 +1,23 @@
+unit DataMeshGroup.Fusion.IMessageParser;
+
+interface
+
+uses DataMeshGroup.Fusion.SaleToPOIRequest,
+  DataMeshGroup.Fusion.MessagePayload;
+
+type
+  IMessageParser = interface
+  ['{6FFC5471-EEC0-4452-BD40-AD35422D6223}']
+
+    function RecvMessage(AObject: TMessagePayload; AJSon: string): TMessagePayload;
+    function BuildSaleToPOIMessage(AServiceID: string; ASaleID: string;
+      APoiID: string; AKek: string; ARequestMessage: TMessagePayload): TSaleToPOIMessage;
+
+    function SaleToPOIMessageToString(ASaleToPOIMessage: TSaleToPOIMessage): string;
+
+    function ParseSaleToPOIMessage(ASaleToPOIMessage: string; AKek: string): TMessagePayload;
+  end;
+
+implementation
+
+end.
