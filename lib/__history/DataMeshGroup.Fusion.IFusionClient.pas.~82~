@@ -67,18 +67,16 @@ type
     /// Sends a request, and then waits for a specified response message type. Discards all other response types. Timeout set to <see cref="DefaultTimeout"/>
     /// </summary>
     /// <typeparam name="T">The type of message to await. Must be of type <see cref="MessagePayload"/></typeparam>
-    /// <param name="AObject">The object to deserialize the JSon</param>
+    /// <param name="ARequestType">The type of request to deserialize</param>
     /// <param name="AJSon">JSon response from the requests</param>
-    function RecvMessage(AJSon: string): TMessagePayload; overload;
+    function ReceiveMessage(ARequestType: TRequestType; AJSon: string;
+      const AKek: string): TMessagePayload; overload;
 
     function GetPort: string;
     procedure SetPort(APort: string);
 
     function GetProtocol: string;
     procedure SetProtocol(AProtocol: string);
-
-    function GetMessageParser: IMessageParser;
-    procedure SetMessageParser(AMessageParser: IMessageParser);
 
     function GetServiceID: string;
     procedure SetServiceID(AServiceID: string);
@@ -156,15 +154,11 @@ type
     function GetEventOnReceiveMessage: TEventOnReceiveMessage;
     procedure SetEventOnReceiveMessage(AEventOnReceiveMessage: TEventOnReceiveMessage);
 
+    function GetDisplayRequest(const AJSon: string; const AKek: string): TDisplayRequest;
+
     {$REGION 'Properties'}
     property Port: string read GetPort write SetPort;
     property Protocol: string read GetProtocol write SetProtocol;
-
-    /// <summary>
-    /// Parser for converting request/response messages to bytes
-    /// </summary>
-    property MessageParser: IMessageParser read GetMessageParser
-      write SetMessageParser;
 
     /// <summary>
     /// ServiceID of the last message sent
@@ -229,6 +223,11 @@ type
     /// </summary>
     property DefaultHeartbeatTimeout: TTimeSpan read GetDefaultHeartbeatTimeout
       write SetDefaultHeartbeatTimeout;
+
+    /// <summary>
+    /// Get the display request from the server if any
+    /// </summary>
+    property Display: TDisplayRequest read GetDisplayRequest;
 
     {$ENDREGION}
 

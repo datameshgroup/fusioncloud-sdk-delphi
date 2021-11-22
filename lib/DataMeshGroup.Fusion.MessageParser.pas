@@ -94,8 +94,6 @@ type
       const AKek: string): TMessagePayload;
     function DeserializeTransactionStatusResponse(const AJSon: string;
       const AKek: string): TMessagePayload;
-    function DeserializeDisplayRequest(const AJSon: string;
-      const AKek: string): TMessagePayload;
     function DeserializeReconcilationResponse(const AJSon: string;
       const AKek: string): TMessagePayload;
     function DeserializePaymentResponse(const AJSon: string;
@@ -107,6 +105,9 @@ type
     const
       F_PROCOL_VER = '3.1-dmg';
   public
+    function DeserializeDisplayRequest(const AJSon: string;
+      const AKek: string): TMessagePayload;
+
     function ReceiveMessage(ARequestType: TRequestType;
       AJSon: string; const AKek: string): TMessagePayload;
 
@@ -1087,7 +1088,7 @@ begin
     MacResponse := GetJSonString(RecipientObj, 'MAC');
 
     EncryptedKey := Crypto.ByteArrToHexStr(
-      Crypto.GetEncrypt(Crypto.HexToByteArr(RespEncryptedKey),
+      Crypto.GetDecrypt(Crypto.HexToByteArr(RespEncryptedKey),
                         AKek,
                         TEncryption.EncKey));
 

@@ -7,6 +7,8 @@ uses System.SysUtils, DECRandom, DECCipherBase, DECCipherModes,
   DataMeshGroup.Fusion.Types;
 
 type
+  TEncryption = (EncKey, EncMsg);
+
   TDECBaseCipherHelper = class helper for TDECCipher
   private
     // Remove size restriction
@@ -26,22 +28,22 @@ type
   end;
 
   TCrypto = class
-  type
-    TEncryption = (EncKey, EncMsg);
   strict private
-    function GetEncrypt(ABytesToEncrypt: TBytes; AKey: RawByteString;
-      AEncryption: TEncryption): TBytes;
-    function HexToByteArr(const AHexString: string): TArray<Byte>;
     function ConvertUTF8ToBytes(const AMsg: UTF8String): TBytes;
     function GetLast8Bytes(ABytes : TBytes): TBytes;
     function GetKey(AEnvironment: TEncEnv): string;
   public
+    function HexToByteArr(const AHexString: string): TArray<Byte>;
+    function GetEncrypt(ABytesToEncrypt: TBytes; AKey: RawByteString;
+      AEncryption: TEncryption): TBytes;
     function GenerateMAC(AMsg: string; AKey : string): string;
     function AppendBytes(ABytes : TBytes): TBytes;
     function ByteArrToHexStr(ABytes: TBytes): string;
     function GetSHA(AMsg: UTF8String): TBytes;
     function GenerateKey(AEnvironment: TEncEnv): string;
     function Encrypt(const AMsg: string; AEnvironment: TEncEnv): string;
+    function GetDecrypt(ABytesToEncrypt: TBytes; AKey: RawByteString;
+      AEncryption: TEncryption): TBytes;
   end;
 
 implementation
@@ -152,7 +154,7 @@ var
   EncryptedKey: TBytes;
 begin
   /// Generate 16 random bytes
-  RandKey := RandomBytes(16);
+  RandKey := HexToByteArr('2a38e0f2835f926c455e087ed4744fa7'); //RandomBytes(16);
 
   // Encrypt the random key + master key
   EncryptedKey := GetEncrypt(RandKey, GetKey(AEnvironment), EncKey);
@@ -168,13 +170,44 @@ var
   Encrypted: TBytes;
   Last8Bytes: TBytes;
   GeneratedMac: string;
-begin
+begin                     //  HexToByteArr(AMsg);
   HashResults := GetSHA(AMsg);
   HashAppendedBytes := AppendBytes(HashResults);
   Encrypted := GetEncrypt(HashAppendedBytes, AKey, EncMsg);
   Last8Bytes := GetLast8Bytes(Encrypted);
 
   Result := ByteArrToHexStr(Last8Bytes);
+end;
+
+function TCrypto.GetDecrypt(ABytesToEncrypt: TBytes; AKey: RawByteString;
+  AEncryption: TEncryption): TBytes;
+var
+  Cipher: TCipher_1DES;
+  IVParameters: TBytes;
+  SecretKeyInBytes: TBytes;
+begin
+// Empty IV
+  SetLength(IVParameters, 8);
+  SecretKeyInBytes := HexToByteArr(AKey);
+  // Message encryption and Key encryption uses different class
+  if AEncryption = TEncryption.EncMsg then
+    Cipher := TCipher_2DES.Create
+  else
+  if AEncryption = TEncryption.EncKey then
+    Cipher := TCipher_3DES.Create;
+
+  try
+    try
+      Cipher.CipherInit(SecretKeyInBytes, IVParameters, 0);
+      Cipher.Mode := cmCBCx;
+      Result := Cipher.DecodeBytes(ABytesToEncrypt);
+    except
+      on E: Exception do
+        raise Exception.Create(E.ClassName + ': ' + E.Message);
+    end;
+  finally
+    Cipher.Free;
+  end;
 end;
 
 function TCrypto.GetEncrypt(ABytesToEncrypt: TBytes;

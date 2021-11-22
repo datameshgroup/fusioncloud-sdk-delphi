@@ -42,6 +42,8 @@ type
     function GetSHA(AMsg: UTF8String): TBytes;
     function GenerateKey(AEnvironment: TEncEnv): string;
     function Encrypt(const AMsg: string; AEnvironment: TEncEnv): string;
+    function GetDecrypt(ABytesToEncrypt: TBytes; AKey: RawByteString;
+      AEncryption: TEncryption): TBytes;
   end;
 
 implementation
@@ -175,6 +177,37 @@ begin                     //  HexToByteArr(AMsg);
   Last8Bytes := GetLast8Bytes(Encrypted);
 
   Result := ByteArrToHexStr(Last8Bytes);
+end;
+
+function TCrypto.GetDecrypt(ABytesToEncrypt: TBytes; AKey: RawByteString;
+  AEncryption: TEncryption): TBytes;
+var
+  Cipher: TCipher_1DES;
+  IVParameters: TBytes;
+  SecretKeyInBytes: TBytes;
+begin
+// Empty IV
+  SetLength(IVParameters, 8);
+  SecretKeyInBytes := HexToByteArr(AKey);
+  // Message decryption and Key decryption uses different class
+  if AEncryption = TEncryption.EncMsg then
+    Cipher := TCipher_2DES.Create
+  else
+  if AEncryption = TEncryption.EncKey then
+    Cipher := TCipher_3DES.Create;
+
+  try
+    try
+      Cipher.CipherInit(SecretKeyInBytes, IVParameters, 0);
+      Cipher.Mode := cmCBCx;
+      Result := Cipher.DecodeBytes(ABytesToEncrypt);
+    except
+      on E: Exception do
+        raise Exception.Create(E.ClassName + ': ' + E.Message);
+    end;
+  finally
+    Cipher.Free;
+  end;
 end;
 
 function TCrypto.GetEncrypt(ABytesToEncrypt: TBytes;

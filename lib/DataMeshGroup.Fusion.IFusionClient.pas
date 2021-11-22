@@ -154,7 +154,7 @@ type
     function GetEventOnReceiveMessage: TEventOnReceiveMessage;
     procedure SetEventOnReceiveMessage(AEventOnReceiveMessage: TEventOnReceiveMessage);
 
-    function GetDisplayRequest: TDisplayRequest;
+    function GetDisplayRequest(const AJSon: string; const AKek: string): TDisplayRequest;
 
     {$REGION 'Properties'}
     property Port: string read GetPort write SetPort;
@@ -224,10 +224,6 @@ type
     property DefaultHeartbeatTimeout: TTimeSpan read GetDefaultHeartbeatTimeout
       write SetDefaultHeartbeatTimeout;
 
-    /// <summary>
-    /// Get the display request from the server if any
-    /// </summary>
-    property Display: TDisplayRequest read GetDisplayRequest;
 
     {$ENDREGION}
 

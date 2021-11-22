@@ -178,7 +178,8 @@ type
     /// <typeparam name="T">The type of message to await. Must be of type <see cref="MessagePayload"/></typeparam>
     /// <param name="ARequestType">The type of request to deserialize</param>
     /// <param name="AJSon">JSon response from the requests</param>
-    function RecvMessage(ARequestType: TRequestType; AJSon: string): TMessagePayload;
+    function ReceiveMessage(ARequestType: TRequestType; AJSon: string;
+      const AKek: string): TMessagePayload;
 
 
     {$REGION 'Properties'}
@@ -254,11 +255,6 @@ type
     /// </summary>
     property DefaultHeartbeatTimeout: TTimeSpan read GetDefaultHeartbeatTimeout
       write SetDefaultHeartbeatTimeout;
-
-    /// <summary>
-    /// Get the display request from the server if any
-    /// </summary>
-    property Display: TDisplayRequest read GetDisplayRequest;
 
     {$ENDREGION}
 
@@ -554,13 +550,14 @@ begin
   Result := FUnifyURL;
 end;
 
-function TFusionClient.RecvMessage(ARequestType: TRequestType; AJSon: string): TMessagePayload;
+function TFusionClient.ReceiveMessage(ARequestType: TRequestType;
+  AJSon: string; const AKek: string): TMessagePayload;
 var
   MessageParser: TMessageParser;
 begin
   MessageParser := TMessageParser.Create;
   try
-    Result := MessageParser.RecvMessage(ARequestType, AJSon);
+    Result := MessageParser.ReceiveMessage(ARequestType, AJSon, AKek);
   finally
     MessageParser := nil;
     MessageParser.Free;
@@ -741,6 +738,5 @@ begin
     EncodeDate(System.SysUtils.CurrentYear, 1, 1)), 1);
 end;
 
-end;
 
 end.

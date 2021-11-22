@@ -138,7 +138,6 @@ type
     function GetEventOnReceiveMessage: TEventOnReceiveMessage;
     procedure SetEventOnReceiveMessage(AEventOnReceiveMessage: TEventOnReceiveMessage);
 
-    function GetDisplayRequest: TDisplayRequest;
   public
     /// <summary>
     /// Get the service ID
@@ -178,11 +177,10 @@ type
     /// <typeparam name="T">The type of message to await. Must be of type <see cref="MessagePayload"/></typeparam>
     /// <param name="ARequestType">The type of request to deserialize</param>
     /// <param name="AJSon">JSon response from the requests</param>
-    function RecvMessage(ARequestType: TRequestType; AJSon: string): TMessagePayload;
+    function ReceiveMessage(ARequestType: TRequestType; AJSon: string;
+      const AKek: string): TMessagePayload;
 
-    function ValidateMac(const AMsg: string; const AKek: string;
-      const ASessionKey: string): Boolean;
-
+    function GetDisplayRequest(const AJSon: string; const AKek: string): TDisplayRequest;
 
     {$REGION 'Properties'}
 
@@ -257,11 +255,6 @@ type
     /// </summary>
     property DefaultHeartbeatTimeout: TTimeSpan read GetDefaultHeartbeatTimeout
       write SetDefaultHeartbeatTimeout;
-
-    /// <summary>
-    /// Get the display request from the server if any
-    /// </summary>
-    property Display: TDisplayRequest read GetDisplayRequest;
 
     {$ENDREGION}
 
@@ -345,7 +338,7 @@ type
 implementation
 
 uses System.SysUtils, System.Net.URLClient, System.DateUtils,
-  DataMeshGroup.Fusion.MessageParser, DataMeshGroup.Fusion.Crypto;
+  DataMeshGroup.Fusion.MessageParser;
 
 { TFusionClient }
 
@@ -432,7 +425,8 @@ begin
   Result := FDefaultTimeout;
 end;
 
-function TFusionClient.GetDisplayRequest: TDisplayRequest;
+function TFusionClient.GetDisplayRequest(const AJSon: string;
+  const AKek: string): TDisplayRequest;
 begin
   Result := FDisplayRequest;
 end;
@@ -557,13 +551,14 @@ begin
   Result := FUnifyURL;
 end;
 
-function TFusionClient.RecvMessage(ARequestType: TRequestType; AJSon: string): TMessagePayload;
+function TFusionClient.ReceiveMessage(ARequestType: TRequestType;
+  AJSon: string; const AKek: string): TMessagePayload;
 var
   MessageParser: TMessageParser;
 begin
   MessageParser := TMessageParser.Create;
   try
-    Result := MessageParser.RecvMessage(ARequestType, AJSon);
+    Result := MessageParser.ReceiveMessage(ARequestType, AJSon, AKek);
   finally
     MessageParser := nil;
     MessageParser.Free;
@@ -744,23 +739,5 @@ begin
     EncodeDate(System.SysUtils.CurrentYear, 1, 1)), 1);
 end;
 
-function TFusionClient.ValidateMac(const AMsg; AKek, ASessionKey: string): Boolean;
-var
-  Crypto: TCrypto;
-  EncryptedKey: string;
-begin
-  Crypto := TCrypto.Create;
-  try
-    EncryptedKey := Crypto.ByteArrToHexStr(
-          Crypto.GetEncrypt(Crypto.HexToByteArr(ASessionKey),
-                            AKek, TEncryption.EncKey));
-
-    := Crypto.HexToByteArr(ASessionKey);
-    Crypto.GetEncrypt()
-  finally
-    Crypto.Free;
-  end;
-
-end;
 
 end.

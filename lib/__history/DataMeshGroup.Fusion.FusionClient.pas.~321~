@@ -178,10 +178,8 @@ type
     /// <typeparam name="T">The type of message to await. Must be of type <see cref="MessagePayload"/></typeparam>
     /// <param name="ARequestType">The type of request to deserialize</param>
     /// <param name="AJSon">JSon response from the requests</param>
-    function RecvMessage(ARequestType: TRequestType; AJSon: string): TMessagePayload;
-
-    function ValidateMac(const AMsg: string; const AKek: string;
-      const ASessionKey: string): Boolean;
+    function ReceiveMessage(ARequestType: TRequestType; AJSon: string;
+      const AKek: string): TMessagePayload;
 
 
     {$REGION 'Properties'}
@@ -345,7 +343,7 @@ type
 implementation
 
 uses System.SysUtils, System.Net.URLClient, System.DateUtils,
-  DataMeshGroup.Fusion.MessageParser, DataMeshGroup.Fusion.Crypto;
+  DataMeshGroup.Fusion.MessageParser;
 
 { TFusionClient }
 
@@ -557,13 +555,14 @@ begin
   Result := FUnifyURL;
 end;
 
-function TFusionClient.RecvMessage(ARequestType: TRequestType; AJSon: string): TMessagePayload;
+function TFusionClient.ReceiveMessage(ARequestType: TRequestType;
+  AJSon: string; const AKek: string): TMessagePayload;
 var
   MessageParser: TMessageParser;
 begin
   MessageParser := TMessageParser.Create;
   try
-    Result := MessageParser.RecvMessage(ARequestType, AJSon);
+    Result := MessageParser.ReceiveMessage(ARequestType, AJSon, AKek);
   finally
     MessageParser := nil;
     MessageParser.Free;
@@ -744,17 +743,5 @@ begin
     EncodeDate(System.SysUtils.CurrentYear, 1, 1)), 1);
 end;
 
-function TFusionClient.ValidateMac(const AMsg: string; const AKek, ASessionKey: string): Boolean;
-var
-  Crypto: TCrypto;
-begin
-  Crypto := TCrypto.Create;
-  try
-
-  finally
-    Crypto.Free;
-  end;
-
-end;
 
 end.

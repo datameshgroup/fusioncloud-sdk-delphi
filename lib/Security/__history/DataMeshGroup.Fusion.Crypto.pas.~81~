@@ -7,6 +7,8 @@ uses System.SysUtils, DECRandom, DECCipherBase, DECCipherModes,
   DataMeshGroup.Fusion.Types;
 
 type
+  TEncryption = (EncKey, EncMsg);
+
   TDECBaseCipherHelper = class helper for TDECCipher
   private
     // Remove size restriction
@@ -26,16 +28,14 @@ type
   end;
 
   TCrypto = class
-  type
-    TEncryption = (EncKey, EncMsg);
   strict private
-    function GetEncrypt(ABytesToEncrypt: TBytes; AKey: RawByteString;
-      AEncryption: TEncryption): TBytes;
-    function HexToByteArr(const AHexString: string): TArray<Byte>;
     function ConvertUTF8ToBytes(const AMsg: UTF8String): TBytes;
     function GetLast8Bytes(ABytes : TBytes): TBytes;
     function GetKey(AEnvironment: TEncEnv): string;
   public
+    function HexToByteArr(const AHexString: string): TArray<Byte>;
+    function GetEncrypt(ABytesToEncrypt: TBytes; AKey: RawByteString;
+      AEncryption: TEncryption): TBytes;
     function GenerateMAC(AMsg: string; AKey : string): string;
     function AppendBytes(ABytes : TBytes): TBytes;
     function ByteArrToHexStr(ABytes: TBytes): string;
@@ -152,7 +152,7 @@ var
   EncryptedKey: TBytes;
 begin
   /// Generate 16 random bytes
-  RandKey := RandomBytes(16);
+  RandKey := HexToByteArr('2a38e0f2835f926c455e087ed4744fa7'); //RandomBytes(16);
 
   // Encrypt the random key + master key
   EncryptedKey := GetEncrypt(RandKey, GetKey(AEnvironment), EncKey);
@@ -168,7 +168,7 @@ var
   Encrypted: TBytes;
   Last8Bytes: TBytes;
   GeneratedMac: string;
-begin
+begin                     //  HexToByteArr(AMsg);
   HashResults := GetSHA(AMsg);
   HashAppendedBytes := AppendBytes(HashResults);
   Encrypted := GetEncrypt(HashAppendedBytes, AKey, EncMsg);

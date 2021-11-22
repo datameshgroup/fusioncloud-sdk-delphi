@@ -138,7 +138,6 @@ type
     function GetEventOnReceiveMessage: TEventOnReceiveMessage;
     procedure SetEventOnReceiveMessage(AEventOnReceiveMessage: TEventOnReceiveMessage);
 
-    function GetDisplayRequest: TDisplayRequest;
   public
     /// <summary>
     /// Get the service ID
@@ -181,6 +180,7 @@ type
     function ReceiveMessage(ARequestType: TRequestType; AJSon: string;
       const AKek: string): TMessagePayload;
 
+    function GetDisplayRequest(const AJSon: string; const AKek: string): TDisplayRequest;
 
     {$REGION 'Properties'}
 
@@ -255,11 +255,6 @@ type
     /// </summary>
     property DefaultHeartbeatTimeout: TTimeSpan read GetDefaultHeartbeatTimeout
       write SetDefaultHeartbeatTimeout;
-
-    /// <summary>
-    /// Get the display request from the server if any
-    /// </summary>
-    property Display: TDisplayRequest read GetDisplayRequest;
 
     {$ENDREGION}
 
@@ -430,9 +425,20 @@ begin
   Result := FDefaultTimeout;
 end;
 
-function TFusionClient.GetDisplayRequest: TDisplayRequest;
+function TFusionClient.GetDisplayRequest(const AJSon: string;
+  const AKek: string): TDisplayRequest;
+var
+  MessageParser: TMessageParser;
+  DisplayReq: TDisplayRequest;
 begin
-  Result := FDisplayRequest;
+  MessageParser := TMessageParser.Create;
+  try
+    DisplayReq := MessageParser.DeserializeDisplayRequest(AJSon, AKek) as TDisplayRequest;
+
+    Result := DisplayReq;
+  finally
+    MessageParser.Free;
+  end;
 end;
 
 function TFusionClient.GetEventOnCardAcquisitionResponse: TEventOnCardAcquisitionResponse;

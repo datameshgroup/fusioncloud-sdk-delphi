@@ -25,15 +25,12 @@ type
     BtnReconciliationRequest: TButton;
     BtnCardAcquisitionRequest: TButton;
     BtnClear: TButton;
-    BtnDisplayRequest: TButton;
     BtnRefundRequest: TButton;
-    Edt1: TEdit;
     procedure BtnAbortTransRequestClick(Sender: TObject);
     procedure BtnCardAcquisitionRequestClick(Sender: TObject);
     procedure BtnClearClick(Sender: TObject);
     procedure BtnConnectTestClick(Sender: TObject);
     procedure BtnDisconnectClick(Sender: TObject);
-    procedure BtnDisplayRequestClick(Sender: TObject);
     procedure OnConnect(ASender: TObject);
     procedure OnDisconnect(ASender: TObject);
     procedure OnReceiveMessage(ASender: TObject; const Text: string);
@@ -46,10 +43,10 @@ type
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
     procedure FormShow(Sender: TObject);
   private const
-    ProvIdent = 'BlackLabel';
-    AppName = 'BlackLabel';
-    SoftwareVer = '1.0.0';
-    CertCode = '0x47CD40C6C54D9A';
+    ProvIdent = '<set the provider identification>';
+    AppName = '<set the application name>';
+    SoftwareVer = '<set the version number>';
+    CertCode = 'set the certification code';
 
   private
     FFusionClient: IFusionClient;
@@ -204,59 +201,6 @@ begin
   FFusionClient.Disconnect;
 end;
 
-procedure TFrmMain.BtnDisplayRequestClick(Sender: TObject);
-var
-  DisplayReq: TDisplayRequest;
-  DisplayOutput: TDisplayOutput;
-  OutputContent: TOutputContent;
-  PredefinedContent: TPredefinedContent;
-  OutputText: TOutputText;
-begin
-  DisplayReq := TDisplayRequest.Create;
-  try
-    DisplayOutput := TDisplayOutput.Create;
-    try
-      DisplayOutput.ResponseRequiredFlag := False;
-      DisplayOutput.Device := TDevice.CashierDisplay;
-      DisplayOutput.InfoQualify := TInfoQualify.Sound;
-
-      OutputContent := TOutputContent.Create;
-      try
-        OutputContent.OutputFormat := TOutputFormat.Text;
-
-        PredefinedContent := TPredefinedContent.Create;
-        try
-          PredefinedContent.Language := 'en';
-
-          OutputContent.PredefinedContent := PredefinedContent;
-
-          OutputText := TOutputText.Create;
-          try
-            OutputText.Text := 'Output text';
-            OutputContent.OutputText := OutputText;
-
-            DisplayOutput.OutputContent := OutputContent;
-
-            DisplayReq.DisplayOutput := DisplayOutput;
-
-            SendRequest(DisplayReq);
-          finally
-            OutputText.Free;
-          end;
-        finally
-          PredefinedContent.Free;
-        end;
-      finally
-        OutputContent.Free;
-      end;
-    finally
-      DisplayOutput.Free;
-    end;
-  finally
-    DisplayReq.Free;
-  end;
-end;
-
 procedure TFrmMain.BtnLogInReqClick(Sender: TObject);
 var
   LoginReq: TLoginRequest;
@@ -342,9 +286,9 @@ begin
   FFusionClient.OnReceiveMessage := OnReceiveMessage;
   FFusionClient.DefaultTimeout := 10;
   FFusionClient.ServiceID := FFusionClient.UpdateServiceID;
-  FFusionClient.SaleID := 'BlackLabelUAT1';
-  FFusionClient.PoiID := 'BLBPOI01';
-  FFusionClient.Kek := '44DACB2A22A4A752ADC1BBFFE6CEFB589451E0FFD83F8B21';
+  FFusionClient.SaleID := '<set the sale id>';
+  FFusionClient.PoiID := '<set the poi id>';
+  FFusionClient.Kek := '<set the kek>';
 
   FFusionClient.Connect;
 end;
@@ -389,7 +333,6 @@ begin
       LoginResponse := FFusionClient.ReceiveMessage(TRequestType.TRLogin,
         Text, FFusionClient.kek) as TLoginResponse;
 
-//      Test := TRttiEnumerationType.GetName(LoginResponse.POISystemData.POIStatus.printerstatus);
       for i := 0 to LoginResponse.POISystemData.POITerminalData.POICapabilities.Count - 1 do
       begin
         test := TRttiEnumerationType.GetName(LoginResponse.POISystemData.POITerminalData.POICapabilities[i]);
@@ -408,7 +351,6 @@ begin
         Text, FFusionClient.KEK) as TLogoutResponse;
 
       Test := TRttiEnumerationType.GetName(LogoutResponse.Response.Result);
-//      ShowMessage(Test);
     finally
       LogoutResponse := nil;
       LogoutResponse.Free;

@@ -37,8 +37,6 @@ uses System.Generics.Collections, System.JSON,
 type
   TMessageParser = class(TInterfacedObject, IMessageParser)
   private
-    FKek: string;
-
     FLoginResponse: TLoginResponse;
     FLogoutResponse: TLogoutResponse;
     FTransStatusResponse: TTransactionStatusResponse;
@@ -96,8 +94,6 @@ type
       const AKek: string): TMessagePayload;
     function DeserializeTransactionStatusResponse(const AJSon: string;
       const AKek: string): TMessagePayload;
-    function DeserializeDisplayRequest(const AJSon: string;
-      const AKek: string): TMessagePayload;
     function DeserializeReconcilationResponse(const AJSon: string;
       const AKek: string): TMessagePayload;
     function DeserializePaymentResponse(const AJSon: string;
@@ -109,6 +105,9 @@ type
     const
       F_PROCOL_VER = '3.1-dmg';
   public
+    function DeserializeDisplayRequest(const AJSon: string;
+      const AKek: string): TMessagePayload;
+
     function ReceiveMessage(ARequestType: TRequestType;
       AJSon: string; const AKek: string): TMessagePayload;
 
@@ -226,8 +225,6 @@ var
 begin
   if (ASaleID = '') or (APoiID = '') or (AKek = '') then
     raise Exception.Create('Valid SaleId, POIID, and KEK are required');
-
-  FKek := AKek;
 
   // Construct MessageHeader from RequestMessage
   MessageHeader := TMessageHeader.Create;
@@ -1066,34 +1063,34 @@ var
   JSonRespObj: TJSONObject;
   KEKObj: TJSONObject;
   Mac: string;
+  MacResponse: string;
   MsgBody: string;
   RecipientObj: TJSONObject;
   RespObj: TJSONObject;
   SaleRespObj: TJSONObject;
-  SessionKey: string;
+  RespEncryptedKey: string;
   Start: Integer;
-  Test: string;
 begin
+  Result := True;
+
   Crypto := TCrypto.Create;
   try
     // get the encrypted key from the response
     JSonRespObj := TJSONObject.ParseJSONValue(
       TEncoding.UTF8.GetBytes(AJSon), 0) as TJSONObject;
 
-    SaleRespObj := FJSonRespObj.GetValue('SaleToPOIResponse') as TJSONObject;
+    SaleRespObj := JSonRespObj.GetValue('SaleToPOIResponse') as TJSONObject;
     RespObj := SaleRespObj.GetValue('SecurityTrailer') as TJSONObject;
     AuthDataObj := RespObj.GetValue('AuthenticatedData') as TJSONObject;
     RecipientObj := AuthDataObj.GetValue('Recipient') as TJSONObject;
     KEKObj := RecipientObj.GetValue('KEK') as TJSONObject;
-    SessionKey := GetJSonString(KEKObj, 'EncryptedKey');
-
-    Test := AKek;
+    RespEncryptedKey := GetJSonString(KEKObj, 'EncryptedKey');
+    MacResponse := GetJSonString(RecipientObj, 'MAC');
 
     EncryptedKey := Crypto.ByteArrToHexStr(
-      Crypto.GetEncrypt(Crypto.HexToByteArr(SessionKey), AKek, TEncryption.EncKey));
-
-
-
+      Crypto.GetEncrypt(Crypto.HexToByteArr(RespEncryptedKey),
+                        AKek,
+                        TEncryption.EncKey));
 
     // get the message body starting from the MessageHeader
     Start := Pos('MessageHeader', AJSon);
@@ -1103,7 +1100,7 @@ begin
 
     Mac := Crypto.GenerateMAC(MsgBody, EncryptedKey);
 
-    if Mac <> SessionKey then
+    if Mac <> MacResponse then
       Result := False;    
   finally
     Crypto.Free;
