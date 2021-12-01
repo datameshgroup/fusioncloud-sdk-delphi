@@ -180,7 +180,6 @@ type
     function ReceiveMessage(ARequestType: TRequestType; AJSon: string;
       const AKek: string): TMessagePayload;
 
-    function GetDisplayRequest(const AJSon: string; const AKek: string): TDisplayRequest;
 
     {$REGION 'Properties'}
 
@@ -423,22 +422,6 @@ end;
 function TFusionClient.GetDefaultTimeout: Integer;
 begin
   Result := FDefaultTimeout;
-end;
-
-function TFusionClient.GetDisplayRequest(const AJSon: string;
-  const AKek: string): TDisplayRequest;
-var
-  MessageParser: TMessageParser;
-  DisplayReq: TDisplayRequest;
-begin
-  MessageParser := TMessageParser.Create;
-  try
-    DisplayReq := MessageParser.DeserializeDisplayRequest(AJSon, AKek) as TDisplayRequest;
-
-    Result := DisplayReq;
-  finally
-    MessageParser.Free;
-  end;
 end;
 
 function TFusionClient.GetEventOnCardAcquisitionResponse: TEventOnCardAcquisitionResponse;

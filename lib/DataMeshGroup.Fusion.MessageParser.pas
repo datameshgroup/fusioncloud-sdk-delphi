@@ -77,6 +77,7 @@ type
 
     FJSonRespObj: TJSONObject;
     FRespTypeObj: TJSONObject;
+    FSaleRespObj: TJSONObject;
 
     FUseTestKeyIdentifier: Boolean;
     FConfig: INeonConfiguration;
@@ -98,6 +99,8 @@ type
       const AKek: string): TMessagePayload;
     function DeserializePaymentResponse(const AJSon: string;
       const AKek: string): TMessagePayload;
+    function DeserializeDisplayRequest(const AJSon: string;
+      const AKek: string): TMessagePayload;
 
     function GenerateSecurityTrailer(const AKek: string;
       AMessageHeader: TMessageHeader; AMessagePayload: TMessagePayload;
@@ -105,9 +108,6 @@ type
     const
       F_PROCOL_VER = '3.1-dmg';
   public
-    function DeserializeDisplayRequest(const AJSon: string;
-      const AKek: string): TMessagePayload;
-
     function ReceiveMessage(ARequestType: TRequestType;
       AJSon: string; const AKek: string): TMessagePayload;
 
@@ -296,7 +296,7 @@ begin
       try
         JSonHeaderValue := JSon.ObjectToJSON(AMessageHeader);
         JSonPayloadValue := JSon.ObjectToJSON(AMessagePayload);
-        MacBody := '"MessageHeader":' + JSonHeaderValue.ToString + ',' +
+         MacBody := '"MessageHeader":' + JSonHeaderValue.ToString + ',' +
           '"' + AMessageHeader.GetMessageDescription + '":' + JSonPayloadValue.ToString;
         SessionKey :=  Crypto.GenerateKey(Env);
         Sha256 := Crypto.ByteArrToHexStr(Crypto.GetSHA(MacBody));
@@ -402,10 +402,12 @@ var
   Curr: TCurrencySymbol;
   CurrVal: TJSONString;
   CustLang: string;
+  DocQual: TDocumentQualifier;
   EntryMode: TEntryMode;
   EntryModeVal: TJSONString;
   ErrCon: TErrorCondition;
   ErrorConVal: TJSONString;
+  IntPrintFlagVal: Boolean;
   MaskedPAN: string;
   OnlineFlag: TJSONBool;
   OpID: string;
@@ -419,9 +421,10 @@ var
   PayInstrumentObj: TJSONObject;
   PayInstType: TPaymentInstrumentType;
   PayInstTypeVal: TJSONString;
-  PayReceiptObj: TJSONObject;
+  PayReceiptObj: TJSONArray;
   PayRespObj: TJSONObject;
   PayResultObj: TJSONObject;
+  PayReceiptElem: TJSONValue;
   PayType: TPaymentType;
   PayTypeVal: TJSONString;
   POIDataObj: TJSONObject;
@@ -429,6 +432,7 @@ var
   POITimeStamp: TJSONString;
   POITransID: TJSONString;
   POITransIDObj: TJSONObject;
+  ReqSigFlagVal: Boolean;
   Res: TResult;
   RespObj: TJSONObject;
   ResultVal: TJSONString;
@@ -439,8 +443,6 @@ var
   TotFeeAmtVal: TJSONString;
   TransId: TJSONString;
   TransIdentObj: TJSONObject;
-
-
 begin
   // get the PaymentResponse
   PayRespObj := AJSONObj.GetValue('PaymentResponse') as TJSONObject;
@@ -449,12 +451,15 @@ begin
   ErrorConVal := RespObj.GetValue('ErrorCondition') as TJSONString;
 
   Res := TRttiEnumerationType.GetValue<TResult>(ResultVal.Value);
-  ErrCon := TRttiEnumerationType.GetValue<TErrorCondition>(ErrorConVal.Value);
+  if ErrorConVal <> nil then
+    ErrCon := TRttiEnumerationType.GetValue<TErrorCondition>(ErrorConVal.Value);
   AddResp := RespObj.GetValue('AdditionalResponse') as TJSONString;
 
   FResponse.Result := Res;
   FResponse.ErrorCondition := ErrCon;
-  FResponse.AdditionalResponse := AddResp.Value;
+
+  if AddResp <> nil then
+    FResponse.AdditionalResponse := AddResp.Value;
 
   // get the SaleData
   SaleDataObj := PayRespObj.GetValue('SaleData') as TJSONObject;
@@ -540,18 +545,25 @@ begin
   FAmountsResp.TotalFeesAmount := TotFeeAmt;
   FAmountsResp.CashBackAmount := CashBackAmt;
 
-  // get the PaymentReceipt
-  PayReceiptObj := PayRespObj.GetValue('PaymentReceipt') as TJSONObject;
-  OutputContObj := PayReceiptObj.GetValue('OutputContent') as TJSONObject;
-  OutputFormatVal := OutputContObj.GetValue('OutputFormat') as TJSONString;
-  OutputFormat := TRttiEnumerationType.GetValue<TOutputFormat>(OutputFormatVal.Value);
-  OutputXHTMLVal := OutputContObj.GetValue('OutputXHTML') as TJSONString;
+  // get the TList<TPaymentReceipt>
+  PayReceiptObj := PayRespObj.GetValue<TJSONArray>('PaymentReceipt');
+  for PayReceiptElem in PayReceiptObj do
+  begin
+    DocQual := PayReceiptElem.GetValue<TDocumentQualifier>('DocumentQualifier');
+    IntPrintFlagVal := PayReceiptElem.GetValue<Boolean>('IntegratedPrintFlag');
+    ReqSigFlagVal := PayReceiptElem.GetValue<Boolean>('RequiredSignatureFlag');
 
-  FOutputContent.OutputFormat := OutputFormat;
-  FOutputContent.OutputXHTML := OutputXHTMLVal.Value;
+    OutputContObj := PayReceiptElem.GetValue<TJSONObject>('OutputContent');
+    OutputFormatVal := OutputContObj.GetValue('OutputFormat') as TJSONString;
+    OutputFormat := TRttiEnumerationType.GetValue<TOutputFormat>(OutputFormatVal.Value);
+    OutputXHTMLVal := OutputContObj.GetValue('OutputXHTML') as TJSONString;
 
-  FPaymentReceipt.OutputContent := FOutputContent;
-  FPaymentReceiptList.Add(FPaymentReceipt);
+    FOutputContent.OutputFormat := OutputFormat;
+    FOutputContent.OutputXHTML := OutputXHTMLVal.Value;
+
+    FPaymentReceipt.OutputContent := FOutputContent;
+    FPaymentReceiptList.Add(FPaymentReceipt);
+  end;
 
   // assign all the objects to the corresponding class
   FPaymentInstrumentData.CardData := FCardData;
@@ -569,7 +581,6 @@ end;
 function TMessageParser.GetResponse(const AJSon: string;
   const AResponseType: string; const AKek: string): TResponse;
 var
-  SaleRespObj: TJSONObject;
   RespObj: TJSONObject;
   ValObj: TJSONValue;
 
@@ -585,32 +596,38 @@ begin
   FJSonRespObj := TJSONObject.ParseJSONValue(
     TEncoding.UTF8.GetBytes(AJSon), 0) as TJSONObject;
 
-  SaleRespObj := FJSonRespObj.GetValue('SaleToPOIResponse') as TJSONObject;
-  FRespTypeObj := SaleRespObj.GetValue(AResponseType) as TJSONObject;
-
-  RespObj := FRespTypeObj.GetValue('Response') as TJSONObject;
-  ResultVal := RespObj.GetValue('Result') as TJSONString;
-
-  ValObj := RespObj.FindValue('ErrorCondition');
+  ValObj := FJSonRespObj.FindValue('SaleToPOIResponse');
   if ValObj <> nil then
   begin
-    ErrorVal := RespObj.GetValue('ErrorCondition') as TJSONString;
-    ErrorResult := TRttiEnumerationType.GetValue<TErrorCondition>(ErrorVal.Value);
-    FResponse.ErrorCondition := ErrorResult;
-  end;
+    FSaleRespObj := FJSonRespObj.GetValue('SaleToPOIResponse') as TJSONObject;
 
-  ValObj := RespObj.FindValue('AdditionalResponse');
-  if ValObj <> nil then
-  begin
-    AddRespVal := RespObj.GetValue('AdditionalResponse') as TJSONString;
-    FResponse.AdditionalResponse := AddRespVal.Value;
-  end;
+    FRespTypeObj := FSaleRespObj.GetValue(AResponseType) as TJSONObject;
 
-  // get the Response
-  RespResult := TRttiEnumerationType.GetValue<TResult>(ResultVal.Value);
-  FResponse.Result := RespResult;
+    RespObj := FRespTypeObj.GetValue('Response') as TJSONObject;
+    ResultVal := RespObj.GetValue('Result') as TJSONString;
 
-  Result := FResponse;
+    ValObj := RespObj.FindValue('ErrorCondition');
+    if ValObj <> nil then
+    begin
+      ErrorVal := RespObj.GetValue('ErrorCondition') as TJSONString;
+      ErrorResult := TRttiEnumerationType.GetValue<TErrorCondition>(ErrorVal.Value);
+      FResponse.ErrorCondition := ErrorResult;
+    end;
+
+    ValObj := RespObj.FindValue('AdditionalResponse');
+    if ValObj <> nil then
+    begin
+      AddRespVal := RespObj.GetValue('AdditionalResponse') as TJSONString;
+      FResponse.AdditionalResponse := AddRespVal.Value;
+    end;
+
+    // get the Response
+    RespResult := TRttiEnumerationType.GetValue<TResult>(ResultVal.Value);
+    FResponse.Result := RespResult;
+
+    Result := FResponse;
+  end else // display request
+    Result := nil;
 end;
 
 function TMessageParser.DeserializeLogoutResponse(
@@ -623,11 +640,27 @@ end;
 
 function TMessageParser.DeserializePaymentResponse(
   const AJSon: string; const AKek: string): TMessagePayload;
+var
+  Resp: TResponse;
 begin
-  FPaymentResponse.Response := GetResponse(AJSon, 'PaymentResponse', AKek);
-  GetPaymentResponse(FRespTypeObj);
+  Resp := TResponse.Create;
+  try
+    Resp := GetResponse(AJSon, 'PaymentResponse', AKek);
+    if Resp <> nil then
+    begin
+      FPaymentResponse.Response := Resp;
+      GetPaymentResponse(FSaleRespObj);
 
-  Result := FPaymentResponse;
+      Result := FPaymentResponse;
+    end else
+    begin
+      DeserializeDisplayRequest(AJSon, AKek);
+
+      Result := FDisplayRequest;
+    end;
+  finally
+    Resp.Free;
+  end;
 end;
 
 function TMessageParser.DeserializeReconcilationResponse(
@@ -661,7 +694,6 @@ begin
   Mid := GetJSonString(FRespTypeObj, 'MID');
   AcquirerID := GetJSonString(FRespTypeObj, 'AcquirerID');
   LastShiftTotalTime := GetJSonString(FRespTypeObj, 'LastShiftTotalTime');
-
 
   // get the TList<TTransactionTotals>
   TransTotObj := FRespTypeObj.GetValue<TJSONArray>('TransactionTotals');// as TJSONObject;
@@ -906,9 +938,10 @@ var
   InfoQual: TInfoQualify;
   InfoQualVal: TJSONString;
   MinDislaytime: string;
+  MinDispTime: Integer;
   OutputContObj: TJSONObject;
   OutputFormat: TOutputFormat;
-  OutputFormatVal: TJSONObject;
+  OutputFormatVal: TJSONString;
   OutputText: TJSONString;
   OutputTextObj: TJSONObject;
   RespReqFlagVal: TJSONBool;
@@ -926,12 +959,12 @@ begin
   DeviceVal := DisplayOutpObj.GetValue('Device') as TJSONString;
   Device := TRttiEnumerationType.GetValue<TDevice>(DeviceVal.Value);
 
-  InfoQualVal := DisplayOutpObj.GetValue('InfoQualify') as TJSONString;
+  InfoQualVal := DisplayOutpObj.GetValue('InfoQuality') as TJSONString;
   InfoQual := TRttiEnumerationType.GetValue<TInfoQualify>(InfoQualVal.Value);
 
   // get the OutputContent
   OutputContObj := DisplayOutpObj.GetValue('OutputContent') as TJSONObject;
-  OutputFormatVal := OutputContObj.GetValue('OutputFormat') as TJSONObject;
+  OutputFormatVal := OutputContObj.GetValue('OutputFormat') as TJSONString;
   OutputFormat := TRttiEnumerationType.GetValue<TOutputFormat>(OutputFormatVal.Value);
 
   // get the OutputText
@@ -944,7 +977,8 @@ begin
   FOutputContent.OutputText := FOutputText;
 
   FDisplayOutput.ResponseRequiredFlag := RespReqFlagVal.AsBoolean;
-  FDisplayOutput.MinimumDisplayTime := StrToInt(MinDislaytime);
+  TryStrToInt(MinDislaytime, MinDispTime);
+  FDisplayOutput.MinimumDisplayTime := MinDispTime;
   FDisplayOutput.Device := Device;
   FDisplayOutput.InfoQualify := InfoQual;
   FDisplayOutput.OutputContent := FOutputContent;
@@ -1070,6 +1104,7 @@ var
   SaleRespObj: TJSONObject;
   RespEncryptedKey: string;
   Start: Integer;
+  ValObj: TJSONValue;
 begin
   Result := True;
 
@@ -1079,7 +1114,12 @@ begin
     JSonRespObj := TJSONObject.ParseJSONValue(
       TEncoding.UTF8.GetBytes(AJSon), 0) as TJSONObject;
 
-    SaleRespObj := JSonRespObj.GetValue('SaleToPOIResponse') as TJSONObject;
+    ValObj := JSonRespObj.FindValue('SaleToPOIResponse');
+    if ValObj <> nil then
+      SaleRespObj := JSonRespObj.GetValue('SaleToPOIResponse') as TJSONObject
+    else // display request
+      SaleRespObj := JSonRespObj.GetValue('SaleToPOIRequest') as TJSONObject;
+
     RespObj := SaleRespObj.GetValue('SecurityTrailer') as TJSONObject;
     AuthDataObj := RespObj.GetValue('AuthenticatedData') as TJSONObject;
     RecipientObj := AuthDataObj.GetValue('Recipient') as TJSONObject;

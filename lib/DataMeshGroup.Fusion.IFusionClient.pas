@@ -154,7 +154,6 @@ type
     function GetEventOnReceiveMessage: TEventOnReceiveMessage;
     procedure SetEventOnReceiveMessage(AEventOnReceiveMessage: TEventOnReceiveMessage);
 
-    function GetDisplayRequest(const AJSon: string; const AKek: string): TDisplayRequest;
 
     {$REGION 'Properties'}
     property Port: string read GetPort write SetPort;

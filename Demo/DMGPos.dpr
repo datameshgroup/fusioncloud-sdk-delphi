@@ -100,13 +100,14 @@ uses
   DataMeshGroup.Fusion.TransactionStatusRequest in '..\lib\Model\DataMeshGroup.Fusion.TransactionStatusRequest.pas',
   DataMeshGroup.Fusion.CardAcquisitionRequest in '..\lib\Model\DataMeshGroup.Fusion.CardAcquisitionRequest.pas',
   DataMeshGroup.Fusion.CardAcquisitionTransaction in '..\lib\Model\DataMeshGroup.Fusion.CardAcquisitionTransaction.pas',
-  DataMeshGroup.Fusion.ReconciliationRequest in '..\lib\Model\DataMeshGroup.Fusion.ReconciliationRequest.pas';
+  DataMeshGroup.Fusion.ReconciliationRequest in '..\lib\Model\DataMeshGroup.Fusion.ReconciliationRequest.pas',
+  Login in 'Login.pas' {FrmLogin};
 
 {$R *.res}
 
 begin
   Application.Initialize;
   Application.MainFormOnTaskbar := True;
-  Application.CreateForm(TFrmMain, FrmMain);
+  Application.CreateForm(TFrmLogin, FrmLogin);
   Application.Run;
 end.

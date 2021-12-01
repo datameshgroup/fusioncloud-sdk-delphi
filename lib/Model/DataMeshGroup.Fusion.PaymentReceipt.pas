@@ -9,8 +9,8 @@ type
   TPaymentReceipt = class
   private
     FDocumentQualifier: TDocumentQualifier;
-    FIntegratedPrintFlag: TNullableBool;
-    FRequiredSignatureFlag: TNullableBool;
+    FIntegratedPrintFlag: Boolean;
+    FRequiredSignatureFlag: Boolean;
     FOutputContent: TOutputContent;
   public
     /// <summary>
@@ -22,13 +22,13 @@ type
     /// <summary>
     /// Indicates if the receipt should be included in the sale result. Default == true
     /// </summary>
-    property IntegratedPrintFlag: TNullableBool read FIntegratedPrintFlag
+    property IntegratedPrintFlag: Boolean read FIntegratedPrintFlag
       write FIntegratedPrintFlag;
 
     /// <summary>
     /// True if a signature is required for the receipt. Default == false
     /// </summary>
-    property RequiredSignatureFlag: TNullableBool read FRequiredSignatureFlag
+    property RequiredSignatureFlag: Boolean read FRequiredSignatureFlag
       write FRequiredSignatureFlag;
 
     /// <summary>
