@@ -18,13 +18,11 @@ A delphi library for developers to connect and communicate with Unify - a platfo
 
 ------
 
+- **[Delphi Neon](https://github.com/paolo-rossi/delphi-neon):**	used for JSON parsing
 
+- **[sgc WebSockets](https://www.esegece.com/websockets):**	for the communication protocol
 
-- [Delphi Neon]: https://github.com/paolo-rossi/delphi-neon	"used for JSON parsing"
-
-- [sgc WebSockets]: https://www.esegece.com/websockets	"for the communication protocol"
-
-- [Open SSL]: https://www.openssl.org/	"namely libeay32.dll and ssleay32.dll for secure communication"
+- **[Open SSL](https://www.openssl.org/):**	namely libeay32.dll and ssleay32.dll for secure communication
 
   
 
