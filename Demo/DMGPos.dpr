@@ -86,7 +86,6 @@ uses
   Neon.Core.TypeInfo in '..\lib\Third Party Components and Libraries\delphi-neon-master\Source\Neon.Core.TypeInfo.pas',
   Neon.Core.Types in '..\lib\Third Party Components and Libraries\delphi-neon-master\Source\Neon.Core.Types.pas',
   Neon.Core.Utils in '..\lib\Third Party Components and Libraries\delphi-neon-master\Source\Neon.Core.Utils.pas',
-  Main in 'Main.pas' {FrmMain},
   DataMeshGroup.Fusion.IWebSocket in '..\lib\DataMeshGroup.Fusion.IWebSocket.pas',
   DataMeshGroup.Fusion.Crypto in '..\lib\Security\DataMeshGroup.Fusion.Crypto.pas',
   DataMeshGroup.Fusion.SaleItem in '..\lib\Model\DataMeshGroup.Fusion.SaleItem.pas',
@@ -101,7 +100,8 @@ uses
   DataMeshGroup.Fusion.CardAcquisitionRequest in '..\lib\Model\DataMeshGroup.Fusion.CardAcquisitionRequest.pas',
   DataMeshGroup.Fusion.CardAcquisitionTransaction in '..\lib\Model\DataMeshGroup.Fusion.CardAcquisitionTransaction.pas',
   DataMeshGroup.Fusion.ReconciliationRequest in '..\lib\Model\DataMeshGroup.Fusion.ReconciliationRequest.pas',
-  Login in 'Login.pas' {FrmLogin};
+  Login in 'Login.pas' {FrmLogin},
+  Main in 'Main.pas' {FrmMain};
 
 {$R *.res}
 

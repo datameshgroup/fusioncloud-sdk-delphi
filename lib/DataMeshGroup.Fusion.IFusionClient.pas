@@ -154,6 +154,8 @@ type
     function GetEventOnReceiveMessage: TEventOnReceiveMessage;
     procedure SetEventOnReceiveMessage(AEventOnReceiveMessage: TEventOnReceiveMessage);
 
+    function GetSentMessage: string;
+    procedure SetSentMessage(const AJSon: string);
 
     {$REGION 'Properties'}
     property Port: string read GetPort write SetPort;
@@ -222,6 +224,11 @@ type
     /// </summary>
     property DefaultHeartbeatTimeout: TTimeSpan read GetDefaultHeartbeatTimeout
       write SetDefaultHeartbeatTimeout;
+
+    /// <summary>
+    /// Sent JSON request.
+    /// </summary>
+    property SentJSonMessage: string read GetSentMessage; //write SetSentMessage;
 
 
     {$ENDREGION}

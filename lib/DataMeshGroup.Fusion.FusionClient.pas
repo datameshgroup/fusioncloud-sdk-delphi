@@ -51,9 +51,11 @@ type
     FEventOnReconciliationResponse: TEventOnReconciliationResponse;
     FEventOnDisplayRequest: TEventOnDisplayRequest;
     FEventOnTransactionStatusResponse: TEventOnTransactionStatusResponse;
-    FEventOnReceiveMessage:TEventOnReceiveMessage;
+    FEventOnReceiveMessage: TEventOnReceiveMessage;
+    FEventOnError: TEventOnReceiveMessage;
     FIsTestEnvironment: Boolean;
     FDisplayRequest: TDisplayRequest;
+    FSentMessage: string;
 
     function GetPort: string;
     procedure SetPort(APort: string);
@@ -138,6 +140,11 @@ type
     function GetEventOnReceiveMessage: TEventOnReceiveMessage;
     procedure SetEventOnReceiveMessage(AEventOnReceiveMessage: TEventOnReceiveMessage);
 
+    function GetEventOnError: TEventOnReceiveMessage;
+    procedure SetEventOnError(AEventOnError: TEventOnReceiveMessage);
+
+    function GetSentMessage: string;
+    procedure SetSentMessage(const AJSon: string);
   public
     /// <summary>
     /// Get the service ID
@@ -255,6 +262,8 @@ type
     property DefaultHeartbeatTimeout: TTimeSpan read GetDefaultHeartbeatTimeout
       write SetDefaultHeartbeatTimeout;
 
+    property SentJSonMessage: string read GetSentMessage; //write SetSentMessage;
+
     {$ENDREGION}
 
     {$REGION 'Events'}
@@ -324,8 +333,12 @@ type
     property OnTransactionStatusResponse: TEventOnTransactionStatusResponse
       read GetEventOnTransactionStatusResponse write SetEventOnTransactionStatusResponse;
 
-    property OnReceiveMessage: TEventOnReceiveMessage {TGetStrProc} read GetEventOnReceiveMessage
+    property OnReceiveMessage: TEventOnReceiveMessage read GetEventOnReceiveMessage
       write SetEventOnReceiveMessage;
+
+    property OnError: TEventOnReceiveMessage read GetEventOnError
+      write SetEventOnError;
+
 
     {$ENDREGION}
 
@@ -364,6 +377,7 @@ begin
   FWebSocket.OnConnect := FEventOnConnect;
   FWebSocket.OnDisconnect := FEventOnDisconnect;
   FWebSocket.OnMessage := FEventOnReceiveMessage;
+  FWebSocket.OnError := FEventOnError;
   FWebSocket.Timeout := FDefaultTimeout;
   FWebSocket.Connect;
 end;
@@ -449,6 +463,11 @@ begin
   Result := FEventOnDisplayRequest;
 end;
 
+function TFusionClient.GetEventOnError: TEventOnReceiveMessage;
+begin
+  Result := FEventOnError;
+end;
+
 function TFusionClient.GetEventOnLog: TEventOnLog;
 begin
   Result := FEventOnLog;
@@ -529,6 +548,11 @@ begin
   Result := FSaleID;
 end;
 
+function TFusionClient.GetSentMessage: string;
+begin
+  result := FSentMessage;
+end;
+
 function TFusionClient.GetServiceID: string;
 begin
   Result := FServiceID;
@@ -570,6 +594,8 @@ begin
 
     Msg := MessageParser.BuildMessage(AServiceID, ASaleID,
       APoiID, AKek, AMsg);
+
+    FSentMessage := Msg;
 
     Result := FWebSocket.Send(Msg);
   finally
@@ -624,6 +650,11 @@ procedure TFusionClient.SetEventOnDisplayRequest(
   AEventOnDisplayRequest: TEventOnDisplayRequest);
 begin
   FEventOnDisplayRequest := AEventOnDisplayRequest;
+end;
+
+procedure TFusionClient.SetEventOnError(AEventOnError: TEventOnReceiveMessage);
+begin
+  FEventOnError := AEventOnError;
 end;
 
 procedure TFusionClient.SetEventOnLog(AEventOnLog: TEventOnLog);
@@ -707,6 +738,11 @@ begin
   FSaleID := ASaleID;
 end;
 
+procedure TFusionClient.SetSentMessage(const AJSon: string);
+begin
+  FSentMessage := AJSon;
+end;
+
 procedure TFusionClient.SetServiceID(AServiceID: string);
 begin
   FServiceID := AServiceID;
@@ -731,6 +767,5 @@ begin
   Result := IntToHex(MilliSecondsBetween(TTimeZone.Local.ToUniversalTime(Now),
     EncodeDate(System.SysUtils.CurrentYear, 1, 1)), 1);
 end;
-
 
 end.

@@ -43,6 +43,7 @@ object FrmLogin: TFrmLogin
     Width = 329
     Height = 21
     TabOrder = 2
+    Text = '44DACB2A22A4A752ADC1BBFFE6CEFB589451E0FFD83F8B21'
   end
   object EdtSaleID: TEdit
     Left = 122
@@ -50,6 +51,7 @@ object FrmLogin: TFrmLogin
     Width = 329
     Height = 21
     TabOrder = 0
+    Text = 'BlackLabelUAT1'
   end
   object EdtPOIId: TEdit
     Left = 122
@@ -57,6 +59,7 @@ object FrmLogin: TFrmLogin
     Width = 329
     Height = 21
     TabOrder = 1
+    Text = 'BLBPOI01'
   end
   object BtnLogin: TButton
     Left = 15
@@ -87,8 +90,5 @@ object FrmLogin: TFrmLogin
       item
         Width = 50
       end>
-    ExplicitLeft = 248
-    ExplicitTop = 160
-    ExplicitWidth = 0
   end
 end

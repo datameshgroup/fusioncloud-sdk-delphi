@@ -57,23 +57,26 @@ var
   LoginResponse: TLoginResponse;
   Res: string;
 begin
-   LoginResponse := TLoginResponse.Create;
-    try
-      // deserialize received login response
-      LoginResponse := FFusionClient.ReceiveMessage(TRequestType.TRLogin,
-        AText, EdtKek.Text) as TLoginResponse;
+  // this will only be triggered if we have a successful request
+  // received response (AText) is in JSON format
 
-      Res := TRttiEnumerationType.GetName(LoginResponse.Response.Result);
-      if Res = 'Success' then
-      begin
-        FrmMain := TFrmMain.Create(Self);
-        FrmMain.FFusionClient := FFusionClient;
-        FrmMain.Show;
-      end;
-    finally
-      LoginResponse := nil;
-      LoginResponse.Free;
+  LoginResponse := TLoginResponse.Create;
+  try
+    // deserialize received login response
+    LoginResponse := FFusionClient.ReceiveMessage(TRequestType.TRLogin,
+      AText, EdtKek.Text) as TLoginResponse;
+
+    Res := TRttiEnumerationType.GetName(LoginResponse.Response.Result);
+    if Res = 'Success' then
+    begin
+      FrmMain := TFrmMain.Create(Self);
+      FrmMain.FFusionClient := FFusionClient;
+      FrmMain.Show;
     end;
+  finally
+    LoginResponse := nil;
+    LoginResponse.Free;
+  end;
 end;
 
 procedure TFrmLogin.BtnCloseClick(Sender: TObject);
@@ -84,12 +87,18 @@ end;
 procedure TFrmLogin.BtnLoginClick(Sender: TObject);
 var
   LoginReq: TLoginRequest;
+  SentMessage: string;
 begin
   LoginReq := TLoginRequest.Create(ProvIdent, AppName, SoftwareVer, CertCode);
   try
     FFusionClient.SendMessage(LoginReq, FFusionClient.ServiceID,
       FFusionClient.SaleID, FFusionClient.PoiID,
       FFusionClient.KEK);
+
+    // get the sent JSon request
+    SentMessage := FFusionClient.SentJSonMessage;
+
+//    ShowMessage(SentMessage);
   finally
     LoginReq.Free;
   end;
@@ -102,8 +111,8 @@ begin
 
   // set the fusion client
   FFusionClient.URL := TUnifyURL.Test;
-  FFusionClient.Port := '443';
-  FFusionClient.Protocol := 'tcp';
+//  FFusionClient.Port := '443';
+//  FFusionClient.Protocol := 'tcp';
   FFusionClient.OnConnect := OnConnect;
   FFusionClient.OnReceiveMessage := OnReceiveMsg;
   FFusionClient.DefaultTimeout := 10;

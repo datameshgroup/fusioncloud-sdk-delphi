@@ -64,9 +64,9 @@ object FrmMain: TFrmMain
   object LblItemID: TLabel
     Left = 102
     Top = 18
-    Width = 91
+    Width = 70
     Height = 13
-    Caption = '1000028903671'
+    Caption = '1028903671'
     Font.Charset = DEFAULT_CHARSET
     Font.Color = clWindowText
     Font.Height = -11
@@ -139,24 +139,14 @@ object FrmMain: TFrmMain
     Font.Style = [fsBold]
     ParentFont = False
   end
-  object BtnDisconnect: TButton
-    Left = 194
-    Top = 133
-    Width = 152
-    Height = 25
-    Cursor = crHandPoint
-    Caption = 'Disconnect'
-    TabOrder = 0
-    OnClick = BtnDisconnectClick
-  end
   object BtnPaymentReq: TButton
     Left = 20
-    Top = 133
+    Top = 136
     Width = 152
     Height = 25
     Cursor = crHandPoint
     Caption = 'Payment Request'
-    TabOrder = 1
+    TabOrder = 0
     OnClick = BtnPaymentReqClick
   end
   object BtnClear: TButton
@@ -172,7 +162,7 @@ object FrmMain: TFrmMain
     Font.Name = 'Tahoma'
     Font.Style = []
     ParentFont = False
-    TabOrder = 2
+    TabOrder = 1
     OnClick = BtnClearClick
   end
   object Pnl1: TPanel
@@ -182,7 +172,7 @@ object FrmMain: TFrmMain
     Height = 242
     Align = alBottom
     Caption = 'Pnl1'
-    TabOrder = 3
+    TabOrder = 2
     object spl1: TSplitter
       Left = 382
       Top = 1
@@ -201,8 +191,6 @@ object FrmMain: TFrmMain
         '')
       ScrollBars = ssBoth
       TabOrder = 0
-      ExplicitLeft = -2
-      ExplicitHeight = 143
     end
     object MmoDisplayRequest: TMemo
       Left = 385
@@ -214,8 +202,6 @@ object FrmMain: TFrmMain
         '')
       ScrollBars = ssBoth
       TabOrder = 1
-      ExplicitLeft = 4
-      ExplicitHeight = 143
     end
   end
 end

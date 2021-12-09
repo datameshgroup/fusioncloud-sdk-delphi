@@ -14,7 +14,6 @@ uses
 
 type
   TFrmMain = class(TForm)
-    BtnDisconnect: TButton;
     BtnPaymentReq: TButton;
     BtnClear: TButton;
     Pnl1: TPanel;
@@ -35,18 +34,11 @@ type
     LblUnitPrice: TLabel;
     procedure FormCreate(Sender: TObject);
     procedure BtnClearClick(Sender: TObject);
-    procedure BtnDisconnectClick(Sender: TObject);
     procedure OnDisconnect(ASender: TObject);
     procedure OnReceiveMessage(ASender: TObject; const Text: string);
     procedure BtnPaymentReqClick(Sender: TObject);
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
     procedure FormShow(Sender: TObject);
-  private const
-    ProvIdent = 'BlackLabel';
-    AppName = 'BlackLabel';
-    SoftwareVer = '1.0.0';
-    CertCode = '0x47CD40C6C54D9A';
-
   private
     FRequestType: TRequestType;
 
@@ -97,11 +89,6 @@ begin
   MmoDisplayRequest.Lines.Clear;
 end;
 
-procedure TFrmMain.BtnDisconnectClick(Sender: TObject);
-begin
-  FFusionClient.Disconnect;
-end;
-
 procedure TFrmMain.BtnPaymentReqClick(Sender: TObject);
 begin
   PaymentAndRefundRequest(TPaymentType.Normal);
@@ -121,6 +108,7 @@ procedure TFrmMain.FormShow(Sender: TObject);
 begin
   FFusionClient.OnDisconnect := OnDisconnect;
   FFusionClient.OnReceiveMessage := OnReceiveMessage;
+  FFusionClient.Connect;
 end;
 
 procedure TFrmMain.OnDisconnect(ASender: TObject);
@@ -138,7 +126,8 @@ var
   ReconciliationResponse: TReconciliationResponse;
   PaymentResponse: TPaymentResponse;
 begin
-  // handle deserialized responses
+  // this will only be triggered if we have a successful request
+  // received response (AText) is in JSON format
 
   MmoResponse.Lines.Add('----------------------------------------');
   MmoResponse.Lines.Add('JSon Response:' + sLineBreak + Text);
