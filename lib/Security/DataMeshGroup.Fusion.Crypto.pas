@@ -154,7 +154,7 @@ var
   EncryptedKey: TBytes;
 begin
   /// Generate 16 random bytes
-  RandKey := HexToByteArr('2a38e0f2835f926c455e087ed4744fa7'); //RandomBytes(16);
+  RandKey := RandomBytes(16);
 
   // Encrypt the random key + master key
   EncryptedKey := GetEncrypt(RandKey, GetKey(AEnvironment), EncKey);
