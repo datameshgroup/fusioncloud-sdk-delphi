@@ -572,10 +572,20 @@ function TFusionClient.ReceiveMessage(ARequestType: TRequestType;
   AJSon: string; const AKek: string): TMessagePayload;
 var
   MessageParser: TMessageParser;
+  Log: TLogEventArgs;
 begin
   MessageParser := TMessageParser.Create;
   try
-    Result := MessageParser.ReceiveMessage(ARequestType, AJSon, AKek);
+    Log := TLogEventArgs.Create;
+    try
+      Log.LogLevel := TLogLevel.Information;
+      Log.Data := AJSon;
+      FEventOnLog(Log);
+
+      Result := MessageParser.ReceiveMessage(ARequestType, AJSon, AKek);
+    finally
+      Log.Free;
+    end;
   finally
     MessageParser := nil;
     MessageParser.Free;
@@ -587,6 +597,7 @@ function TFusionClient.SendMessage(AMsg: TMessagePayload; const AServiceID,
 var
   MessageParser: TMessageParser;
   Msg: string;
+  Log: TLogEventArgs;
 begin
   MessageParser := TMessageParser.Create;
   try
@@ -597,7 +608,16 @@ begin
 
     FSentMessage := Msg;
 
-    Result := FWebSocket.Send(Msg);
+    Log := TLogEventArgs.Create;
+    try
+      Log.LogLevel := TLogLevel.Information;
+      Log.Data := Msg;
+      FEventOnLog(Log);
+
+      Result := FWebSocket.Send(Msg);
+    finally
+      Log.Free;
+    end;
   finally
     MessageParser.Free;
   end;

@@ -6,7 +6,7 @@ uses
   Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
   Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, Main,
   DataMeshGroup.Fusion.IFusionClient, DataMeshGroup.Fusion.FusionClient,
-  Vcl.ComCtrls;
+  Vcl.ComCtrls, DataMeshGroup.Fusion.LogEventArgs;
 
 type
   TFrmLogin = class(TForm)
@@ -25,9 +25,10 @@ type
 
     procedure OnReceiveMsg(ASender: TObject; const AText: string);
     procedure OnConnect(ASender: TObject);
+    procedure OnLogEvent(out AEventArgs: TLogEventArgs);
   private const
-    ProvIdent = 'Test Identification'; // test environment only - replace for production
-    AppName = 'Demo'; // test environment only - replace for production
+    ProvIdent = 'BlackLabel'; // test environment only - replace for production
+    AppName = 'BlackLabel'; // test environment only - replace for production
     SoftwareVer = '1.0.0'; // test environment only - replace for production
     CertCode = '0x47CD40C6C54D9A';  // test environment only - replace for production
 
@@ -50,6 +51,12 @@ uses System.Rtti,
 procedure TFrmLogin.OnConnect(ASender: TObject);
 begin
   stat1.Panels[0].Text := 'Connected';
+end;
+
+procedure TFrmLogin.OnLogEvent(out AEventArgs: TLogEventArgs);
+begin
+//  ShowMessage('Onlog: ' + AEventArgs.Data);
+  // handle received JSon response here
 end;
 
 procedure TFrmLogin.OnReceiveMsg(ASender: TObject; const AText: string);
@@ -113,6 +120,7 @@ begin
   FFusionClient.URL := TUnifyURL.Test;
 //  FFusionClient.Port := '443';
 //  FFusionClient.Protocol := 'tcp';
+  FFusionClient.OnLog := OnLogEvent;
   FFusionClient.OnConnect := OnConnect;
   FFusionClient.OnReceiveMessage := OnReceiveMsg;
   FFusionClient.DefaultTimeout := 10;

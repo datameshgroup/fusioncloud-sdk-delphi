@@ -10,7 +10,8 @@ uses
   DataMeshGroup.Fusion.Types, DataMeshGroup.Fusion.MessagePayload,
   System.Generics.Collections, Vcl.ExtCtrls,
   DataMeshGroup.Fusion.LoginResponse,
-  DataMeshGroup.Fusion.LogoutResponse;
+  DataMeshGroup.Fusion.LogoutResponse,
+  DataMeshGroup.Fusion.LogEventArgs;
 
 type
   TFrmMain = class(TForm)
@@ -36,6 +37,7 @@ type
     procedure BtnClearClick(Sender: TObject);
     procedure OnDisconnect(ASender: TObject);
     procedure OnReceiveMessage(ASender: TObject; const Text: string);
+    procedure OnLogEvent(out AEventArgs: TLogEventArgs);
     procedure BtnPaymentReqClick(Sender: TObject);
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
     procedure FormShow(Sender: TObject);
@@ -108,12 +110,19 @@ procedure TFrmMain.FormShow(Sender: TObject);
 begin
   FFusionClient.OnDisconnect := OnDisconnect;
   FFusionClient.OnReceiveMessage := OnReceiveMessage;
+  FFusionClient.OnLog := OnLogEvent;
   FFusionClient.Connect;
 end;
 
 procedure TFrmMain.OnDisconnect(ASender: TObject);
 begin
   MmoResponse.Lines.Add('Session Closed');
+end;
+
+procedure TFrmMain.OnLogEvent(out AEventArgs: TLogEventArgs);
+begin
+  // handle JSon response
+  MmoResponse.Lines.Add('Log - ' + AEventArgs.Data);
 end;
 
 procedure TFrmMain.OnReceiveMessage(ASender: TObject; const Text: string);
