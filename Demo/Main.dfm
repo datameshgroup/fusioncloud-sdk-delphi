@@ -4,7 +4,7 @@ object FrmMain: TFrmMain
   Cursor = crHandPoint
   BorderStyle = bsSingle
   Caption = 'Main'
-  ClientHeight = 409
+  ClientHeight = 439
   ClientWidth = 658
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
@@ -141,7 +141,7 @@ object FrmMain: TFrmMain
   end
   object BtnPaymentReq: TButton
     Left = 20
-    Top = 136
+    Top = 133
     Width = 152
     Height = 25
     Cursor = crHandPoint
@@ -167,7 +167,7 @@ object FrmMain: TFrmMain
   end
   object Pnl1: TPanel
     Left = 0
-    Top = 167
+    Top = 178
     Width = 658
     Height = 242
     Align = alBottom
@@ -203,5 +203,15 @@ object FrmMain: TFrmMain
       ScrollBars = ssBoth
       TabOrder = 1
     end
+  end
+  object StatMessage: TStatusBar
+    Left = 0
+    Top = 420
+    Width = 658
+    Height = 19
+    Panels = <
+      item
+        Width = 50
+      end>
   end
 end

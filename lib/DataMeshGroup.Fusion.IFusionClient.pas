@@ -157,9 +157,15 @@ type
     function GetSentMessage: string;
     procedure SetSentMessage(const AJSon: string);
 
+    function GetCurrentRequest: TSaleToPOIMessage;
+    procedure SetCurrentRequest(ACurrentRequest: TSaleToPOIMessage);
+
     {$REGION 'Properties'}
     property Port: string read GetPort write SetPort;
     property Protocol: string read GetProtocol write SetProtocol;
+
+    property CurrentRequest: TSaleToPOIMessage read GetCurrentRequest
+      write SetCurrentRequest;
 
     /// <summary>
     /// ServiceID of the last message sent

@@ -21,6 +21,7 @@ uses DataMeshGroup.Fusion.IFusionClient,
 type
   TFusionClient = class(TInterfacedObject, IFusionClient)
   private
+    FCurrentRequest: TSaleToPOIMessage;
     FWebSocket: TWebSocket;
     FPort: string;
     FProtocol: string;
@@ -145,6 +146,9 @@ type
 
     function GetSentMessage: string;
     procedure SetSentMessage(const AJSon: string);
+
+    function GetCurrentRequest: TSaleToPOIMessage;
+    procedure SetCurrentRequest(ACurrentRequest: TSaleToPOIMessage);
   public
     /// <summary>
     /// Get the service ID
@@ -192,6 +196,9 @@ type
 
     property Port: string read GetPort write SetPort;
     property Protocol: string read GetProtocol write SetProtocol;
+
+    property CurrentRequest: TSaleToPOIMessage read GetCurrentRequest
+      write SetCurrentRequest;
 
     /// <summary>
     /// ServiceID of the last message sent
@@ -350,7 +357,7 @@ type
 implementation
 
 uses System.SysUtils, System.Net.URLClient, System.DateUtils,
-  DataMeshGroup.Fusion.MessageParser;
+  DataMeshGroup.Fusion.MessageParser, DataMeshGroup.Fusion.MessageHeader;
 
 { TFusionClient }
 
@@ -404,11 +411,13 @@ begin
   FLogLevel := TLogLevel.None;
 
   FWebSocket := TWebSocket.Create;
+  FCurrentRequest := TSaleToPOIMessage.Create;
 end;
 
 destructor TFusionClient.Destroy;
 begin
   FWebSocket.Free;
+  FCurrentRequest.Free;
 
   inherited;
 end;
@@ -416,6 +425,11 @@ end;
 procedure TFusionClient.Disconnect;
 begin
   FWebSocket.Disconnect;
+end;
+
+function TFusionClient.GetCurrentRequest: TSaleToPOIMessage;
+begin
+  Result := FCurrentRequest;
 end;
 
 function TFusionClient.GetCustomRootCA: string;
@@ -598,6 +612,7 @@ var
   MessageParser: TMessageParser;
   Msg: string;
   Log: TLogEventArgs;
+  MessageHeader: TMessageHeader;
 begin
   MessageParser := TMessageParser.Create;
   try
@@ -605,6 +620,20 @@ begin
 
     Msg := MessageParser.BuildMessage(AServiceID, ASaleID,
       APoiID, AKek, AMsg);
+
+    MessageHeader := TMessageHeader.Create;
+    try
+      MessageHeader.MessageClass := AMsg.MessageClass;
+      MessageHeader.MessageCategory := AMsg.MessageCategory;
+      MessageHeader.MessageType := AMsg.MessageType;
+      MessageHeader.ServiceID := AServiceID;
+      MessageHeader.POIID := APoiID;
+      MessageHeader.SaleID := ASaleID;
+
+      FCurrentRequest.MessageHeader := MessageHeader;
+    finally
+      MessageHeader.Free;
+    end;
 
     FSentMessage := Msg;
 
@@ -621,6 +650,11 @@ begin
   finally
     MessageParser.Free;
   end;
+end;
+
+procedure TFusionClient.SetCurrentRequest(ACurrentRequest: TSaleToPOIMessage);
+begin
+  FCurrentRequest := ACurrentRequest;
 end;
 
 procedure TFusionClient.SetCustomRootCA(ACustomRootCA: string);

@@ -11,7 +11,9 @@ uses
   System.Generics.Collections, Vcl.ExtCtrls,
   DataMeshGroup.Fusion.LoginResponse,
   DataMeshGroup.Fusion.LogoutResponse,
-  DataMeshGroup.Fusion.LogEventArgs;
+  DataMeshGroup.Fusion.LogEventArgs,
+  DataMeshGroup.Fusion.SaleToPOIMessage, Vcl.ComCtrls,
+  DataMeshGroup.Fusion.TransactionStatusResponse;
 
 type
   TFrmMain = class(TForm)
@@ -33,6 +35,7 @@ type
     LblTransID: TLabel;
     LblAmount: TLabel;
     LblUnitPrice: TLabel;
+    StatMessage: TStatusBar;
     procedure FormCreate(Sender: TObject);
     procedure BtnClearClick(Sender: TObject);
     procedure OnDisconnect(ASender: TObject);
@@ -43,9 +46,14 @@ type
     procedure FormShow(Sender: TObject);
   private
     FRequestType: TRequestType;
+    FHandlingErrorRecovery: Boolean;
+    FPaymentResult: Boolean;
+    FTransactionStatus: TResult;
+    FTransactionStatusResponse: TTransactionStatusResponse;
 
     procedure SendRequest(AMsg: TMessagePayload);
     procedure PaymentAndRefundRequest(APaymentType: TPaymentType);
+    function HandleErrorRecovery: Boolean;
   public
     FFusionClient: IFusionClient;
   end;
@@ -55,7 +63,7 @@ var
 
 implementation
 
-uses System.Rtti,
+uses System.Rtti, System.TimeSpan, System.DateUtils, System.Diagnostics,
   DataMeshGroup.Fusion.LoginRequest, DataMeshGroup.Fusion.LogoutRequest,
   DataMeshGroup.Fusion.PaymentRequest, DataMeshGroup.Fusion.AbortRequest,
   DataMeshGroup.Fusion.TransactionStatusRequest,
@@ -73,16 +81,17 @@ uses System.Rtti,
   DataMeshGroup.Fusion.PredefinedContent,
   DataMeshGroup.Fusion.OutputText,
   DataMeshGroup.Fusion.ReconciliationRequest,
-  DataMeshGroup.Fusion.TransactionStatusResponse,
   DataMeshGroup.Fusion.ReconciliationResponse,
   DataMeshGroup.Fusion.PaymentResponse,
-  System.DateUtils;
+  DataMeshGroup.Fusion.MessageReference,
+  DataMeshGroup.Fusion.Response;
 
 {$R *.dfm}
 
 procedure TFrmMain.FormCreate(Sender: TObject);
 begin
   FFusionClient := TFusionClient.Create(True);
+  FHandlingErrorRecovery := False;
 end;
 
 procedure TFrmMain.BtnClearClick(Sender: TObject);
@@ -114,9 +123,100 @@ begin
   FFusionClient.Connect;
 end;
 
+function TFrmMain.HandleErrorRecovery: Boolean;
+var
+  WaitingForResponse: Boolean;
+  TransactionStatusRequest: TTransactionStatusRequest;
+  MessageReference: TMessageReference;
+  TimeoutTimer: TStopwatch;
+  Resp: TResponse;
+  Res: Boolean;
+begin
+  if FFusionClient.CurrentRequest = nil then
+  begin
+    ShowMessage('Error recovery not necessary since no current request.');
+    Result := True;
+    Exit;
+  end;
+
+  FHandlingErrorRecovery := True;
+
+  StatMessage.Panels[0].Text := 'Error recovery...';
+
+  Res := False;
+
+  TransactionStatusRequest := TTransactionStatusRequest.Create;
+  try
+    repeat
+      MessageReference := TMessageReference.Create;
+      try
+        MessageReference.MessageCategory := FFusionClient.CurrentRequest.MessageHeader.MessageCategory;
+        MessageReference.POIID := FFusionClient.CurrentRequest.MessageHeader.POIID;
+        MessageReference.SaleID := FFusionClient.CurrentRequest.MessageHeader.SaleID;
+        MessageReference.ServiceID := FFusionClient.CurrentRequest.MessageHeader.ServiceID;
+
+        TransactionStatusRequest.MessageReference := MessageReference;
+
+        TimeoutTimer := TStopwatch.StartNew;
+
+        try
+          FRequestType := TRequestType.TRTransactionStatus;
+          SendRequest(TransactionStatusRequest);
+
+          // If the response to our TransactionStatus request is "Success", we have a PaymentResponse to check
+          if FTransactionStatus = TResult.Success then
+          begin
+            Resp := TResponse.Create;
+            try
+              Resp := FTransactionStatusResponse.RepeatedMessageResponse
+                        .RepeatedResponseMessageBody.PaymentResponse.Response;
+
+              ShowMessage(
+                'Payment result: ' + TRttiEnumerationType.GetName(Resp.Result) + sLineBreak +
+                'ErrorCondition: ' + TRttiEnumerationType.GetName(Resp.ErrorCondition) + sLineBreak +
+                'Result: ' + Resp.AdditionalResponse
+              );
+
+              Res := (Resp.Result = TResult.Success) or ((Resp.Result = TResult.Partial));
+              FFusionClient.CurrentRequest := nil;
+              WaitingForResponse := False;
+            finally
+              Resp.Free;
+            end;
+          end else
+          // else check if the transaction is still in progress, and we haven't reached out timeout
+          if (Resp.ErrorCondition = TErrorCondition.InProgress) and
+             (TimeoutTimer.ElapsedMilliseconds < 60000) then
+            ShowMessage('Payment in progress...')
+         else
+          // otherwise, fail
+          begin
+            FFusionClient.CurrentRequest := nil;
+            WaitingForResponse := False;
+          end;
+        except
+          on E: Exception do
+            ShowMessage('Waiting for connection...');
+        end;
+      finally
+        MessageReference.Free;
+      end;
+    until WaitingForResponse = True;
+
+    TimeoutTimer.Stop;
+    FHandlingErrorRecovery := False;
+    Result := Res;
+  finally
+    TransactionStatusRequest.Free;
+  end;
+end;
+
 procedure TFrmMain.OnDisconnect(ASender: TObject);
 begin
-  MmoResponse.Lines.Add('Session Closed');
+  MmoResponse.Lines.Add('Disconnected');
+
+  if (not FHandlingErrorRecovery) and (FFusionClient.CurrentRequest <> nil) then
+    HandleErrorRecovery;
 end;
 
 procedure TFrmMain.OnLogEvent(out AEventArgs: TLogEventArgs);
@@ -131,7 +231,6 @@ var
   LoginResponse: TLoginResponse;
   LogoutResponse: TLogoutResponse;
   MsgPayload: TMessagePayload;
-  TransactionStatusResponse: TTransactionStatusResponse;
   ReconciliationResponse: TReconciliationResponse;
   PaymentResponse: TPaymentResponse;
 begin
@@ -166,13 +265,16 @@ begin
   end else
   if FRequestType = TRequestType.TRTransactionStatus then
   begin
-    TransactionStatusResponse := TTransactionStatusResponse.Create;
+    FTransactionStatusResponse := TTransactionStatusResponse.Create;
     try
-      TransactionStatusResponse := FFusionClient.ReceiveMessage(TRequestType.TRTransactionStatus,
+      FTransactionStatusResponse := FFusionClient.ReceiveMessage(TRequestType.TRTransactionStatus,
         Text, FFusionClient.KEK) as TTransactionStatusResponse;
+
+      // check whether we have a successful request
+      FTransactionStatus := FTransactionStatusResponse.Response.Result;
     finally
-      TransactionStatusResponse := nil;
-      TransactionStatusResponse.Free;
+      FTransactionStatusResponse := nil;
+      FTransactionStatusResponse.Free;
     end;
   end else
   if FRequestType = TRequestType.TRReconciliation then
@@ -236,49 +338,56 @@ var
   SaleData: TSaleData;
   TransIdent: TTransactionIdentification;
 begin
-  SaleItem := TSaleItem.Create;
+  FHandlingErrorRecovery := False;
+
   try
-    SaleItem.ItemID := StrToInt(LblItemID.Caption);
-    SaleItem.ProductCode := LblProdCode.Caption;
-    SaleItem.UnitOfMeasure := TUnitOfMeasure.Unit;
-    SaleItem.UnitPrice := StrToCurr(LblUnitPrice.Caption);
-    SaleItem.ProductLabel := LblDesc.Caption;
-
-    SaleItemArr := TList<TSaleItem>.Create;
-    SaleItemArr.Add(SaleItem);
-
-    FRequestType := TRequestType.TRPayment;
-
-    SaleData := TSaleData.Create;
+    SaleItem := TSaleItem.Create;
     try
-      TransIdent := TTransactionIdentification.Create;
+      SaleItem.ItemID := StrToInt(LblItemID.Caption);
+      SaleItem.ProductCode := LblProdCode.Caption;
+      SaleItem.UnitOfMeasure := TUnitOfMeasure.Unit;
+      SaleItem.UnitPrice := StrToCurr(LblUnitPrice.Caption);
+      SaleItem.ProductLabel := LblDesc.Caption;
+
+      SaleItemArr := TList<TSaleItem>.Create;
+      SaleItemArr.Add(SaleItem);
+
+      FRequestType := TRequestType.TRPayment;
+
+      SaleData := TSaleData.Create;
       try
-        TransIdent.TimeStamp := ISO8601ToDate(DateToISO8601(Now));
-        TransIdent.TransactionID := LblTransID.Caption;
-
-        SaleData.SaleTransactionID := TransIdent;
-
-        PaymentReq := TPaymentRequest.Create(LblTransID.Caption, StrToCurr(LblAmount.Caption),
-          SaleItemArr, APaymentType);
+        TransIdent := TTransactionIdentification.Create;
         try
-          PaymentReq.SaleData := SaleData;
+          TransIdent.TimeStamp := ISO8601ToDate(DateToISO8601(Now));
+          TransIdent.TransactionID := LblTransID.Caption;
 
-          SendRequest(PaymentReq);
+          SaleData.SaleTransactionID := TransIdent;
+
+          PaymentReq := TPaymentRequest.Create(LblTransID.Caption, StrToCurr(LblAmount.Caption),
+            SaleItemArr, APaymentType);
+          try
+            PaymentReq.SaleData := SaleData;
+
+            SendRequest(PaymentReq);
+          finally
+            PaymentReq.Free;
+          end;
         finally
-          PaymentReq.Free;
+          TransIdent := nil;
+          TransIdent.Free;
         end;
       finally
-        TransIdent := nil;
-        TransIdent.Free;
+        SaleData := nil;
+
+        SaleData.Free;
       end;
     finally
-      SaleData := nil;
-
-      SaleData.Free;
+      SaleItem := nil;
+      SaleItem.Free;
     end;
-  finally
-    SaleItem := nil;
-    SaleItem.Free;
+  except
+    on E: Exception do
+      HandleErrorRecovery;
   end;
 end;
 
