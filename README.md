@@ -30,6 +30,8 @@ A delphi library for developers to connect and communicate with Unify - a platfo
 
 - **[Open SSL](https://www.openssl.org/):**	namely libeay32.dll and ssleay32.dll for secure communication
 
+- **[DEC (Delphi Encryption Compendium)](https://github.com/MHumm/DelphiEncryptionCompendium):**	cryptographic algorithms used in the DataMeshGroup.Fusion.Crypto unit
+
   
 
 #### Configuration
