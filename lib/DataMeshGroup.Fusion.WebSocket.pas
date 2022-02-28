@@ -4,7 +4,7 @@ interface
 
 uses DataMeshGroup.Fusion.IWebSocket, sgcWebSocket, sgcWebSocket_Classes,
   System.Classes, Vcl.ExtCtrls, System.SysUtils,
-  DataMeshGroup.Fusion.IFusionClient;
+  DataMeshGroup.Fusion.IFusionClient, sgcWebSocket_Types;
 
 type
   TWebSocket = class(TInterfacedObject, IWebSocket)
@@ -37,6 +37,7 @@ type
 
     function GetOnError: TEventOnReceiveMessage;
     procedure SetOnError(AEventOnError: TEventOnReceiveMessage);
+
   public
     function Connect: Boolean;
     procedure Disconnect;
@@ -106,11 +107,12 @@ var
   Host: string;
   HostParam: string;
 begin
-  GetAddressAndParameter(Host, HostParam);
-  FWebSocket.Host := 'www.cloudposintegration.io';// Host;
-  FWebSocket.Options.Parameters := '/nexodev';//HostParam;
-  FWebSocket.Port := 443; // FPort.ToInteger;
+//  GetAddressAndParameter(Host, HostParam);
+  FWebSocket.Host := 'www.cloudposintegration.io';
+  FWebSocket.Options.Parameters := '/nexodev';
+  FWebSocket.Port := 443;
   FWebSocket.TLS := True;
+  FWebSocket.TLSOptions.IOHandler := iohSChannel;
   FWebSocket.OnConnect := TsgcWSConnectEvent(FOnConnect);
   FWebSocket.OnDisconnect := TsgcWSDisconnectEvent(FOnDisconnect);
   FWebSocket.OnMessage := TsgcWSMessageEvent(FOnMessage);
@@ -210,3 +212,4 @@ begin
 end;
 
 end.
+

@@ -62,8 +62,8 @@ object FrmLogin: TFrmLogin
     Text = 'BLBPOI01'
   end
   object BtnLogin: TButton
-    Left = 15
-    Top = 116
+    Left = 8
+    Top = 119
     Width = 153
     Height = 25
     Cursor = crHandPoint

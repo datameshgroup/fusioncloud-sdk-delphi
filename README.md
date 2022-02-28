@@ -22,6 +22,12 @@ A delphi library for developers to connect and communicate with Unify - a platfo
 
 - **[sgc WebSockets](https://www.esegece.com/websockets):**	for the communication protocol
 
+  - **NOTE:** sgcWebSocket can connect to secure websocket servers  without the need to deploy openssl libraries by setting the `TLSOptions.IOHandler` property
+
+    ```Delphi
+    FWebSocket.TLSOptions.IOHandler := iohSChannel;
+    ```
+
 - **[Open SSL](https://www.openssl.org/):**	namely libeay32.dll and ssleay32.dll for secure communication
 
   

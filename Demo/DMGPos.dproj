@@ -58,7 +58,6 @@
         <UWP_DelphiLogo44>$(BDS)\bin\Artwork\Windows\UWP\delphi_UwpDefault_44.png</UWP_DelphiLogo44>
         <UWP_DelphiLogo150>$(BDS)\bin\Artwork\Windows\UWP\delphi_UwpDefault_150.png</UWP_DelphiLogo150>
         <SanitizedProjectName>DMGPos</SanitizedProjectName>
-        <DCC_UnitSearchPath>D:\Projects\DataMesh Group\dmgpos\lib\Third Party Components and Libraries\ICS\icsv867\Source;D:\Projects\DataMesh Group\dmgpos\lib\Third Party Components and Libraries\ICS\icsv867\Source\Include;D:\Projects\DataMesh Group\dmgpos\lib\Third Party Components and Libraries\DelphiEncryptionCompendium;$(DCC_UnitSearchPath)</DCC_UnitSearchPath>
         <VerInfo_Locale>13321</VerInfo_Locale>
         <VerInfo_Keys>CompanyName=;FileDescription=$(MSBuildProjectName);FileVersion=1.0.0.0;InternalName=;LegalCopyright=;LegalTrademarks=;OriginalFilename=;ProgramID=com.embarcadero.$(MSBuildProjectName);ProductName=$(MSBuildProjectName);ProductVersion=1.0.0.0;Comments=</VerInfo_Keys>
         <BRCC_IncludePath>D:\Program Files (x86)\Embarcadero\Studio\21.0\source\ToolsAPI;$(BRCC_IncludePath)</BRCC_IncludePath>
@@ -68,7 +67,6 @@
         <DCC_Namespace>Winapi;System.Win;Data.Win;Datasnap.Win;Web.Win;Soap.Win;Xml.Win;Bde;$(DCC_Namespace)</DCC_Namespace>
         <BT_BuildType>Debug</BT_BuildType>
         <VerInfo_IncludeVerInfo>true</VerInfo_IncludeVerInfo>
-        <VerInfo_Keys>CompanyName=;FileDescription=$(MSBuildProjectName);FileVersion=1.0.0.0;InternalName=;LegalCopyright=;LegalTrademarks=;OriginalFilename=;ProgramID=com.embarcadero.$(MSBuildProjectName);ProductName=$(MSBuildProjectName);ProductVersion=1.0.0.0;Comments=</VerInfo_Keys>
         <VerInfo_Locale>1033</VerInfo_Locale>
         <Manifest_File>$(BDS)\bin\default_app.manifest</Manifest_File>
     </PropertyGroup>
@@ -211,6 +209,7 @@
             <Form>FrmMain</Form>
             <FormType>dfm</FormType>
         </DCCReference>
+        <DCCReference Include="..\lib\Model\DataMeshGroup.Fusion.SaleToPOIMessage.pas"/>
         <BuildConfiguration Include="Release">
             <Key>Cfg_2</Key>
             <CfgParent>Base</CfgParent>
