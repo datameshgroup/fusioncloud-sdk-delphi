@@ -4,7 +4,7 @@ interface
 
 uses
   Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants,
-  System.Classes, Vcl.Graphics,
+  System.Classes, Vcl.Graphics, System.Diagnostics,
   Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls,
   DataMeshGroup.Fusion.FusionClient, DataMeshGroup.Fusion.IFusionClient,
   DataMeshGroup.Fusion.Types, DataMeshGroup.Fusion.MessagePayload,
@@ -50,10 +50,17 @@ type
     FPaymentResult: Boolean;
     FTransactionStatus: TResult;
     FTransactionStatusResponse: TTransactionStatusResponse;
+    FReqServiceID: string;
+    FTimer: TTimer;
+    FTimerCnt: Integer;
+    FIsRespRecvd: Boolean;
+    FIsAbortSent: Boolean;
 
     procedure SendRequest(AMsg: TMessagePayload);
     procedure PaymentAndRefundRequest(APaymentType: TPaymentType);
     function HandleErrorRecovery: Boolean;
+    procedure SetupTimer;
+    procedure OnTimer(Sender: TObject);
   public
     FFusionClient: IFusionClient;
   end;
@@ -63,7 +70,7 @@ var
 
 implementation
 
-uses System.Rtti, System.TimeSpan, System.DateUtils, System.Diagnostics,
+uses System.Rtti, System.TimeSpan, System.DateUtils,
   DataMeshGroup.Fusion.LoginRequest, DataMeshGroup.Fusion.LogoutRequest,
   DataMeshGroup.Fusion.PaymentRequest, DataMeshGroup.Fusion.AbortRequest,
   DataMeshGroup.Fusion.TransactionStatusRequest,
@@ -84,7 +91,9 @@ uses System.Rtti, System.TimeSpan, System.DateUtils, System.Diagnostics,
   DataMeshGroup.Fusion.ReconciliationResponse,
   DataMeshGroup.Fusion.PaymentResponse,
   DataMeshGroup.Fusion.MessageReference,
-  DataMeshGroup.Fusion.Response;
+  DataMeshGroup.Fusion.Response,
+  DataMeshGroup.Fusion.LogLevel,
+  DataMeshGroup.Fusion.AbortResponse;
 
 {$R *.dfm}
 
@@ -92,6 +101,10 @@ procedure TFrmMain.FormCreate(Sender: TObject);
 begin
   FFusionClient := TFusionClient.Create(True);
   FHandlingErrorRecovery := False;
+  FIsRespRecvd := False;
+  FIsAbortSent := False;
+
+  SetupTimer;
 end;
 
 procedure TFrmMain.BtnClearClick(Sender: TObject);
@@ -102,6 +115,9 @@ end;
 
 procedure TFrmMain.BtnPaymentReqClick(Sender: TObject);
 begin
+  FIsAbortSent := False;
+  FTimer.Enabled := True; // start the timer then wait for message response
+
   PaymentAndRefundRequest(TPaymentType.Normal);
 end;
 
@@ -109,10 +125,7 @@ end;
 
 procedure TFrmMain.FormClose(Sender: TObject; var Action: TCloseAction);
 begin
-  if Assigned(FFusionClient) then
-    FFusionClient.Disconnect;
-
-  Hide;
+  Application.Terminate;
 end;
 
 procedure TFrmMain.FormShow(Sender: TObject);
@@ -125,12 +138,14 @@ end;
 
 function TFrmMain.HandleErrorRecovery: Boolean;
 var
+  AbortReq: TAbortRequest;
   WaitingForResponse: Boolean;
   TransactionStatusRequest: TTransactionStatusRequest;
   MessageReference: TMessageReference;
   TimeoutTimer: TStopwatch;
   Resp: TResponse;
   Res: Boolean;
+  TransStatReq: TTransactionStatusRequest;
 begin
   if FFusionClient.CurrentRequest = nil then
   begin
@@ -147,9 +162,9 @@ begin
 
   TransactionStatusRequest := TTransactionStatusRequest.Create;
   try
-    repeat
-      MessageReference := TMessageReference.Create;
-      try
+    MessageReference := TMessageReference.Create;
+    try
+      repeat
         MessageReference.MessageCategory := FFusionClient.CurrentRequest.MessageHeader.MessageCategory;
         MessageReference.POIID := FFusionClient.CurrentRequest.MessageHeader.POIID;
         MessageReference.SaleID := FFusionClient.CurrentRequest.MessageHeader.SaleID;
@@ -188,20 +203,40 @@ begin
           if (Resp.ErrorCondition = TErrorCondition.InProgress) and
              (TimeoutTimer.ElapsedMilliseconds < 60000) then
             ShowMessage('Payment in progress...')
-         else
+          else
           // otherwise, fail
           begin
-            FFusionClient.CurrentRequest := nil;
-            WaitingForResponse := False;
+            // send abort request
+            FRequestType := TRequestType.TRAbort;
+
+            AbortReq := TAbortRequest.Create;
+            try
+              FIsAbortSent := True;
+              SendRequest(AbortReq);
+            finally
+              AbortReq.Free;
+            end;
+
+            // send TransactionStatusRequest
+            FRequestType := TRequestType.TRTransactionStatus;
+
+            TransStatReq := TTransactionStatusRequest.Create;
+            try
+              SendRequest(TransStatReq);
+            finally
+              TransStatReq.Free;
+            end;
+
+            WaitingForResponse := True;
           end;
         except
           on E: Exception do
             ShowMessage('Waiting for connection...');
         end;
-      finally
-        MessageReference.Free;
-      end;
-    until WaitingForResponse = True;
+      until WaitingForResponse = True;
+    finally
+      MessageReference.Free;
+    end;
 
     TimeoutTimer.Stop;
     FHandlingErrorRecovery := False;
@@ -222,18 +257,26 @@ end;
 procedure TFrmMain.OnLogEvent(out AEventArgs: TLogEventArgs);
 begin
   // handle JSon response
-  MmoResponse.Lines.Add('Log - ' + AEventArgs.Data);
+  MmoResponse.Lines.Add('Log (' + FormatDateTime('mm/dd/yyy hh:mm:ss', Now) + ') - '
+    + AEventArgs.Data);
 end;
 
 procedure TFrmMain.OnReceiveMessage(ASender: TObject; const Text: string);
 var
+  AbortResponse: TAbortResponse;
   DisplayRequest: TDisplayRequest;
+  Log: TLogEventArgs;
   LoginResponse: TLoginResponse;
   LogoutResponse: TLogoutResponse;
   MsgPayload: TMessagePayload;
   ReconciliationResponse: TReconciliationResponse;
   PaymentResponse: TPaymentResponse;
 begin
+  FIsRespRecvd := True;
+
+  // reset the timer count to 0
+  FTimerCnt := 0;
+
   // this will only be triggered if we have a successful request
   // received response (AText) is in JSON format
 
@@ -272,6 +315,22 @@ begin
 
       // check whether we have a successful request
       FTransactionStatus := FTransactionStatusResponse.Response.Result;
+
+      // check if ServiceID of the PaymentRequest = ServiceID of the previous
+      // PaymentResponse
+      if FReqServiceID <> FTransactionStatusResponse
+                            .RepeatedMessageResponse
+                            .MessageHeader.ServiceID then
+      begin
+        Log := TLogEventArgs.Create;
+        try
+          Log.LogLevel := TLogLevel.Error;
+          Log.Data := 'Service ID mismatch';
+          OnLogEvent(Log);
+        finally
+          Log.Free;
+        end;
+      end;
     finally
       FTransactionStatusResponse := nil;
       FTransactionStatusResponse.Free;
@@ -296,18 +355,26 @@ begin
         Text, FFusionClient.KEK);
       if MsgPayload is TPaymentResponse then
       begin
-        PaymentResponse := TPaymentResponse.Create;
-        try
-          PaymentResponse := MsgPayload as TPaymentResponse;
+        // if an abort request is sent then disregard the PaymentResponse
+        if not FIsAbortSent then
+        begin
+          // process the response if request ServiceID = response Service ID
+          if FReqServiceID = FFusionClient.ResponseServiceID then
+          begin
+            PaymentResponse := TPaymentResponse.Create;
+            try
+              PaymentResponse := MsgPayload as TPaymentResponse;
 
-          MmoResponse.Lines.Add('Deserialized JSon Response:' + sLineBreak +
-            'Result: ' + TRttiEnumerationType.GetName(PaymentResponse.Response.Result) + sLineBreak +
-            'Payment Result: ' + TRttiEnumerationType.GetName(PaymentResponse.PaymentResult.PaymentType) + sLineBreak +
-            'Payment Brand: ' + TRttiEnumerationType.GetName(PaymentResponse.PaymentResult.PaymentInstrumentData.CardData.PaymentBrand)
-          );
-        finally
-          PaymentResponse := nil;
-          PaymentResponse.Free;
+              MmoResponse.Lines.Add('Deserialized JSon Response:' + sLineBreak +
+                'Result: ' + TRttiEnumerationType.GetName(PaymentResponse.Response.Result) + sLineBreak +
+                'Payment Result: ' + TRttiEnumerationType.GetName(PaymentResponse.PaymentResult.PaymentType) + sLineBreak +
+                'Payment Brand: ' + TRttiEnumerationType.GetName(PaymentResponse.PaymentResult.PaymentInstrumentData.CardData.PaymentBrand)
+              );
+            finally
+              PaymentResponse := nil;
+              PaymentResponse.Free;
+            end;
+          end;
         end;
       end else
       if MsgPayload is TDisplayRequest then
@@ -326,6 +393,33 @@ begin
       end;
     finally
       MsgPayload.Free;
+    end;
+  end else
+  if FRequestType = TRequestType.TRAbort then
+  begin
+    AbortResponse := TAbortResponse.Create;
+    try
+      AbortResponse := FFusionClient.ReceiveMessage(TRequestType.TRAbort,
+        Text, FFusionClient.KEK) as TAbortResponse;
+    finally
+      AbortResponse := nil;
+      AbortResponse.Free;
+    end;
+  end;
+end;
+
+procedure TFrmMain.OnTimer(Sender: TObject);
+begin
+  FTimerCnt := FTimerCnt + 1;
+
+  LblUnitPrice.Caption := IntToStr(FTimerCnt);
+
+  if not FIsRespRecvd then
+  begin
+    if FTimerCnt >= 60 then
+    begin
+      FTimer.Enabled := False;
+      HandleErrorRecovery;
     end;
   end;
 end;
@@ -393,8 +487,18 @@ end;
 
 procedure TFrmMain.SendRequest(AMsg: TMessagePayload);
 begin
-  FFusionClient.SendMessage(AMsg, FFusionClient.ServiceID, FFusionClient.SaleID,
+  FReqServiceID := FFusionClient.ServiceID;
+  FFusionClient.SendMessage(AMsg, FReqServiceID, FFusionClient.SaleID,
     FFusionClient.PoiID, FFusionClient.KEK);
+end;
+
+procedure TFrmMain.SetupTimer;
+begin
+  FTimer := TTimer.Create(Self);
+  FTimer.Interval := 1000;
+  FTimer.Enabled := False;
+  FTimer.OnTimer := OnTimer;
+  FTimerCnt := 0;
 end;
 
 end.

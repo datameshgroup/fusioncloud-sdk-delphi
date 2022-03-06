@@ -18,7 +18,8 @@ type
     TRDisplay,
     TRCardAcquisition,
     TRReconciliation,
-    TRPayment
+    TRPayment,
+    TRAbort
   );
 
   TEncEnv = (EEProd, EETest);

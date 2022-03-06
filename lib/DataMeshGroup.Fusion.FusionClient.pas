@@ -16,6 +16,7 @@ uses DataMeshGroup.Fusion.IFusionClient,
   DataMeshGroup.Fusion.DisplayRequest,
   DataMeshGroup.Fusion.TransactionStatusResponse,
   DataMeshGroup.Fusion.WebSocket,
+  DataMeshGroup.Fusion.MessageHeader,
   System.Classes;
 
 type
@@ -26,7 +27,8 @@ type
     FPort: string;
     FProtocol: string;
 
-    FServiceId: string;
+    FServiceID: string;
+    FResponseServiceID: string;
     FSaleID: string;
     FPoiID: string;
     FKek: string;
@@ -38,10 +40,10 @@ type
     FLoginResponse: TLoginResponse;
     FReceiveBufferSize: Integer;
     FLogLevel: TLogLevel;
+    FEventOnLog: TEventOnLog;
     FDefaultTimeout: Integer;
     FDefaultHeartbeatTimeout: TTimeSpan;
     FIsEventModeEnabled: Boolean;
-    FEventOnLog: TEventOnLog;
     FEventOnConnect: TNotifyEvent;
     FEventOnConnectError: TEventOnConnectError;
     FEventOnDisconnect: TNotifyEvent;
@@ -56,6 +58,7 @@ type
     FEventOnError: TEventOnReceiveMessage;
     FIsTestEnvironment: Boolean;
     FDisplayRequest: TDisplayRequest;
+    FMessageHeader: TMessageHeader;
     FSentMessage: string;
 
     function GetPort: string;
@@ -66,6 +69,8 @@ type
 
     function GetServiceID: string;
     procedure SetServiceID(AServiceID: string);
+
+    function GetResponseServiceID: string;
 
     function GetSaleID: string;
     procedure SetSaleID(ASaleID: string);
@@ -204,6 +209,11 @@ type
     /// ServiceID of the last message sent
     /// </summary>
     property ServiceID: string read GetServiceID write SetServiceID;
+
+    /// <summary>
+    /// ServiceID of the last message received
+    /// </summary>
+    property ResponseServiceID: string read GetResponseServiceID;
 
     /// <summary>
     /// SaleID provided by DataMesh
@@ -357,7 +367,7 @@ type
 implementation
 
 uses System.SysUtils, System.Net.URLClient, System.DateUtils,
-  DataMeshGroup.Fusion.MessageParser, DataMeshGroup.Fusion.MessageHeader;
+  DataMeshGroup.Fusion.MessageParser;
 
 { TFusionClient }
 
@@ -412,10 +422,12 @@ begin
 
   FWebSocket := TWebSocket.Create;
   FCurrentRequest := TSaleToPOIMessage.Create;
+  FMessageHeader := TMessageHeader.Create;
 end;
 
 destructor TFusionClient.Destroy;
 begin
+  FMessageHeader.Free;
   FWebSocket.Free;
   FCurrentRequest.Free;
 
@@ -557,6 +569,11 @@ begin
   Result := FProtocol;
 end;
 
+function TFusionClient.GetResponseServiceID: string;
+begin
+  Result := FResponseServiceID;
+end;
+
 function TFusionClient.GetSaleID: string;
 begin
   Result := FSaleID;
@@ -597,6 +614,7 @@ begin
       FEventOnLog(Log);
 
       Result := MessageParser.ReceiveMessage(ARequestType, AJSon, AKek);
+      FResponseServiceID := MessageParser.ResponseServiceID;
     finally
       Log.Free;
     end;
@@ -612,7 +630,6 @@ var
   MessageParser: TMessageParser;
   Msg: string;
   Log: TLogEventArgs;
-  MessageHeader: TMessageHeader;
 begin
   MessageParser := TMessageParser.Create;
   try
@@ -621,19 +638,14 @@ begin
     Msg := MessageParser.BuildMessage(AServiceID, ASaleID,
       APoiID, AKek, AMsg);
 
-    MessageHeader := TMessageHeader.Create;
-    try
-      MessageHeader.MessageClass := AMsg.MessageClass;
-      MessageHeader.MessageCategory := AMsg.MessageCategory;
-      MessageHeader.MessageType := AMsg.MessageType;
-      MessageHeader.ServiceID := AServiceID;
-      MessageHeader.POIID := APoiID;
-      MessageHeader.SaleID := ASaleID;
+    FMessageHeader.MessageClass := AMsg.MessageClass;
+    FMessageHeader.MessageCategory := AMsg.MessageCategory;
+    FMessageHeader.MessageType := AMsg.MessageType;
+    FMessageHeader.ServiceID := AServiceID;
+    FMessageHeader.POIID := APoiID;
+    FMessageHeader.SaleID := ASaleID;
 
-      FCurrentRequest.MessageHeader := MessageHeader;
-    finally
-      MessageHeader.Free;
-    end;
+    FCurrentRequest.MessageHeader := FMessageHeader;
 
     FSentMessage := Msg;
 

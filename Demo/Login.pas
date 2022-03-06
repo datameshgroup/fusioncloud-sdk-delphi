@@ -6,7 +6,7 @@ uses
   Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
   Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, Main,
   DataMeshGroup.Fusion.IFusionClient, DataMeshGroup.Fusion.FusionClient,
-  Vcl.ComCtrls, DataMeshGroup.Fusion.LogEventArgs;
+  Vcl.ComCtrls, DataMeshGroup.Fusion.LogEventArgs, Vcl.ExtCtrls;
 
 type
   TFrmLogin = class(TForm)
@@ -31,8 +31,9 @@ type
     AppName = 'BlackLabel'; // test environment only - replace for production
     SoftwareVer = '1.0.0'; // test environment only - replace for production
     CertCode = '0x47CD40C6C54D9A';  // test environment only - replace for production
-
   private
+    FReqServiceID: string;
+
     FFrmMain: TFrmMain;
     FFusionClient: IFusionClient;
   end;
@@ -44,7 +45,7 @@ implementation
 
 uses System.Rtti,
   DataMeshGroup.Fusion.LoginRequest, DataMeshGroup.Fusion.LoginResponse,
-  DataMeshGroup.Fusion.Types;
+  DataMeshGroup.Fusion.Types, System.Diagnostics;
 
 {$R *.dfm}
 
@@ -67,18 +68,22 @@ begin
   // this will only be triggered if we have a successful request
   // received response (AText) is in JSON format
 
+  ShowMessage('message received');
   LoginResponse := TLoginResponse.Create;
   try
     // deserialize received login response
     LoginResponse := FFusionClient.ReceiveMessage(TRequestType.TRLogin,
       AText, EdtKek.Text) as TLoginResponse;
 
-    Res := TRttiEnumerationType.GetName(LoginResponse.Response.Result);
-    if Res = 'Success' then
+    if FReqServiceID = FFusionClient.ResponseServiceID then
     begin
-      FrmMain := TFrmMain.Create(Self);
-      FrmMain.FFusionClient := FFusionClient;
-      FrmMain.Show;
+      Res := TRttiEnumerationType.GetName(LoginResponse.Response.Result);
+      if Res = 'Success' then
+      begin
+        FrmMain := TFrmMain.Create(Self);
+        FrmMain.FFusionClient := FFusionClient;
+        FrmMain.Show;
+      end;
     end;
   finally
     LoginResponse := nil;
@@ -98,14 +103,14 @@ var
 begin
   LoginReq := TLoginRequest.Create(ProvIdent, AppName, SoftwareVer, CertCode);
   try
-    FFusionClient.SendMessage(LoginReq, FFusionClient.ServiceID,
-      FFusionClient.SaleID, FFusionClient.PoiID,
-      FFusionClient.KEK);
+    FReqServiceID := FFusionClient.ServiceID;
+    FFusionClient.SendMessage(LoginReq, FReqServiceID, FFusionClient.SaleID,
+      FFusionClient.PoiID, FFusionClient.KEK);
 
     // get the sent JSon request
     SentMessage := FFusionClient.SentJSonMessage;
 
-//    ShowMessage(SentMessage);
+    ShowMessage('message sent');
   finally
     LoginReq.Free;
   end;
@@ -118,8 +123,6 @@ begin
 
   // set the fusion client
   FFusionClient.URL := TUnifyURL.Test;
-//  FFusionClient.Port := '443';
-//  FFusionClient.Protocol := 'tcp';
   FFusionClient.OnLog := OnLogEvent;
   FFusionClient.OnConnect := OnConnect;
   FFusionClient.OnReceiveMessage := OnReceiveMsg;

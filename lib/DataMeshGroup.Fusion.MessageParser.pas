@@ -32,7 +32,9 @@ uses System.Generics.Collections, System.JSON,
   DataMeshGroup.Fusion.OutputText,
   DataMeshGroup.Fusion.ReconciliationResponse,
   DataMeshGroup.Fusion.TransactionTotals,
-  DataMeshGroup.Fusion.PaymentTotals;
+  DataMeshGroup.Fusion.PaymentTotals,
+  DataMeshGroup.Fusion.AbortResponse,
+  DataMeshGroup.Fusion.EventNotification;
 
 type
   TMessageParser = class(TInterfacedObject, IMessageParser)
@@ -64,6 +66,8 @@ type
     FReconciliationResponse: TReconciliationResponse;
     FTransactionTotals: TTransactionTotals;
     FPaymentTotals: TPaymentTotals;
+    FAbortResponse: TAbortResponse;
+    FEventNotification: TEventNotification;
 
     FPOICapList: TList<TPOICapability>;
     FSaleCapList: TList<TSaleCapability>;
@@ -81,6 +85,7 @@ type
 
     FUseTestKeyIdentifier: Boolean;
     FConfig: INeonConfiguration;
+    FResponseServiceID: string;
 
     function GetJSonString(AJSONObj: TJSONObject;
       const AJSONKey: string): string;
@@ -101,6 +106,8 @@ type
       const AKek: string): TMessagePayload;
     function DeserializeDisplayRequest(const AJSon: string;
       const AKek: string): TMessagePayload;
+    function DeserializeAbortResponse(const AJSon: string;
+      const AKek: string): TMessagePayload;
 
     function GenerateSecurityTrailer(const AKek: string;
       AMessageHeader: TMessageHeader; AMessagePayload: TMessagePayload;
@@ -117,6 +124,7 @@ type
 
     property UseTestKeyIdentifier: Boolean read FUseTestKeyIdentifier
       write FUseTestKeyIdentifier;
+    property ResponseServiceID: string read FResponseServiceID;
 
     constructor Create;
     destructor Destroy; override;
@@ -161,6 +169,8 @@ begin
   FReconciliationResponse := TReconciliationResponse.Create;
   FTransactionTotals := TTransactionTotals.Create;
   FPaymentTotals := TPaymentTotals.Create;
+  FAbortResponse := TAbortResponse.Create;
+  FEventNotification := TEventNotification.Create;
 
   FPOICapList := TList<TPOICapability>.Create;
   FSaleCapList := TList<TSaleCapability>.Create;
@@ -214,6 +224,8 @@ begin
   FTransactionTotalsList.Free;
   FPaymentTotals.Free;
   FPaymentTotalsList.Free;
+  FAbortResponse.Free;
+  FEventNotification.Free;
 
   inherited;
 end;
@@ -583,12 +595,14 @@ function TMessageParser.GetResponse(const AJSon: string;
 var
   RespObj: TJSONObject;
   ValObj: TJSONValue;
+  MessHeaderObj: TJSONObject;
 
   RespResult: TResult;
   ErrorResult: TErrorCondition;
   ResultVal: TJSONString;
   ErrorVal: TJSONString;
   AddRespVal: TJSONString;
+  ServiceIDVal: TJSONString;
 begin
   if not ValidateResponse(AJSon, AKek) then
     raise Exception.Create('SecurityTrailer validation error. MAC error.');
@@ -600,6 +614,10 @@ begin
   if ValObj <> nil then
   begin
     FSaleRespObj := FJSonRespObj.GetValue('SaleToPOIResponse') as TJSONObject;
+
+    MessHeaderObj := FSaleRespObj.GetValue('MessageHeader') as TJSONObject;
+    ServiceIDVal := MessHeaderObj.GetValue('ServiceID') as TJSONString;
+    FResponseServiceID := ServiceIDVal.Value;
 
     FRespTypeObj := FSaleRespObj.GetValue(AResponseType) as TJSONObject;
 
@@ -928,6 +946,46 @@ begin
   Result := FTransStatusResponse;
 end;
 
+function TMessageParser.DeserializeAbortResponse(const AJSon,
+  AKek: string): TMessagePayload;
+var
+  EventDet: string;
+  EventNotifObj: TJSONObject;
+  EventToNotify: string;
+  FSaleReqObj: TJSONObject;
+  SecurityTrailer: string;
+  TimeStamp: string;
+  ValObj: TJSONValue;
+begin
+  if not ValidateResponse(AJSon, AKek) then
+    raise Exception.Create('SecurityTrailer validation error. MAC error.');
+
+  FJSonRespObj := TJSONObject.ParseJSONValue(
+    TEncoding.UTF8.GetBytes(AJSon), 0) as TJSONObject;
+
+  ValObj := FJSonRespObj.FindValue('SaleToPOIRequest');
+  if ValObj <> nil then
+  begin
+    FSaleReqObj := FJSonRespObj.GetValue('SaleToPOIRequest') as TJSONObject;
+
+    EventNotifObj := FSaleReqObj.GetValue('EventNotification') as TJSONObject;
+    TimeStamp := GetJSonString(EventNotifObj, 'TimeStamp');
+    EventToNotify := GetJSonString(EventNotifObj, 'EventToNotify');
+    EventDet := GetJSonString(EventNotifObj, 'EventDetails');
+
+    SecurityTrailer := GetJSonString(FSaleReqObj, 'SecurityTrailer');
+
+    FEventNotification.TimeStamp := ISO8601ToDate(TimeStamp);
+    FEventNotification.EventToNotify := EventToNotify;
+    FEventNotification.EventDetails := EventDet;
+
+    FAbortResponse.EventNotification := FEventNotification;
+    FAbortResponse.SecurityTrailer := SecurityTrailer;
+
+    Result := FAbortResponse;
+  end;
+end;
+
 function TMessageParser.DeserializeDisplayRequest(
   const AJSon: string; const AKek: string): TMessagePayload;
 var
@@ -1084,7 +1142,10 @@ begin
     Result := DeserializeReconcilationResponse(AJSon, AKek)
   else
   if ARequestType = TRequestType.TRPayment then
-    Result := DeserializePaymentResponse(AJSon, AKek);
+    Result := DeserializePaymentResponse(AJSon, AKek)
+  else
+  if ARequestType = TRequestType.TRAbort then
+    Result := DeserializeAbortResponse(AJSon, AKek)
 end;
 
 function TMessageParser.ValidateResponse(const AJSon: string;

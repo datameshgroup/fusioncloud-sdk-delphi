@@ -101,7 +101,9 @@ uses
   DataMeshGroup.Fusion.CardAcquisitionTransaction in '..\lib\Model\DataMeshGroup.Fusion.CardAcquisitionTransaction.pas',
   DataMeshGroup.Fusion.ReconciliationRequest in '..\lib\Model\DataMeshGroup.Fusion.ReconciliationRequest.pas',
   Login in 'Login.pas' {FrmLogin},
-  Main in 'Main.pas' {FrmMain};
+  Main in 'Main.pas' {FrmMain},
+  DataMeshGroup.Fusion.SaleToPOIMessage in '..\lib\Model\DataMeshGroup.Fusion.SaleToPOIMessage.pas',
+  DataMeshGroup.Fusion.AbortResponse in '..\lib\Model\DataMeshGroup.Fusion.AbortResponse.pas';
 
 {$R *.res}
 
